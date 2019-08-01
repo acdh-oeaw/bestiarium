@@ -16,7 +16,7 @@ For development just append `--settings=tieromina.settings.dev` to the following
 2. `python manage.py migrate --settings=tieromina.settings.dev`
 3. `python manage.py runserver --settings=tieromina.settings.dev`.
 
-6. Run `makemigrations`, `migrate`, and `runserver` and check [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+6. Check [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
 
 ## Tests
