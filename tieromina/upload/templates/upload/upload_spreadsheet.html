@@ -1,0 +1,20 @@
+{% extends "webpage/base.html" %}
+{% block Titel %} Import TEI {% endblock %}
+{% block content %}
+
+  {% load crispy_forms_tags %}
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h1 style="text-align: center;">Upload Omens Workbook (XLS files)</h1>
+      </div>
+      <div class="card-body">
+        <br>
+        {% crispy form %}
+      </div>
+      <div class="row">
+
+      </div>
+    </div>
+  </div>
+{% endblock content %}

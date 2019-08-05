@@ -19,6 +19,8 @@ urlpatterns = [
     url(r'^browsing/', include('browsing.urls', namespace='browsing')),
     url(r'^info/', include('infos.urls', namespace='info')),
     url(r'^', include('webpage.urls', namespace='webpage')),
+    url(r'^upload/', include('upload.urls', namespace='upload')),
+
 ]
 
 if 'bib' in settings.INSTALLED_APPS:
