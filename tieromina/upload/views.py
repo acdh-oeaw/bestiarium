@@ -12,7 +12,7 @@ from xl2tei.omensworkbook import OmensWorkbook
 
 
 # Create your views here.
-
+UPLOAD_LOC = '/'
 class UploadSpreadSheet(FormView):
     template_name = 'upload/upload_spreadsheet.html'
     form_class = UploadSpreadSheet
@@ -32,17 +32,20 @@ class UploadSpreadSheet(FormView):
     def form_valid(self, form, **kwargs):
         context = super(UploadSpreadSheet, self).get_context_data(**kwargs)
         cd = form.cleaned_data
-        uploaded_file = cd.get('uploaded_file')
+        uploaded_file = cd.get('upload_file')
+        context['filename'] = uploaded_file._name
+        filename = uploaded_file._name
 
-        filename = 'whatever.xls'
-        
         with default_storage.open(filename, 'wb') as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
 
-        print(destination)
-        wb = OmensWorkbook(destination.name )
-        print(wb)
+        try:
+            wb = OmensWorkbook(destination.name )
+        except Exception as e:            
+            context['error'] = repr(e)
+
+            
         '''
         context['unzip_path'] = extract_path
         zf = zipfile.ZipFile(zipped, 'r')
