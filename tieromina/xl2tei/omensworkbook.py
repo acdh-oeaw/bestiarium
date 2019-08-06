@@ -41,7 +41,16 @@ class OmensWorkbook:
             self.omens[sheet.name] = omen
             if not self.chapter: self.chapter = omen.chapter
         return
-       
+
+    def save(self):
+        '''
+        Breaksdown the workbook, 
+        extracts tablet, chapter and omen data
+        and saves in respective tables
+        '''
+        
+        return
+    
     def export_to_tei(self, tei_base_loc=TEI_BASE_LOC, overwrite=False):
         '''       
         Omens are read one by one from the sheets,
