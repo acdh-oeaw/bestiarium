@@ -6,7 +6,14 @@ import xml.dom.minidom as minidom
 import pandas as pd
 import xlrd
 from tqdm import  tqdm
-from .omen import Omen
+
+from django.db import DatabaseError, transaction
+
+from .omensheet import OmenSheet
+
+from .models import Tablet, Chapter
+
+
 
 TEI_BASE_LOC = '/mnt/acdh_resources/tieromina'
 
@@ -37,11 +44,37 @@ class OmensWorkbook:
         self.witnesses = {}
         self.chapter = None
         for sheet in self.book.sheets():
-            omen = Omen(sheet)
+            omen = OmenSheet(sheet)
             self.omens[sheet.name] = omen
             if not self.chapter: self.chapter = omen.chapter
+
+        self.export_to_tei()
         return
+
+    def save_to_db(self, spreadsheet):
+        '''
+        Breaksdown the workbook, 
+        extracts tablet, chapter and omen data
+        and saves in respective tables
+        '''
+        chapter, created = Chapter.objects.get_or_create(chapter_id=self.chapter)
+        chapter.tei = self.tei        
+        chapter.save()
+        chapter.spreadsheet.add(spreadsheet)
        
+        for omen_id, omen in self.omens.items():
+            omen_db_instance = omen.save_to_db(spreadsheet, chapter)
+
+        for wit_id, siglum in self.witnesses.items():
+            try:
+                tablet, _ = Tablet.objects.get_or_create(tablet_id=siglum)
+                tablet.spreadsheet.add(spreadsheet)
+            except DatabaseError:
+                raise
+
+            
+        return
+    
     def export_to_tei(self, tei_base_loc=TEI_BASE_LOC, overwrite=False):
         '''       
         Omens are read one by one from the sheets,
@@ -129,7 +162,7 @@ class OmensWorkbook:
 
             existing_omen_div =  root.find(f".//text/body/div[@n='{omen.n}']")
             if  existing_omen_div and not overwrite:
-                logging.warning('Omen already present, Skipping. Rerun with "overwrite" flag set if needed.')
+                logging.warning('OmenSheet already present, Skipping. Rerun with "overwrite" flag set if needed.')
                 continue
             if overwrite and existing_omen_div:
                 # removes existing omen div so it can be added again
@@ -142,8 +175,6 @@ class OmensWorkbook:
         # save TEI
 
         logging.debug(pretty_print(root))
+        self.tei = ET.tostring(root, encoding='unicode')
 
-        with open(out_file, 'w') as f:
-            f.write(ET.tostring(root, encoding='unicode'))
-            logging.info('Saved to %s', out_file)
         return

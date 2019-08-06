@@ -1,4 +1,4 @@
-import os
+import os, logging
 
 from django.shortcuts import render
 from django.views.generic.edit import FormView
@@ -10,7 +10,7 @@ from crispy_forms.layout import Submit
 
 from .forms import UploadSpreadSheet
 from xl2tei.omensworkbook import OmensWorkbook
-
+from .models import Spreadsheet
 
 # Create your views here.
 UPLOAD_LOC = '/'
@@ -35,16 +35,19 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
         uploaded_file = cd.get('upload_file')
         context['filename'] = uploaded_file._name
         filename = uploaded_file._name
-
         with default_storage.open(filename, 'wb') as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
 
         try:
             wb = OmensWorkbook(destination.name )
+            spreadsheet = Spreadsheet(name=uploaded_file)
+            spreadsheet.save()
+            
+            wb.save_to_db(spreadsheet)
         except Exception as e:            
             context['error'] = repr(e)
-
+            raise
             
         return render(self.request, self.template_name, context)
 
