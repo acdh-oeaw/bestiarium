@@ -7,12 +7,12 @@
       <h1 style="text-align: center;">Upload Omens</h1>
     </div>
     {% if error%}
-      <div class="alert alert-warning" role="alert">
+      <div class="alert alert-warning m-3" role="alert">
 	Sorry! Something went wrong while trying to process <em>{{ filename }}</em>.
 	<pre>{{ error }}</pre>
       </div>
     {% elif filename %}
-      <div class="alert alert-primary" role="alert">
+      <div class="alert alert-primary m-3" role="alert">
 	Thank you! <em>{{ filename }}</em> has been uploaded successfully.
       </div>
     {% endif %}

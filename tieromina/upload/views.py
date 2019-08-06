@@ -3,6 +3,7 @@ import os
 from django.shortcuts import render
 from django.views.generic.edit import FormView
 from django.core.files.storage import default_storage
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -13,11 +14,11 @@ from xl2tei.omensworkbook import OmensWorkbook
 
 # Create your views here.
 UPLOAD_LOC = '/'
-class UploadSpreadSheet(FormView):
+
+class UploadSpreadSheet(LoginRequiredMixin, FormView):
     template_name = 'upload/upload_spreadsheet.html'
     form_class = UploadSpreadSheet
     success_url = '.'
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,7 +29,6 @@ class UploadSpreadSheet(FormView):
         self.helper.field_class = 'col-md-11'
         self.helper.add_input(Submit('submit', 'save'),)
         
-
     def form_valid(self, form, **kwargs):
         context = super(UploadSpreadSheet, self).get_context_data(**kwargs)
         cd = form.cleaned_data
