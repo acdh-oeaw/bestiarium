@@ -1,20 +1,21 @@
 {% extends "webpage/base.html" %}
 {% block Titel %} Import TEI {% endblock %}
 {% block content %}
-
   {% load crispy_forms_tags %}
   <div class="container">
-    <div class="card">
-      <div class="card-header">
-        <h1 style="text-align: center;">Upload Omens Workbook (XLS files)</h1>
-      </div>
-      <div class="card-body">
-        <br>
-        {% crispy form %}
-      </div>
-      <div class="row">
-
-      </div>
+    <div class="jumbotron">
+      <h1 style="text-align: center;">Upload Omens</h1>
     </div>
+    {% if error%}
+      <div class="alert alert-warning" role="alert">
+	Sorry! Something went wrong while trying to process <em>{{ filename }}</em>.
+	<pre>{{ error }}</pre>
+      </div>
+    {% elif filename %}
+      <div class="alert alert-primary" role="alert">
+	Thank you! <em>{{ filename }}</em> has been uploaded successfully.
+      </div>
+    {% endif %}
+    {% crispy form %}
   </div>
 {% endblock content %}

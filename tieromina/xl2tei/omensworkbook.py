@@ -29,7 +29,10 @@ for namespace, uri in NAMESPACES.items():
 class OmensWorkbook:
     def __init__(self, wbfile):
         self.wbfile = wbfile
-        self.book = xlrd.open_workbook(wbfile, formatting_info=True)
+        try:
+            self.book = xlrd.open_workbook(wbfile, formatting_info=True)
+        except Exception as e:
+            raise e
         self.omens ={}
         self.witnesses = {}
         self.chapter = None

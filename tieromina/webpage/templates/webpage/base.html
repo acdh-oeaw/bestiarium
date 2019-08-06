@@ -126,9 +126,7 @@
             </div>
             <div id="content">
                 {% if DEV_VERSION %}
-                <div class="alert alert-danger" role="alert">
-                    This is a DEVELOPMENT instance. Click <a href="https://{{ PROJECT_NAME }}.acdh.oeaw.ac.at">here</a> for the Production version
-                </div>
+
                 {% endif %}
                 {% block content %}{% endblock %}
             </div>
