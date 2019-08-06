@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-import os
+import os, logging
 import sys
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)8s: %(message)s')
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tieromina.settings")
     try:
         from django.core.management import execute_from_command_line

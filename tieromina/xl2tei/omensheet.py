@@ -8,6 +8,7 @@ import pandas as pd
 import xlrd
 from tqdm import tqdm
 
+from .models import Tablet, Omen
 
 LINE_NUM_COLOR = ((255, 0, 0),)
 
@@ -18,7 +19,7 @@ for namespace, uri in NAMESPACES.items():
     ET.register_namespace(namespace, uri)
 
 
-class Omen:
+class OmenSheet:
     class Witness(namedtuple('Witness', ['siglum', 'ref'])):    
         __slots__ = ()
     
@@ -26,12 +27,12 @@ class Omen:
         def witness_id(self):
             return "wit_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.siglum)
     
-#     class Reading(namedtuple('Variant', ['varname', 'ref'])):    
-#         __slots__ = ()
+    class Reading(namedtuple('Variant', ['varname', 'ref'])):    
+        __slots__ = ()
     
-#         @property
-#         def variant_id(self):
-#             return "var_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.siglum)
+        @property
+        def variant_id(self):
+             return "var_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.siglum)
     
 
     class ReadingLine:
@@ -174,6 +175,17 @@ class Omen:
         self.linebreaks = []
         self.read()
         return
+
+    def save_to_db(self, spreadsheet, chapter):
+        '''
+        Saves the omen into into the database
+        '''
+        omen,_ = Omen.objects.get_or_create(omen_id=self.omen_num, spreadsheet=spreadsheet, chapter=chapter)
+        for witness in self.score.keys():
+            tablet, _ = Tablet.objects.get_or_create(tablet_id=witness.siglum)
+            
+            omen.tablet.add(tablet)
+        return omen
     
     def read(self):
         self.check_name()
@@ -207,18 +219,18 @@ class Omen:
         
     def check_name(self):
         top_cell_val = self.sheet.row(0)[0].value
-        if top_cell_val.lstrip('Omen ') != self.sheet.name:
-            logging.warning('Omen name in cell A1 (%s) and sheet name (%s) do not match.', 
+        if top_cell_val.lstrip('OmenSheet ') != self.sheet.name:
+            logging.warning('OmenSheet name in cell A1 (%s) and sheet name (%s) do not match.', 
                             top_cell_val, self.sheet.name)
         self.chapter, self.omen_num = self.sheet.name.split('.')
-        self.n = f'Omen {self.chapter}.{self.omen_num}'
+        self.n = f'OmenSheet {self.chapter}.{self.omen_num}'
         return
     
     def add_to_score(self, row):
         '''
         Score hashed using witness
         '''
-        witness = Omen.Witness(siglum=row[0].value, ref=row[1].value)
+        witness = OmenSheet.Witness(siglum=row[0].value, ref=row[1].value)
         self.score[witness] = row
         for i, cell in enumerate(row[2:]):
             col_num = i+2
@@ -241,7 +253,7 @@ class Omen:
         May or may not contain a reference cell (second column)
         Probably corresponds to a "witness" in the score
         '''
-        reading = Omen.ReadingLine(row)
+        reading = OmenSheet.ReadingLine(row)
         self.readings[reading.group_name].append(reading)           
         return
     
@@ -279,7 +291,7 @@ class Omen:
         return True
         
     def __repr__(self):
-        return f'Omen {self.omen_num} from chapter {self.chapter}'
+        return f'OmenSheet {self.omen_num} from chapter {self.chapter}'
     
     def get_omen_tei(self):
         '''
@@ -296,13 +308,13 @@ class Omen:
                     continue
                 if col not in self.linebreaks:
                     # Open word element
-                    word = Omen.Word(col, self.n)
+                    word = OmenSheet.Word(col, self.n)
                     w = ET.SubElement(ab, 'w', {'xml:id':word.word_id})
                     app = ET.SubElement(w, 'app')
                 for row_num, (witness, row) in enumerate(self.score.items()):
                     if col in self.linebreaks:
                         # Mark linebreak
-                        pos = Omen.Position(str(row[col].value))
+                        pos = OmenSheet.Position(str(row[col].value))
                         if pos.column_break:
                             cb = ET.SubElement(ab, 'cb', {'n':pos.column_break,
                                                      'ed': f'#{witness.witness_id}'})
@@ -316,7 +328,7 @@ class Omen:
                                 lb.attrib['corresp'] = witness.ref
 
                     elif row[col].value: 
-                        token = Omen.Token(row[col], col, self.n)
+                        token = OmenSheet.Token(row[col], col, self.n)
                         rdg = token.get_score_reading()
                         rdg.attrib['wit'] = f'#{witness.witness_id}'
                         rdg.attrib['xml:id'] = f'omen{self.chapter}.{self.omen_num}.w.{col}.rdg{row_num}'
@@ -352,7 +364,7 @@ class Omen:
                 for i, cell in enumerate(reading.row[2:]):
                     col_num = i + 2
                     if cell.value:
-                        word = Omen.Token(cell, col_num, self.n)
+                        word = OmenSheet.Token(cell, col_num, self.n)
                         w = word.get_token_for_tei()
                         w.attrib['xml:id'] = word.trl_word_id
                         w.attrib['corresp'] = f'#{word.word_id}'
@@ -371,7 +383,7 @@ class Omen:
                 for i, cell in enumerate(reading.row[2:]):
                     col_num = i + 2
                     if cell.value:
-                        word = Omen.Token(cell, col_num, self.n)
+                        word = OmenSheet.Token(cell, col_num, self.n)
                         w = word.get_token_for_tei()
 
                         w.attrib['xml:id']=word.trs_word_id

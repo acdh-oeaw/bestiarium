@@ -1,4 +1,4 @@
-import os
+import os, logging
 
 from django.shortcuts import render
 from django.views.generic.edit import FormView
@@ -43,10 +43,11 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
             wb = OmensWorkbook(destination.name )
             spreadsheet = Spreadsheet(name=uploaded_file)
             spreadsheet.save()
-            wb.save(spreadsheet)
+            
+            wb.save_to_db(spreadsheet)
         except Exception as e:            
             context['error'] = repr(e)
-
+            raise
             
         return render(self.request, self.template_name, context)
 
