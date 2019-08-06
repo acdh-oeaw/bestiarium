@@ -7,5 +7,6 @@ class Spreadsheet(models.Model):
     name = models.FileField(blank=False)
     ctime = models.DateTimeField (default=now)
 
+
     def __str__(self):
-        return "{}".format(self.name)
+        return str(self.name)
