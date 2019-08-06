@@ -27,7 +27,7 @@
                         No TeamMemeber objects have been created yet.
                         {% if user.is_authenticated %}
                             <strong>
-                                go <a href="{% url 'infos:teammember_browse' %}">create</a> some
+                                Go <a href="{% url 'infos:teammember_browse' %}">create</a> some
                             </strong>
                         {% endif %}
                     </p>
@@ -37,7 +37,7 @@
                 <p>
                     {% if user.is_authenticated %}
                         <br />
-                        <small>Data is fetch from <a href="{% url 'infos:teammember_browse' %}">TeamMember</a> object</small>
+                        <small>Data is fetched from <a href="{% url 'infos:teammember_browse' %}">TeamMember</a> object</small>
                     {% endif %}
                 </p>
             </div>
