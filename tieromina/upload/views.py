@@ -43,7 +43,7 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
             wb = OmensWorkbook(destination.name )
             spreadsheet = Spreadsheet(name=uploaded_file)
             spreadsheet.save()
-            wb.save()
+            wb.save(spreadsheet)
         except Exception as e:            
             context['error'] = repr(e)
 

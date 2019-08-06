@@ -6,7 +6,14 @@ import xml.dom.minidom as minidom
 import pandas as pd
 import xlrd
 from tqdm import  tqdm
+
+from django.db import DatabaseError, transaction
+
 from .omen import Omen
+
+from .models import Tablet
+
+
 
 TEI_BASE_LOC = '/mnt/acdh_resources/tieromina'
 
@@ -40,15 +47,24 @@ class OmensWorkbook:
             omen = Omen(sheet)
             self.omens[sheet.name] = omen
             if not self.chapter: self.chapter = omen.chapter
+
+        self.export_to_tei()
         return
 
-    def save(self):
+    def save(self, spreadsheet):
         '''
         Breaksdown the workbook, 
         extracts tablet, chapter and omen data
         and saves in respective tables
         '''
-        
+        for wit_id, siglum in self.witnesses.items():
+            try:
+                tablet, _ = Tablet.objects.get_or_create(tablet_id=siglum)
+                tablet.spreadsheet.add(spreadsheet)
+            except DatabaseError:
+                raise
+
+
         return
     
     def export_to_tei(self, tei_base_loc=TEI_BASE_LOC, overwrite=False):
@@ -151,8 +167,6 @@ class OmensWorkbook:
         # save TEI
 
         logging.debug(pretty_print(root))
+        self.tei = ET.tostring(root, encoding='unicode')
 
-        with open(out_file, 'w') as f:
-            f.write(ET.tostring(root, encoding='unicode'))
-            logging.info('Saved to %s', out_file)
         return

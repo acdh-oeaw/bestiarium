@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'browsing',
     'infos',
     'chapters',
-    'upload'
+    'upload',
+    'xl2tei'
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
