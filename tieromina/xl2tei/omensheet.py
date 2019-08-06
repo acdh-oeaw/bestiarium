@@ -180,7 +180,7 @@ class OmenSheet:
         '''
         Saves the omen into into the database
         '''
-        omen,_ = Omen.objects.get_or_create(omen_id=self.omen_num, spreadsheet=spreadsheet, chapter=chapter)
+        omen,_ = Omen.objects.get_or_create(omen_num=self.omen_num, spreadsheet=spreadsheet, chapter=chapter)
         for witness in self.score.keys():
             tablet, _ = Tablet.objects.get_or_create(tablet_id=witness.siglum)
             

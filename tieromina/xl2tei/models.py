@@ -37,7 +37,7 @@ class Omen(models.Model):
     Individual omen
 
     '''
-    omen_id = models.CharField(max_length=100)
+    omen_num = models.CharField(max_length=100)
     ctime = models.DateTimeField(default=now)
     spreadsheet = models.ForeignKey(Spreadsheet, on_delete=models.CASCADE, default='')
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
