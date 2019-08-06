@@ -30,7 +30,7 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
         self.helper.add_input(Submit('submit', 'save'),)
         
     def form_valid(self, form, **kwargs):
-        context = super(UploadSpreadSheet, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         cd = form.cleaned_data
         uploaded_file = cd.get('upload_file')
         context['filename'] = uploaded_file._name
@@ -46,24 +46,6 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
             context['error'] = repr(e)
 
             
-        '''
-        context['unzip_path'] = extract_path
-        zf = zipfile.ZipFile(zipped, 'r')
-        extracted = zf.extractall(extract_path)
-        for x in zf.infolist():
-            if (x.filename).endswith('.jp2'):
-                print(x.filename)
-                new_img = Image.objects.create(
-                    directory=cd['filepath'],
-                    custom_filename=x.filename)
-                # new_img.save()
-                # x.extract(x.filename, [context['unzip_path']])
-
-        context['extract_path'] = extract_path
-        context['zipped'] = zf.infolist()
-        '''
-        context['extract_path'] = 'Whatever'
-
         return render(self.request, self.template_name, context)
 
         

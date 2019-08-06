@@ -35,7 +35,7 @@ class TeamMemberCreate(BaseCreateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(TeamMemberCreate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TeamMemberUpdate(BaseUpdateView):
@@ -45,7 +45,7 @@ class TeamMemberUpdate(BaseUpdateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(TeamMemberUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TeamMemberDelete(DeleteView):
@@ -55,7 +55,7 @@ class TeamMemberDelete(DeleteView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(TeamMemberDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class AboutTheProjectListView(GenericListView):
@@ -82,7 +82,7 @@ class AboutTheProjectCreate(BaseCreateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(AboutTheProjectCreate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class AboutTheProjectUpdate(BaseUpdateView):
@@ -92,7 +92,7 @@ class AboutTheProjectUpdate(BaseUpdateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(AboutTheProjectUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class AboutTheProjectDelete(DeleteView):
@@ -102,7 +102,7 @@ class AboutTheProjectDelete(DeleteView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(AboutTheProjectDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ProjectInstListView(GenericListView):
@@ -129,7 +129,7 @@ class ProjectInstCreate(BaseCreateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ProjectInstCreate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ProjectInstUpdate(BaseUpdateView):
@@ -139,7 +139,7 @@ class ProjectInstUpdate(BaseUpdateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ProjectInstUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ProjectInstDelete(DeleteView):
@@ -149,4 +149,4 @@ class ProjectInstDelete(DeleteView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ProjectInstDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)

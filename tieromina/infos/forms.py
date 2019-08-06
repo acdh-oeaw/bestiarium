@@ -37,7 +37,7 @@ class ProjectInstForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(ProjectInstForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = True
         self.helper.form_class = 'form-horizontal'
@@ -48,7 +48,7 @@ class ProjectInstForm(forms.ModelForm):
 
 class TeamMemberFilterFormHelper(FormHelper):
     def __init__(self, *args, **kwargs):
-        super(TeamMemberFilterFormHelper, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.form_class = 'genericFilterForm'
         self.form_method = 'GET'
@@ -78,7 +78,7 @@ class TeamMemberForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(TeamMemberForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = True
         self.helper.form_class = 'form-horizontal'
@@ -89,7 +89,7 @@ class TeamMemberForm(forms.ModelForm):
 
 class AboutTheProjectFilterFormHelper(FormHelper):
     def __init__(self, *args, **kwargs):
-        super(AboutTheProjectFilterFormHelper, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.form_class = 'genericFilterForm'
         self.form_method = 'GET'
@@ -118,7 +118,7 @@ class AboutTheProjectForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(AboutTheProjectForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = True
         self.helper.form_class = 'form-horizontal'

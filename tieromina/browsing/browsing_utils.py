@@ -30,7 +30,7 @@ class MergeColumn(django_tables2.Column):
     """ renders a column with to checkbox - used to select objects for merging """
 
     def __init__(self, *args, **kwargs):
-        super(MergeColumn, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def render(self, value):
         return mark_safe(
@@ -52,7 +52,7 @@ def get_entities_table(model_class):
 class GenericFilterFormHelper(FormHelper):
 
     def __init__(self, *args, **kwargs):
-        super(GenericFilterFormHelper, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.form_class = 'genericFilterForm'
         self.form_method = 'GET'
@@ -101,13 +101,13 @@ class GenericListView(django_tables2.SingleTableView):
         return all_cols
 
     def get_queryset(self, **kwargs):
-        qs = super(GenericListView, self).get_queryset()
+        qs = super().get_queryset()
         self.filter = self.filter_class(self.request.GET, queryset=qs)
         self.filter.form.helper = self.formhelper_class()
         return self.filter.qs
 
     def get_table(self, **kwargs):
-        table = super(GenericListView, self).get_table()
+        table = super().get_table()
         default_cols = self.init_columns
         all_cols = table.base_columns.keys()
         selected_cols = self.request.GET.getlist("columns") + default_cols
@@ -116,7 +116,7 @@ class GenericListView(django_tables2.SingleTableView):
         return table
 
     def get_context_data(self, **kwargs):
-        context = super(GenericListView, self).get_context_data()
+        context = super().get_context_data()
         context['enable_merge'] = self.enable_merge
         togglable_colums = [x for x in self.get_all_cols() if x not in self.init_columns]
         context['togglable_colums'] = togglable_colums
@@ -206,7 +206,7 @@ class GenericListView(django_tables2.SingleTableView):
             response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(filename)
             return response
         else:
-            response = super(GenericListView, self).render_to_response(context)
+            response = super().render_to_response(context)
             return response
 
 
@@ -216,7 +216,7 @@ class BaseCreateView(CreateView):
     template_name = 'browsing/generic_create.html'
 
     def get_context_data(self, **kwargs):
-        context = super(BaseCreateView, self).get_context_data()
+        context = super().get_context_data()
         context['docstring'] = "{}".format(self.model.__doc__)
         context['class_name'] = "{}".format(self.model.__name__)
         return context
@@ -228,7 +228,7 @@ class BaseUpdateView(UpdateView):
     template_name = 'browsing/generic_create.html'
 
     def get_context_data(self, **kwargs):
-        context = super(BaseUpdateView, self).get_context_data()
+        context = super().get_context_data()
         context['docstring'] = "{}".format(self.model.__doc__)
         context['class_name'] = "{}".format(self.model.__name__)
         # if self.model.__name__.endswith('s'):
