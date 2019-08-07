@@ -29,13 +29,13 @@ class Chapter(models.Model):
     tei = models.TextField(default='')
 
     def __str__(self):
-        return str(self.chapter_id)
+        return f'Chapter {self.chapter_id}'
 
+
+    
 class Omen(models.Model):
     '''
-
     Individual omen
-
     '''
     omen_num = models.CharField(max_length=100)
     ctime = models.DateTimeField(default=now)
@@ -43,5 +43,37 @@ class Omen(models.Model):
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
     tablet = models.ManyToManyField(Tablet)    
 
+    def __str__(self):
+        return f'Omen {self.chapter.chapter_id}.{self.omen_num}'
+
+class Transliteration(models.Model):
+    '''
+    Transliteration (trl row) 
+    '''
+    omen = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
+
+
+class Translation(models.Model):
+    '''
+    Modernlanguage translation (en/de row)
+    '''
+    omen = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
+
+
+
+class Transcription(models.Model):
+    '''
+    Transcription (trs row)
+    '''
+    omen = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
+
+
+class Commentary(models.Model):
+    '''
+    Philological commentary
+    '''
+    omen = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
+
+    
 
     
