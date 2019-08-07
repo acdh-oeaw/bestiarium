@@ -47,7 +47,7 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
             wb.save_to_db(spreadsheet)
         except Exception as e:            
             context['error'] = repr(e)
-            raise
+            # raise
             
         return render(self.request, self.template_name, context)
 
