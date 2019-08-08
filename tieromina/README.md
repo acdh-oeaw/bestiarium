@@ -30,3 +30,9 @@ Run tests
     python manage.py test --settings=tieromina.settings.test
 
 After running the test a HTML coverage report will be available at cover/index.html
+
+
+## Jupyter notebook
+
+Check Django baseproject
+This [SO link](https://stackoverflow.com/questions/35483328/how-do-i-set-up-jupyter-ipython-notebook-for-django)
