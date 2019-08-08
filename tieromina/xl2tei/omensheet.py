@@ -8,7 +8,7 @@ import pandas as pd
 import xlrd
 from tqdm import tqdm
 
-from .models import Tablet, Omen
+# from .models import Tablet, Omen
 
 LINE_NUM_COLOR = ((255, 0, 0),)
 
@@ -179,13 +179,14 @@ class OmenSheet:
     def save_to_db(self, spreadsheet, chapter):
         '''
         Saves the omen into into the database
-        '''
+        
         omen,_ = Omen.objects.get_or_create(omen_num=self.omen_num, spreadsheet=spreadsheet, chapter=chapter)
         for witness in self.score.keys():
             tablet, _ = Tablet.objects.get_or_create(tablet_id=witness.siglum)
             
             omen.tablet.add(tablet)
         return omen
+        '''
     
     def read(self):
         self.check_name()

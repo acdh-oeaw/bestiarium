@@ -11,7 +11,7 @@ from django.db import DatabaseError, transaction
 
 from .omensheet import OmenSheet
 
-from .models import Tablet, Chapter
+# from .models import Tablet, Chapter
 
 
 
@@ -56,7 +56,7 @@ class OmensWorkbook:
         Breaksdown the workbook, 
         extracts tablet, chapter and omen data
         and saves in respective tables
-        '''
+
         chapter, created = Chapter.objects.get_or_create(chapter_id=self.chapter)
         chapter.tei = self.tei        
         chapter.save()
@@ -72,7 +72,7 @@ class OmensWorkbook:
             except DatabaseError:
                 raise
 
-            
+        '''            
         return
     
     def export_to_tei(self, tei_base_loc=TEI_BASE_LOC, overwrite=False):
