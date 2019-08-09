@@ -8,7 +8,7 @@ def all_spreadsheets(obj):
 
 
 class TabletAdmin(admin.ModelAdmin):
-    list_display = ('tablet_id', 'ctime', all_spreadsheets)
+    list_display = ('siglum', 'join', 'ctime', all_spreadsheets)
 
 
 class ChapterAdmin(admin.ModelAdmin):

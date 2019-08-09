@@ -9,7 +9,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 from .forms import UploadSpreadSheet
-from xl2tei.omensworkbook import OmensWorkbook
+from xl2tei.workbook import Workbook
 from .models import Spreadsheet
 
 # Create your views here.
@@ -40,7 +40,7 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
                 destination.write(chunk)
 
         try:
-            wb = OmensWorkbook(destination.name )
+            wb = Workbook(destination.name )
             spreadsheet = Spreadsheet(name=uploaded_file)
             spreadsheet.save()
             

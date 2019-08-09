@@ -15,7 +15,7 @@ class Tablet(models.Model):
     spreadsheet = models.ManyToManyField(Spreadsheet)
     
     def __str__(self):
-        return f'{self.siglum}{self.join}'
+        return f'{self.siglum}+{self.join}'
 
 
 class Reference(models.Model):

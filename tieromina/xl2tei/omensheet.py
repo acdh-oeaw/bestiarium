@@ -20,7 +20,7 @@ for namespace, uri in NAMESPACES.items():
 
 
 class OmenSheet:
-    class Witness(namedtuple('Witness', ['siglum', 'ref'])):    
+    class Witness(namedtuple('Witness', ['siglum', 'join', 'ref'])):    
         __slots__ = ()
     
         @property
@@ -231,7 +231,13 @@ class OmenSheet:
         '''
         Score hashed using witness
         '''
-        witness = OmenSheet.Witness(siglum=row[0].value, ref=row[1].value)
+        try:
+            _siglum, _join = row[0].value.split('+')
+        except:
+            _siglum = row[0].value.split('+')[0]
+            _join = ''
+            
+        witness = OmenSheet.Witness(siglum=_siglum, join=_join, ref=row[1].value)
         self.score[witness] = row
         for i, cell in enumerate(row[2:]):
             col_num = i+2
