@@ -9,12 +9,13 @@ class Tablet(models.Model):
     '''
     Stores the physical tablet information - siglum
     '''
-    tablet_id = models.CharField(max_length=100, primary_key=True)
+    siglum = models.CharField(max_length=100)
+    join = models.CharField(max_length=100, blank=True, null=True)
     ctime = models.DateTimeField (default=now)
     spreadsheet = models.ManyToManyField(Spreadsheet)
     
     def __str__(self):
-        return str(self.tablet_id)
+        return f'{self.siglum}{self.join}'
 
 
 class Reference(models.Model):
@@ -57,7 +58,7 @@ class Omen(models.Model):
     spreadsheet = models.ForeignKey(Spreadsheet, on_delete=models.CASCADE, default='')
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
     tablet = models.ManyToManyField(Tablet, blank=True, null=True)        
-    reading = models.ManyToManyField(Reference, blank=True, null=True)    
+    reference = models.ManyToManyField(Reference, blank=True, null=True)    
 
 class Token(models.Model):
     '''
@@ -73,7 +74,7 @@ class Transliteration(models.Model):
     '''
     
     token = models.ForeignKey(Token, on_delete=models.CASCADE)
-    reading = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)
+    reference = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)
     text = models.CharField(max_length=100, default='')
 
     
@@ -82,7 +83,7 @@ class Transcription(models.Model):
     Transcription
     '''
     token = models.ForeignKey(Token, on_delete=models.CASCADE)
-    reading = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)
+    reference = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)
     text = models.CharField(max_length=100, default='')
     
     
@@ -93,7 +94,7 @@ class Translation(models.Model):
     lang = models.CharField(max_length=100) # language
     translation_id =  models.CharField(max_length=100, primary_key=True) # TEI ID
     omen = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
-    reading = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)    
+    reference = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)    
     text = models.TextField(default='') 
 
     
@@ -102,7 +103,7 @@ class Commentary(models.Model):
     Philological commentary
     '''
     omen = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
-    reading = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)    
+    reference = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)    
     text = models.TextField(default='') 
 
     
