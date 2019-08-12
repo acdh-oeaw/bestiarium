@@ -3,16 +3,12 @@ from enum import Enum
 import os, glob, logging, re
 from xml.etree import ElementTree as ET
 import xml.dom.minidom as minidom
-import pandas as pd
 import xlrd
 from tqdm import  tqdm
 
 from django.db import DatabaseError, transaction
 
 from .sheet import Sheet
-
-# from .models import Tablet, Chapter
-
 
 
 TEI_BASE_LOC = '/mnt/acdh_resources/tieromina'
