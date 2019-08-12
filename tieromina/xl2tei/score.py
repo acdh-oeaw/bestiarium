@@ -6,12 +6,15 @@ class Score:
     '''
     line_num_cols = []
     rows = []
+
+    def __init__(self,
+                 line_num_format):
+        self.line_num_format = line_num_format
+        
     def append(self, row):
         score_row = ScoreRow(row)
         self.rows.append(ScoreRow(row))
-        
-        
-
+        return
 
 
 class ScoreRow:

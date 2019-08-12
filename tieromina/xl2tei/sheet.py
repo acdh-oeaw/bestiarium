@@ -1,7 +1,6 @@
 import logging
 from .comments import Comments
-
-LINE_NUM_COLORS = ((255, 0, 0),)
+from .score import Score
 
 class Sheet:
     '''
@@ -9,36 +8,20 @@ class Sheet:
     contains score, readings and commentary
     '''
     chapter = ''
-    score = []
     readings = []
-    comment = Comments()
+    comments = Comments()
     unknown = []
     witnesses = []
     
-    def __init__(self, sheet):
+    def __init__(self, sheet, line_num_format=None):
         self.sheet = sheet
-        self._set_line_num_format()
+        self.line_num_format = line_num_format
+        self.score = Score(self.line_num_format)
         self.classify_rows()
         if self.unknown:
             logging.warning('Found the following rows with no label - SKIPPED\n%s', self.unknown)
 
         return
-
-
-    def _set_line_num_format(self):
-        '''
-        Looks in the XLRD object for the formatting index of the line number
-        '''
-        for key, val in self.sheet.book.colour_map:
-            if val in LINE_NUM_COLORS:
-                self.line_num_format = val
-                return
-
-        self.line_num_format = None
-
-        logging.warning('Unable to find an index value for LINE NUMBER FORMAT %s.',
-                        LINE_NUM_COLORS)
-        return                
                     
     def classify_rows(self):
         '''

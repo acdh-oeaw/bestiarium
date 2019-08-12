@@ -28,6 +28,7 @@ NAMESPACES =  {'tei': 'http://www.tei-c.org/ns/1.0',
 for namespace, uri in NAMESPACES.items():
     ET.register_namespace(namespace, uri)
 
+LINE_NUM_COLORS = ((255, 0, 0),)
     
 class Workbook:
     '''
@@ -41,17 +42,35 @@ class Workbook:
             self.book = xlrd.open_workbook(wbfile, formatting_info=True)
         except Exception as e:
             raise e
+
+        self._set_line_num_format()
         self.omens ={}
         self.witnesses = {}
         self.chapter = None
         for sheet in self.book.sheets():
-            omen = Sheet(sheet)
+            omen = Sheet(sheet, self.line_num_format)
             self.omens[sheet.name] = omen
             if not self.chapter: self.chapter = omen.chapter
 
         self.convert_to_tei()
 
-    def convert_to_tei(self):
+    def _set_line_num_format(self):
+        '''
+        Looks in the XLRD object for the formatting index of the line number
+        '''
+        for key, val in self.book.colour_map.items():
+            if val in LINE_NUM_COLORS:
+                self.line_num_format = key
+                print(key)
+                return
+
+        self.line_num_format = None
+
+        logging.warning('Unable to find an index value for LINE NUMBER FORMAT %s.',
+                        LINE_NUM_COLORS)
+        return
+    
+    def convert_to_tei(self):        
         '''
         generates TEI representation 
         by creating from scratch or 
