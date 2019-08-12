@@ -57,8 +57,8 @@ class Omen(models.Model):
     ctime = models.DateTimeField(default=now)
     spreadsheet = models.ForeignKey(Spreadsheet, on_delete=models.CASCADE, default='')
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
-    tablet = models.ManyToManyField(Tablet, blank=True, null=True)        
-    reference = models.ManyToManyField(Reference, blank=True, null=True)    
+    tablet = models.ManyToManyField(Tablet)        
+
 
 class Token(models.Model):
     '''
@@ -107,17 +107,20 @@ class Commentary(models.Model):
     text = models.TextField(default='') 
 
     
+APODOSIS, PROTASIS = 'a', 'p'   
+TYPE_CHOICES = ((APODOSIS, 'apodosis'), (PROTASIS, 'protasis'))
+
 class Segment:
     '''
     A segment - either protasis or apodosis
     '''
-    token_id = models.CharField(max_length=100, primary_key=True)
-    APODOSIS, PROTASIS = 'a', 'p'   
-    TYPE_CHOICES = ((APODOSIS, 'apodosis'), (PROTASIS, 'protasis'))
+    token = models.ForeignKey(Token, on_delete=models.CASCADE)
 
+    '''
     segment_type = models.CharField(max_length=1,
                                     choices=TYPE_CHOICES,
                                     default=PROTASIS)
-    text = models.CharField(max_length=100, blank=True, null=True)
+    '''
     position = models.IntegerField()
+
     
