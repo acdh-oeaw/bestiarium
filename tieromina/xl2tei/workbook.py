@@ -11,7 +11,7 @@ from django.db import DatabaseError, transaction
 
 from .sheet import Sheet
 
-from .models import Tablet, Chapter
+# from .models import Tablet, Chapter
 
 
 
