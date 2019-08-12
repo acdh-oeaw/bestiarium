@@ -26,6 +26,7 @@ class Reference(models.Model):
     '''
     tablet = models.ForeignKey(Tablet, on_delete=models.CASCADE)
     reflabel = models.CharField(max_length=100)
+    ctime = models.DateTimeField (default=now)
     
     def __str__(self):
         return f'{str(self.tablet)} - {self.reflabel}'
@@ -63,6 +64,7 @@ class Omen(models.Model):
 APODOSIS, PROTASIS = 'a', 'p'   
 TYPE_CHOICES = ((APODOSIS, 'apodosis'), (PROTASIS, 'protasis'))
 
+
 class Token(models.Model):
     '''
     A word/lemma - automatic primary key
@@ -72,7 +74,8 @@ class Token(models.Model):
     segment_type = models.CharField(max_length=2,
                                     choices=TYPE_CHOICES,
                                     default=PROTASIS)
-    
+    ctime = models.DateTimeField (default=now)
+
 
 class Reading(models.Model):
     '''
@@ -94,6 +97,7 @@ class Transliteration(models.Model):
     text = models.CharField(max_length=100, default='')
     reading = models.ForeignKey(Reading, on_delete=models.CASCADE)
     ctime = models.DateTimeField(default=now)
+
     
 class Transcription(models.Model):
     '''
@@ -105,6 +109,7 @@ class Transcription(models.Model):
     reading = models.ForeignKey(Reading, on_delete=models.CASCADE)
     ctime = models.DateTimeField(default=now)
         
+
 class Translation(models.Model):
     '''
     Modernlanguage translation (en/de row)
