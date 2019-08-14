@@ -22,7 +22,7 @@ class ReadingLabel:
                 self.name = label.rstrip(ending)
                 return
             
-        raise ValueError(UNEXPECTED_ROW)
+        raise ValueError(UNEXPECTED_ROW+'\nFound: '+ label)
 
 
 class ReadingGroup:
@@ -35,7 +35,7 @@ class ReadingGroup:
     transcription = []
     
     def __init__(self, row,  label):
-        self.name = name
+        self.name = label.name
         self.append(row, label)
         return
     
@@ -65,10 +65,10 @@ class Readings:
         '''
         label = ReadingLabel(row[0].value)
             
-        try:
+        if label.name in self.groups:
             # Append a row to existing row
             self.groups[label.name].append(row, label)
-        except KeyError:
+        else:
             # add a new reading group
             self.groups[label.name] = ReadingGroup(row, label)
 

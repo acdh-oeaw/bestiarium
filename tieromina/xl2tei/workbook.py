@@ -9,6 +9,7 @@ from tqdm import  tqdm
 from django.db import DatabaseError, transaction
 
 from .sheet import Sheet
+from .wbformat import WBFormat
 
 
 TEI_BASE_LOC = '/mnt/acdh_resources/tieromina'
@@ -27,9 +28,8 @@ NAMESPACES =  {'tei': 'http://www.tei-c.org/ns/1.0',
 
 for namespace, uri in NAMESPACES.items():
     ET.register_namespace(namespace, uri)
+  
 
-LINE_NUM_COLORS = ((255, 0, 0),)
-    
 class Workbook:
     '''
     Represents an Excel workbook 
@@ -43,33 +43,19 @@ class Workbook:
         except Exception as e:
             raise e
 
-        self._set_line_num_format()
+        self.wbformat  = WBFormat(xf_list=self.book.xf_list,
+                                  font_list=self.book.font_list,
+                                  colour_map=self.book.colour_map)
         self.omens ={}
         self.witnesses = {}
         self.chapter = None
         for sheet in self.book.sheets():
-            omen = Sheet(sheet, self.line_num_format)
+            omen = Sheet(sheet, self.wbformat)
             self.omens[sheet.name] = omen
             if not self.chapter: self.chapter = omen.chapter
 
         self.convert_to_tei()
 
-    def _set_line_num_format(self):
-        '''
-        Looks in the XLRD object for the formatting index of the line number
-        '''
-        for key, val in self.book.colour_map.items():
-            if val in LINE_NUM_COLORS:
-                self.line_num_format = key
-                print(key)
-                return
-
-        self.line_num_format = None
-
-        logging.warning('Unable to find an index value for LINE NUMBER FORMAT %s.',
-                        LINE_NUM_COLORS)
-        return
-    
     def convert_to_tei(self):        
         '''
         generates TEI representation 

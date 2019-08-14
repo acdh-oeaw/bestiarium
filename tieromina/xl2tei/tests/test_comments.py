@@ -30,6 +30,8 @@ class CommentsTestCase(TestCase):
         comments.append(self.sheet.row(21))
         comments.append(self.sheet.row(22))
         self.assertEqual(comments.text[0], 'According to KAL 1, p. 3, SU 51/49+ cannot be considered “canonical, but are merely very close to the canonical series (cf. ibd, p. 6, fn. 57).')
+        self.assertEqual(comments.text[0], 'According to KAL 1, p. 3, SU 51/49+ cannot be considered “canonical, but are merely very close to the canonical series (cf. ibd, p. 6, fn. 57).')
+  
         return
 
     def test_tei_export(self):

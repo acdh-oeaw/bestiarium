@@ -7,12 +7,8 @@ from ..comments import Comments
 class SheetTestCase(TestCase):
     def setUp(self):
         wb = xlrd.open_workbook('xl2tei/tests/Snake_23_1_11.xls',formatting_info=True)
-        self.wb_sheet = wb.sheet_by_index(0)
-        self.sheet = Sheet(self.wb_sheet, line_num_format=2)
-        return
-
-    def test_line_num_format(self):
-        self.assertEqual(self.sheet .line_num_format, 2)
+        self.wb_sheet = wb.sheet_by_index(0)      
+        self.sheet = Sheet(self.wb_sheet)
         return
 
     def test_comment_lines(self):
@@ -20,6 +16,3 @@ class SheetTestCase(TestCase):
         self.assertEqual(self.sheet.comments.text[1],'gerû “to be hostile, to start a lawsuit”, “to bring suit and complain against” (CAD G: 61-62). The translation “who is litigating” is borrowed from CCP 3.5.22.A.b.')
         return
 
-    def test_classification(self):
-        self.assertEqual(1,1)
-        return

@@ -8,6 +8,6 @@ class WorkbookTestCase(TestCase):
         self.wb = Workbook('xl2tei/tests/Snake_23_1_11.xls')
         return
 
-    def test_line_num_format(self):
-        self.assertEqual(self.wb.line_num_format, 2)
+    def test_wb_format(self):
+        self.assertNotEqual(self.wb.wbformat, None)
         return
