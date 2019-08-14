@@ -57,7 +57,7 @@ class Readings:
     '''
     Hashed reading groups 
     '''
-    groups = defaultdict(ReadingGroup)
+    groups = {}
 
     def append(self, row):
         '''
