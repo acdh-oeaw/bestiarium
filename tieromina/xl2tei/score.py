@@ -13,7 +13,9 @@ class Score:
 
     def append(self, row):
         tablet = Tablet(row[0].value, reference=row[1].value)
-        
+        for i, cell in enumerate(row):
+            if self.wbformat.is_line_num(cell):
+                
         return
 
 
