@@ -8,27 +8,47 @@ class Sheet:
     Represents a sheet in an omens workbook;
     contains score, readings and commentary
     '''
-    chapter = ''
 
+    chapter = ''
+    omen_num = ''
+    tradition = ''
+    siglum = ''
     
     def __init__(self, sheet, wbformat=None):
         self.sheet = sheet
         self.wbformat = wbformat
+        self.read_omen_name()
         self.read()
         return
 
+    def read_omen_name(self):
+        '''
+        Reads the omen name from the sheet name and 
+        compares it with the value in the top cell.
+        Notes any link given in the top cell.
+        '''        
+        omen_parts = self.sheet.name.split('.')
+        self.chapter = omen_parts[0]
+        self.omen_num = omen_parts[-1]
+        if len(omen_parts) > 2:
+            self.tradition = omen_parts[2]
+        elif len(omen_parts) > 3:
+            self.siglum = omen_parts[3]
+        elif len(omen_parts)>4 or len(omen_parts)>2:
+            raise ValueError('Sheet name does not conform to Chapter.Number or Chapter.Tradition.Number or Chapter.Tradition.Siglum.Number formats')
+            
+        return
+
+    @property
+    def omen_name(self):
+        return f'Omen {self.chapter}.{"."+self.tradition if self.tradition else ""}.{"."+self.siglum if self.siglum else ""}{self.omen_num}'
+    
     def read(self):
         '''
         Reads the score first, 
-        identifies 
-        columns containing tokens and 
-        columns containing line numbers
-        Reads readings
+        Then reads transliterations, transcriptions and translations
         Then reads commentary
         '''
-        
-        self.unknown = []
-
         def read_until(start_row_num=0, end_label_pattern=None):
             for row_num in range(start_row_num, self.sheet.nrows):
                 row = self.sheet.row(row_num)
