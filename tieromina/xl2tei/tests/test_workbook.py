@@ -1,12 +1,17 @@
-from ..sheet import Sheet
+from ..wbformat import WBFormat
 from ..workbook import Workbook
 from unittest.mock import patch, call, ANY, PropertyMock, MagicMock
 from django.test import TestCase
-
+import xlrd
 
 class WorkbookTestCase(TestCase):
     test_file = 'xl2tei/tests/Snake_23_1_11.xls'
 
+    def test_wbfile(self):
+        wb = Workbook(self.test_file)
+        self.assertEqual(wb.wbfile, self.test_file)
+        return
+    
     @patch('xl2tei.workbook.WBFormat')
     @patch('xl2tei.workbook.Sheet')
     def test_number_of_sheets(self, MockSheet, MockWBFormat):

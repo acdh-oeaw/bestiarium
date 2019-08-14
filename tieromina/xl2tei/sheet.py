@@ -31,17 +31,17 @@ class Sheet:
         self.chapter = omen_parts[0]
         self.omen_num = omen_parts[-1]
         if len(omen_parts) > 2:
-            self.tradition = omen_parts[2]
-        elif len(omen_parts) > 3:
-            self.siglum = omen_parts[3]
-        elif len(omen_parts)>4 or len(omen_parts)>2:
+            self.tradition = omen_parts[1]
+        if len(omen_parts) > 3:
+            self.siglum = omen_parts[2]
+        if len(omen_parts)>4 or len(omen_parts)<2:
             raise ValueError('Sheet name does not conform to Chapter.Number or Chapter.Tradition.Number or Chapter.Tradition.Siglum.Number formats')
             
         return
 
     @property
     def omen_name(self):
-        return f'Omen {self.chapter}.{"."+self.tradition if self.tradition else ""}.{"."+self.siglum if self.siglum else ""}{self.omen_num}'
+        return f'Omen {self.chapter}{("."+self.tradition) if self.tradition else ""}{("."+self.siglum) if self.siglum else ""}.{self.omen_num}'
 
 
     def read(self):

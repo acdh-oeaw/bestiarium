@@ -51,7 +51,7 @@ class Workbook:
         self.chapter = None
         for sheet in self.book.sheets():
             omen = Sheet(sheet, self.wbformat)
-            self.omens[sheet.name] = omen
+            self.omens[omen.omen_num] = omen
             if not self.chapter: self.chapter = omen.chapter
 
         self.convert_to_tei()
