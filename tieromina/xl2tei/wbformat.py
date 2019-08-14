@@ -22,7 +22,7 @@ class WBFormat:
         return cell_font_color
 
     def match_cell_font_color(self, cell, color):
-        return self.cell_font_colour == color
+        return self.cell_font_colour(cell) == color
 
     def is_line_num(self, cell):
         return match_cell_font_color(cell, WBFormat.LINE_NUM_COLOR)
