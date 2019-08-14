@@ -24,6 +24,8 @@ class WBFormat:
     def match_cell_font_color(self, cell, color):
         return self.cell_font_colour == color
 
+    def is_line_num(self, cell):
+        return match_cell_font_color(cell, WBFormat.LINE_NUM_COLOR)
     
         
     
