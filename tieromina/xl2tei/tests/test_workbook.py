@@ -1,13 +1,16 @@
 from django.test import TestCase
+from unittest.mock import patch, call, ANY
 
-import xlrd
 from ..workbook import Workbook
 
 class WorkbookTestCase(TestCase):
-    def setUp(self):
-        self.wb = Workbook('xl2tei/tests/Snake_23_1_11.xls')
-        return
+    test_file = 'xl2tei/tests/Snake_23_1_11.xls'
 
-    def test_wb_format(self):
-        self.assertNotEqual(self.wb.wbformat, None)
+    @patch('xl2tei.workbook.WBFormat')
+    @patch('xl2tei.workbook.Sheet')
+    def test_wb_format(self, MockSheet, MockWBFormat):
+        wb = Workbook(self.test_file)
+        self.assertEqual(MockSheet.call_count, 11)
+        self.assertEqual(MockWBFormat.call_count, 1)
+        self.assertNotEqual(wb.wbformat, None)
         return
