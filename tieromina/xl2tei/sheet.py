@@ -42,7 +42,8 @@ class Sheet:
     @property
     def omen_name(self):
         return f'Omen {self.chapter}.{"."+self.tradition if self.tradition else ""}.{"."+self.siglum if self.siglum else ""}{self.omen_num}'
-    
+
+
     def read(self):
         '''
         Reads the score first, 
