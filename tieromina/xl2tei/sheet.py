@@ -2,11 +2,13 @@
 A sheet from the workbook containing omens
 '''
 import logging
+from .wbformat import WBFormat
 from .comments import Comments
 from .reading import Readings
-from .score import Score
+from .tablet import Tablet
 
-class Sheet:
+
+class Sheet:    
     '''
     Represents a sheet in an omens workbook;
     contains score, readings and commentary
@@ -16,10 +18,15 @@ class Sheet:
     omen_num = ''
     tradition = ''
     siglum = ''
-
+    wbformat=None
     def __init__(self, sheet, wbformat=None):
         self.sheet = sheet
-        self.wbformat = wbformat
+        if wbformat:
+            self.wbformat = wbformat
+        else:
+            self.wbformat = WBFormat(xf_list=sheet.book.xf_list,
+                                     font_list=sheet.book.font_list,
+                                     colour_map=sheet.book.colour_map)
         self.read_omen_name()
         self.read()
         return
@@ -69,11 +76,10 @@ class Sheet:
                     yield row_num, row
 
         # Read Score
-        self.score = Score(self.wbformat)
+        self.score = {}
         for row_num, row in read_until(start_row_num=1,
                                        end_label_pattern='(trl)'):
-            if row:
-                self.score.append(row)
+            self.read_score(row)
 
         # Read readings (transliteration, transcription and translations)
         self.readings = Readings()
@@ -88,6 +94,17 @@ class Sheet:
 
         return
 
+    def read_score(self, row):
+        '''
+        Reads a score row, makes note of columns that contain line numbers
+        and the columns that contain words
+        '''
+        tablet = Tablet(row[0].value, reference=row[1].value)
+        for i, cell in enumerate(row):
+            if self.wbformat.is_line_num(cell):
+                pass      
+        return
+
     @staticmethod
     def _is_empty(row):
         '''
@@ -98,3 +115,7 @@ class Sheet:
                 return False
 
         return True
+
+        
+
+
