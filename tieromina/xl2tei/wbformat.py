@@ -11,21 +11,21 @@ class WBFormat:
         return
     
     
-    def cell_font(self, cell):
+    def _cell_font(self, cell):
         cell_format = self.xf_list[cell.xf_index]
         cell_font = self.font_list[cell_format.font_index]
         return cell_font
     
-    def cell_font_colour(self, cell):
-        cell_font = self.cell_font(cell)
-        colour = self.colour_map[cell_font.colour_index]
+    def _cell_font_colour(self, cell):
+        _cell_font = self._cell_font(cell)
+        colour = self.colour_map[_cell_font.colour_index]
         return colour
 
-    def match_cell_font_color(self, cell, color):
-        return self.cell_font_colour(cell) == color
+    def _match_cell_font_color(self, cell, color):
+        return self._cell_font_colour(cell) == color
 
     def is_line_num(self, cell):
-        return self.match_cell_font_color(cell, WBFormat.LINE_NUM_COLOR)
+        return self._match_cell_font_color(cell, WBFormat.LINE_NUM_COLOR)
     
         
     
