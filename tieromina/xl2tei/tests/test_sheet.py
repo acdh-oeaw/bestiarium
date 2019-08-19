@@ -12,8 +12,9 @@ class SheetTestCase(TestCase):
         return
 
     
-    @patch('xl2tei.comments.Comments.append')   
-    def test_comment_lines(self, mock_append):
+    @patch('xl2tei.comments.Comments.append')
+    @patch('xl2tei.score.Score.append')   
+    def test_comment_lines(self, mock_append, mock_score):
         sheet = Sheet(self.wb_sheet)
         self.assertEqual(mock_append.call_count, 6)
         expected_calls = [call(self.wb_sheet.row(21)), call(self.wb_sheet.row(22))]

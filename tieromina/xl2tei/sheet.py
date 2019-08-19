@@ -1,3 +1,6 @@
+'''
+A sheet from the workbook containing omens
+'''
 import logging
 from .comments import Comments
 from .reading import Readings
@@ -13,7 +16,7 @@ class Sheet:
     omen_num = ''
     tradition = ''
     siglum = ''
-    
+
     def __init__(self, sheet, wbformat=None):
         self.sheet = sheet
         self.wbformat = wbformat
@@ -23,10 +26,10 @@ class Sheet:
 
     def read_omen_name(self):
         '''
-        Reads the omen name from the sheet name and 
+        Reads the omen name from the sheet name and
         compares it with the value in the top cell.
         Notes any link given in the top cell.
-        '''        
+        '''
         omen_parts = self.sheet.name.split('.')
         self.chapter = omen_parts[0]
         self.omen_num = omen_parts[-1]
@@ -34,19 +37,24 @@ class Sheet:
             self.tradition = omen_parts[1]
         if len(omen_parts) > 3:
             self.siglum = omen_parts[2]
-        if len(omen_parts)>4 or len(omen_parts)<2:
-            raise ValueError('Sheet name does not conform to Chapter.Number or Chapter.Tradition.Number or Chapter.Tradition.Siglum.Number formats')
-            
+        if len(omen_parts) > 4 or len(omen_parts) < 2:
+            logging.error('Sheet name "{}" does not conform '.format(self.sheet.name) +
+                          'to Chapter.Number or Chapter.Tradition.Number ' +
+                          'or Chapter.Tradition.Siglum.Number formats')
+
         return
 
     @property
     def omen_name(self):
-        return f'Omen {self.chapter}{("."+self.tradition) if self.tradition else ""}{("."+self.siglum) if self.siglum else ""}.{self.omen_num}'
+        return (f'Omen {self.chapter}' +
+                f'{("."+self.tradition) if self.tradition else ""}' +
+                f'{("."+self.siglum) if self.siglum else ""}' +
+                f'.{self.omen_num}')
 
 
     def read(self):
         '''
-        Reads the score first, 
+        Reads the score first,
         Then reads transliterations, transcriptions and translations
         Then reads commentary
         '''
@@ -57,15 +65,15 @@ class Sheet:
                 if self._is_empty(row): continue # skip empty rows
                 elif end_label_pattern and  end_label_pattern in row_label.lower():
                     return row_num, None
-                else: yield row_num, row
-
-            return
+                else:
+                    yield row_num, row
 
         # Read Score
         self.score = Score(self.wbformat)
         for row_num, row in read_until(start_row_num=1,
                                        end_label_pattern='(trl)'):
-            if row: self.score.append(row)
+            if row:
+                self.score.append(row)
 
         # Read readings (transliteration, transcription and translations)
         self.readings = Readings()
@@ -73,13 +81,13 @@ class Sheet:
                                        end_label_pattern='comment'):
             self.readings.append(row)
 
-        self.comments = Comments()
         # Read comments
+        self.comments = Comments()
         for row_num, row in read_until(start_row_num=row_num+1):
             self.comments.append(row)
 
         return
-    
+
     @staticmethod
     def _is_empty(row):
         '''
@@ -88,6 +96,5 @@ class Sheet:
         for cell in row:
             if cell.value:
                 return False
-            
-        return True
 
+        return True
