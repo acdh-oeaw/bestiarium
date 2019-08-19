@@ -43,9 +43,7 @@ class Workbook:
         except Exception as e:
             raise e
 
-        self.wbformat  = WBFormat(xf_list=self.book.xf_list,
-                                  font_list=self.book.font_list,
-                                  colour_map=self.book.colour_map)
+        self.wbformat  = WBFormat(self.book)
         self.omens ={}
         self.witnesses = {}
         self.chapter = None

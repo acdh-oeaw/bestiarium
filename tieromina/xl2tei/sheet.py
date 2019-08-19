@@ -24,9 +24,8 @@ class Sheet:
         if wbformat:
             self.wbformat = wbformat
         else:
-            self.wbformat = WBFormat(xf_list=sheet.book.xf_list,
-                                     font_list=sheet.book.font_list,
-                                     colour_map=sheet.book.colour_map)
+            self.wbformat = WBFormat(sheet.book)
+            
         self.read_omen_name()
         self.read()
         return

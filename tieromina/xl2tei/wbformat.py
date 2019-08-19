@@ -4,10 +4,10 @@ class WBFormat:
     '''
     LINE_NUM_COLOR = (255, 0, 0)
     
-    def __init__(self, **kwargs):
-        self.xf_list = kwargs.get('xf_list')
-        self.font_list = kwargs.get('font_list')
-        self.colour_map = kwargs.get('colour_map')
+    def __init__(self, workbook):
+        self.xf_list = workbook.xf_list
+        self.font_list = workbook.font_list
+        self.colour_map = workbook.colour_map
         return
     
     
