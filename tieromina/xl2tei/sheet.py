@@ -66,46 +66,50 @@ class Sheet:
         Then reads commentary
         '''
         def read_until(start_row_num=0, end_label_pattern=None):
+            relevant_rows = []
+            next_row = start_row_num
             for row_num in range(start_row_num, self.sheet.nrows):
+                next_row += 1
                 row = self.sheet.row(row_num)
                 row_label = row[0].value
                 if self._is_empty(row): continue # skip empty rows
                 elif end_label_pattern and  end_label_pattern in row_label.lower():
-                    return row_num, None
+                    break
                 else:
-                    yield row_num, row
+                    relevant_rows.append(row)
+
+            return relevant_rows, next_row
 
         # Read Score
-        self.score = Score()
-        for row_num, row in read_until(start_row_num=1,
-                                       end_label_pattern='(trl)'):
-            self.read_score(row)
+        score_rows, next_row = read_until(start_row_num=1, end_label_pattern='(trl)')
+        self.read_score(score_rows)
 
         # Read readings (transliteration, transcription and translations)
-        self.readings = Readings()
-        for row_num, row in read_until(start_row_num=row_num+1,
-                                       end_label_pattern='comment'):
-            self.readings.append(row)
+        reading_rows, next_row = read_until(start_row_num=next_row,
+                                            end_label_pattern='comment')
 
         # Read comments
-        self.comments = Comments()
-        for row_num, row in read_until(start_row_num=row_num+1):
-            self.comments.append(row)
+        comment_rows, _ = read_until(start_row_num=next_row)
+        self.comments = Comments(comment_rows)
 
         return
 
-    def read_score(self, row):
+    def read_score(self, score_rows):
         '''
         Reads a score row, makes note of columns that contain line numbers
         and the columns that contain words
         '''
-        tablet = Tablet(row[0].value, reference=row[1].value)
-        for i, cell in enumerate(row):
-            if self.wbformat.is_line_num(cell):
-                self.score.add_position_to_row(tablet, cell.value)
-            else:
-                self.score.add_token_to_row(tablet, cell.value)
-        return    
+        self.score = Score()
+        for row in score_rows:
+            tablet = Tablet(row[0].value, reference=row[1].value)
+            for i, cell in enumerate(row):
+                if self.wbformat.is_line_num(cell):
+                    self.score.add_position(tablet, cell.value)
+                else:
+                    self.score.add_token(tablet, cell.value)
+                    
+        return
+   
 
     @staticmethod
     def _is_empty(row):

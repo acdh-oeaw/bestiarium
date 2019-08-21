@@ -19,30 +19,25 @@ class CommentsTestCase(TestCase):
         return
     
     def test_one_line(self):
-        comments = Comments()
-        comments.append(self.sheet.row(21))
+        comments = Comments([self.sheet.row(21)])
         self.assertEqual(comments.text, ['According to KAL 1, p. 3, SU 51/49+ cannot be considered “canonical, but are merely very close to the canonical series (cf. ibd, p. 6, fn. 57).'])
         self.assertEqual(len(comments.text), 1)
         return
 
     def test_multiple_lines(self):
-        comments = Comments()
-        comments.append(self.sheet.row(21))
-        comments.append(self.sheet.row(22))
+        comments = Comments([self.sheet.row(21), self.sheet.row(22)])
+        self.assertEqual(len(comments.text), 2)
         self.assertEqual(comments.text[0], 'According to KAL 1, p. 3, SU 51/49+ cannot be considered “canonical, but are merely very close to the canonical series (cf. ibd, p. 6, fn. 57).')
-        self.assertEqual(comments.text[0], 'According to KAL 1, p. 3, SU 51/49+ cannot be considered “canonical, but are merely very close to the canonical series (cf. ibd, p. 6, fn. 57).')
-  
+
         return
 
     def test_tei_export(self):
-        comments = Comments()
-        comments.append(self.sheet.row(21))
-        comments.append(self.sheet.row(22))
+        comments = Comments([self.sheet.row(21), self.sheet.row(22)])
         tei_comment = comments.tei_export
         self.assertEqual(tei_comment.tag, 'div')
         self.assertEqual(tei_comment.attrib.get('n'), comments.label)
         self.assertEqual(tei_comment.attrib.get('type'), 'commentary')
-        self.assertEqual(len(tei_comment),2)
+        ET.dump(tei_comment)
         para1, para2 = tei_comment[:]
         self.assertEqual(para1.tag, 'p')
         self.assertEqual(para2.tag, 'p')

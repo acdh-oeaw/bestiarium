@@ -1,16 +1,23 @@
+from .token import Token
+
+
 class Score:
     '''
     represents the "score" of an omen
     '''
     rows = {}
     
-    def add_token_to_row(self, tablet, token):
+    def add_token(self, tablet, token):
         '''
         adds the token to corresponding row
         '''
-        pass
+        if hash(tablet) not in self.rows:
+            self.rows[hash(tablet)] = ScoreRow()
 
-    def add_position_to_row(self, tablet, token):
+        self.rows[hash(tablet)].add_token(token)
+        return
+
+    def add_position(self, tablet, token):
         '''
         adds the line/column position to corresponding row
         '''
@@ -24,18 +31,19 @@ class ScoreRow:
     and/or reference
     '''
     elements = []
-    def add_token(self, cell):
+    
+    def add_token(self, token):
         '''
         adds token
         '''
-        self.elements.append(Token(cell.value))
+        self.elements.append(Token(token))
         return
 
-    def add_position(self, cell):
+    def add_position(self, token):
         '''
         adds linebreak
         '''
-        self.elements.append(Position(cell.value))
+        self.elements.append(Position(token))
         return
 
 
