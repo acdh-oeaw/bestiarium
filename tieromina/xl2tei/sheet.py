@@ -6,6 +6,7 @@ from .wbformat import WBFormat
 from .comments import Comments
 from .reading import Readings
 from .tablet import Tablet
+from .score import Score
 
 
 class Sheet:    
@@ -75,7 +76,7 @@ class Sheet:
                     yield row_num, row
 
         # Read Score
-        self.score = {}
+        self.score = Score()
         for row_num, row in read_until(start_row_num=1,
                                        end_label_pattern='(trl)'):
             self.read_score(row)
@@ -101,8 +102,10 @@ class Sheet:
         tablet = Tablet(row[0].value, reference=row[1].value)
         for i, cell in enumerate(row):
             if self.wbformat.is_line_num(cell):
-                pass      
-        return
+                self.score.add_position_to_row(tablet, cell.value)
+            else:
+                self.score.add_token_to_row(tablet, cell.value)
+        return    
 
     @staticmethod
     def _is_empty(row):

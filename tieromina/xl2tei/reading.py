@@ -104,11 +104,13 @@ class AlignedRow:
     '''
     pass
 
+
 class Transliteration(AlignedRow):
     '''
     Transliteration of the omen
     '''
     pass
+
 
 class Transcription(AlignedRow):
     '''

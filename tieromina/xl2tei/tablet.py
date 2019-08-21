@@ -16,7 +16,13 @@ class Tablet:
 
         self.joins = siglum_parts[1:] if len(siglum_parts) > 1 else None
         return
-            
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __eq__(self,other):
+        return self.siglum_info == other.siglum_info and self.reference == other.reference
+
 
     def __str__(self):
         return f'{self.siglum_info} ({self.reference})'
