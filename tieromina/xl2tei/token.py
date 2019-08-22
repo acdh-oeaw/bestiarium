@@ -1,3 +1,6 @@
+'''
+A token
+'''
 class Token:
     '''
     Represents a token

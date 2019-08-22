@@ -12,7 +12,6 @@ from .score import Score
 from .tablet import Tablet
 from .wbformat import WBFormat
 
-
 class Sheet:
     '''
     Represents a sheet in an omens workbook;
@@ -49,9 +48,10 @@ class Sheet:
         if len(omen_parts) > 3:
             self.siglum = omen_parts[2]
         if len(omen_parts) > 4 or len(omen_parts) < 2:
-            logging.error('Sheet name %s does not conform '
-                          'to Chapter.Number or Chapter.Tradition.Number '
-                          'or Chapter.Tradition.Siglum.Number formats', self.sheet.name)
+            logging.error(
+                'Sheet name %s does not conform '
+                'to Chapter.Number or Chapter.Tradition.Number '
+                'or Chapter.Tradition.Siglum.Number formats', self.sheet.name)
 
     @property
     def omen_name(self) -> str:
@@ -69,7 +69,6 @@ class Sheet:
         Then reads transliterations, transcriptions and translations
         Then reads commentary
         '''
-
         def read_until(start_row_num=0, end_label_pattern=None):
             relevant_rows = []
             next_row = start_row_num
@@ -87,13 +86,13 @@ class Sheet:
             return relevant_rows, next_row
 
         # Read Score
-        score_rows, next_row = read_until(
-            start_row_num=1, end_label_pattern='(trl)')
+        score_rows, next_row = read_until(start_row_num=1,
+                                          end_label_pattern='(trl)')
         self.read_score(score_rows)
 
         # Read readings (transliteration, transcription and translations)
-        reading_rows, next_row = read_until(
-            start_row_num=next_row, end_label_pattern='comment')
+        reading_rows, next_row = read_until(start_row_num=next_row,
+                                            end_label_pattern='comment')
 
         # Read comments
         comment_rows, _ = read_until(start_row_num=next_row)
@@ -106,7 +105,8 @@ class Sheet:
         '''
         for row in score_rows:
             tablet = Tablet(row[0].value, row[1].value)
- 
+            self.score.add_lemma_to_score(tablet, 0, 'a')
+
     @staticmethod
     def _is_empty(row: List[sheet.Cell]) -> bool:
         '''

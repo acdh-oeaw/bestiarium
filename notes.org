@@ -1,0 +1,6 @@
+#+TITLE: notes
+
+* Inbox
+** TODO
+self.tradition = omen
+[[file:~/Documents/code/bestiarium-mesopotamicum/webapp/tieromina/xl2tei/sheet.py::self.tradition%20=%20omen]]
