@@ -101,13 +101,7 @@ class Sheet:
         '''
         self.score = Score()
         for row in score_rows:
-            tablet = Tablet(row[0].value, reference=row[1].value)
-            for i, cell in enumerate(row):
-                if self.wbformat.is_line_num(cell):
-                    self.score.add_position(tablet, cell.value)
-                else:
-                    self.score.add_token(tablet, cell.value)
-                    
+            tablet = Tablet(row[0].value, row[1].value)
         return
    
 

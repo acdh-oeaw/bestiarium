@@ -9,7 +9,7 @@ class TabletTestCase(TestCase):
     def test_tablet_without_joins(self):
         tablet = Tablet('VAT 10805')
         self.assertEqual(tablet.siglum, 'VAT 10805')
-        self.assertEqual(tablet.joins, None)
+        self.assertFalse(tablet.joins)
         return
 
 
