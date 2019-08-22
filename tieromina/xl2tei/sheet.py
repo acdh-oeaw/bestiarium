@@ -49,18 +49,17 @@ class Sheet:
         if len(omen_parts) > 3:
             self.siglum = omen_parts[2]
         if len(omen_parts) > 4 or len(omen_parts) < 2:
-            logging.error(
-                'Sheet name "{}" does not conform '.format(self.sheet.name) +
-                'to Chapter.Number or Chapter.Tradition.Number ' +
-                'or Chapter.Tradition.Siglum.Number formats')
+            logging.error('Sheet name %s does not conform '
+                          'to Chapter.Number or Chapter.Tradition.Number '
+                          'or Chapter.Tradition.Siglum.Number formats', self.sheet.name)
 
         return
 
     @property
     def omen_name(self) -> str:
-        return (f'Omen {self.chapter}' +
-                f'{("."+self.tradition) if self.tradition else ""}' +
-                f'{("."+self.siglum) if self.siglum else ""}' +
+        return (f'Omen {self.chapter}'
+                f'{("."+self.tradition) if self.tradition else ""}'
+                f'{("."+self.siglum) if self.siglum else ""}'
                 f'.{self.omen_num}')
 
     def read(self):
