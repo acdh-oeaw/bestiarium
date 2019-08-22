@@ -23,6 +23,7 @@ class Sheet:
     tradition = ''
     siglum = ''
     wbformat = None
+    score = Score()
 
     def __init__(self, sheet: sheet.Sheet, wbformat: WBFormat = None):
         self.sheet = sheet
@@ -33,7 +34,6 @@ class Sheet:
 
         self.read_omen_name()
         self.read()
-        return
 
     def read_omen_name(self):
         '''
@@ -53,10 +53,11 @@ class Sheet:
                           'to Chapter.Number or Chapter.Tradition.Number '
                           'or Chapter.Tradition.Siglum.Number formats', self.sheet.name)
 
-        return
-
     @property
     def omen_name(self) -> str:
+        '''
+        dumb docstring
+        '''
         return (f'Omen {self.chapter}'
                 f'{("."+self.tradition) if self.tradition else ""}'
                 f'{("."+self.siglum) if self.siglum else ""}'
@@ -98,18 +99,14 @@ class Sheet:
         comment_rows, _ = read_until(start_row_num=next_row)
         self.comments = Comments(comment_rows)
 
-        return
-
     def read_score(self, score_rows: List[List[sheet.Cell]]):
         '''
         Reads a score row, makes note of columns that contain line numbers
         and the columns that contain words
         '''
-        self.score = Score()
         for row in score_rows:
             tablet = Tablet(row[0].value, row[1].value)
-        return
-
+ 
     @staticmethod
     def _is_empty(row: List[sheet.Cell]) -> bool:
         '''
