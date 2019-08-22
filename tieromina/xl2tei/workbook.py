@@ -3,16 +3,13 @@ from enum import Enum
 import os, glob, logging, re
 from xml.etree import ElementTree as ET
 import xml.dom.minidom as minidom
-import pandas as pd
 import xlrd
 from tqdm import  tqdm
 
 from django.db import DatabaseError, transaction
 
 from .sheet import Sheet
-
-# from .models import Tablet, Chapter
-
+from .wbformat import WBFormat
 
 
 TEI_BASE_LOC = '/mnt/acdh_resources/tieromina'
@@ -31,8 +28,8 @@ NAMESPACES =  {'tei': 'http://www.tei-c.org/ns/1.0',
 
 for namespace, uri in NAMESPACES.items():
     ET.register_namespace(namespace, uri)
+  
 
-    
 class Workbook:
     '''
     Represents an Excel workbook 
@@ -45,17 +42,19 @@ class Workbook:
             self.book = xlrd.open_workbook(wbfile, formatting_info=True)
         except Exception as e:
             raise e
+
+        self.wbformat  = WBFormat(self.book)
         self.omens ={}
         self.witnesses = {}
         self.chapter = None
         for sheet in self.book.sheets():
-            omen = Sheet(sheet)
-            self.omens[sheet.name] = omen
+            omen = Sheet(sheet, self.wbformat)
+            self.omens[omen.omen_num] = omen
             if not self.chapter: self.chapter = omen.chapter
 
         self.convert_to_tei()
 
-    def convert_to_tei(self):
+    def convert_to_tei(self):        
         '''
         generates TEI representation 
         by creating from scratch or 

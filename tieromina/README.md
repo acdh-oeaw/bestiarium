@@ -28,8 +28,9 @@ Install required packages
 Run tests
 
     python manage.py test --settings=tieromina.settings.test
+    python manage.py test  --settings=tieromina.settings.dev xl2tei or
+    coverage run manage.py test  --settings=tieromina.settings.dev  xl2tei
 
-After running the test a HTML coverage report will be available at cover/index.html
 
 
 ## Jupyter notebook
