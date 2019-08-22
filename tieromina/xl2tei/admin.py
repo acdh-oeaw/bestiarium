@@ -2,7 +2,9 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Tablet, Reference, Chapter, Omen, Token, Transliteration, Transcription, Translation, Commentary
+from .models import (Chapter, Commentary, Omen, Reference, Tablet, Token,
+                     Transcription, Translation, Transliteration)
+
 
 def all_spreadsheets(obj):
     return (', '.join([str(s[1].strip('.xls')) for s in obj.spreadsheet.values_list()]))
@@ -29,9 +31,3 @@ admin.site.register(Transcription)
 
 admin.site.register(Translation)
 admin.site.register(Commentary)
-
-
-
-
-
-

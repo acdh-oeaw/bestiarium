@@ -1,8 +1,11 @@
+from unittest.mock import ANY, MagicMock, PropertyMock, call, patch
+
+import xlrd
+from django.test import TestCase
+
 from ..wbformat import WBFormat
 from ..workbook import Workbook
-from unittest.mock import patch, call, ANY, PropertyMock, MagicMock
-from django.test import TestCase
-import xlrd
+
 
 class WorkbookTestCase(TestCase):
     test_file = 'xl2tei/tests/Snake_23_1_11.xls'

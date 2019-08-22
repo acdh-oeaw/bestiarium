@@ -1,9 +1,10 @@
-from django.test import TestCase
-from unittest.mock import patch, call, ANY, PropertyMock
+from pprint import pprint
+from unittest.mock import ANY, PropertyMock, call, patch
 
 import xlrd
-from ..sheet  import Sheet
-from pprint import pprint
+from django.test import TestCase
+
+from ..sheet import Sheet
 
 
 class SheetTestCase(TestCase):
@@ -67,4 +68,3 @@ class SheetTestCase(TestCase):
         self.assertEqual(sheet.siglum, 'K09507(2)')
         self.assertEqual(sheet.omen_name, 'Omen 32.N.K09507(2).4')
         return
-

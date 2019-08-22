@@ -3,50 +3,32 @@ from .token import Token
 
 class Score:
     '''
-    represents the "score" of an omen
+    represents the score of an omen
     '''
-    rows = {}
-    
-    def add_token(self, tablet, token):
-        '''
-        adds the token to corresponding row
-        '''
-        if hash(tablet) not in self.rows:
-            self.rows[hash(tablet)] = ScoreRow()
+    parts = [    ]  # defaultdict(dict) # each part is a dict ( {tablet:Token, ...})
 
-        self.rows[hash(tablet)].add_token(token)
+    def add_lemma_to_score(self, tablet, position: int, cell_value):
+        '''
+        Adds the given lemma to the given position
+        '''
+        # self.parts[position][str(tablet)] = Token(cell_value)
         return
 
-    def add_position(self, tablet, token):
+    def add_position_to_score(
+            self,
+            tablet,
+    ):
         '''
-        adds the line/column position to corresponding row
+        Adds line break/other position information
         '''
+        # self.parts[position][str(tablet)] = Token(cell_value)
+
+
+class ScorePart(dict):
+    '''
+    represents a particular lemma or line break or column
+    in different tablets
+    '''
+
+    def add_part(self, tablet, cell_value):
         pass
-
-
-class ScoreRow:
-    '''
-    represents the score row - 
-    corresponding to a single tablet 
-    and/or reference
-    '''
-    elements = []
-    
-    def add_token(self, token):
-        '''
-        adds token
-        '''
-        self.elements.append(Token(token))
-        return
-
-    def add_position(self, token):
-        '''
-        adds linebreak
-        '''
-        self.elements.append(Position(token))
-        return
-
-
-
-
-    

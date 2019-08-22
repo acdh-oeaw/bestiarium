@@ -1,6 +1,8 @@
-from django.db import models
 from datetime import datetime
+
+from django.db import models
 from django.utils.timezone import now
+
 
 # Create your models here.
 class Spreadsheet(models.Model):

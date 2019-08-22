@@ -1,16 +1,18 @@
+import glob
+import logging
+import os
+import re
+import xml.dom.minidom as minidom
 from collections import defaultdict, namedtuple
 from enum import Enum
-import os, glob, logging, re
 from xml.etree import ElementTree as ET
-import xml.dom.minidom as minidom
-import xlrd
-from tqdm import  tqdm
 
+import xlrd
 from django.db import DatabaseError, transaction
+from tqdm import tqdm
 
 from .sheet import Sheet
 from .wbformat import WBFormat
-
 
 TEI_BASE_LOC = '/mnt/acdh_resources/tieromina'
 

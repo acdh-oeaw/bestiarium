@@ -1,30 +1,25 @@
 import logging
+from typing import NamedTuple
 
 
-class Tablet:
-    '''
-    Represents a physical tablet on which a score/reading is based
-    '''
+class Tablet(NamedTuple):
+    witness : str
+    ref: str = ''    
     JOIN_DELIMITER = '+'
+
+    @property
+    def siglum(self):
+        return self.witness.split(self.JOIN_DELIMITER)[0]
+
+    @property
+    def joins(self):
+        if self.JOIN_DELIMITER in self.witness:
+            return self.witness.split(self.JOIN_DELIMITER)[1:]
+        return []
     
-    def __init__(self, siglum_info, reference=None):
-        self.siglum_info = siglum_info
-        self.reference = reference if reference else ''
-        
-        siglum_parts = siglum_info.split(self.JOIN_DELIMITER)
-        self.siglum = siglum_parts[0]
-
-        self.joins = siglum_parts[1:] if len(siglum_parts) > 1 else None
-        return
-
-    def __eq__(self,other):
-        return self.siglum_info == other.siglum_info and self.reference == other.reference
-
+    @property
+    def witness_id(self):
+        return "wit_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.witness)
 
     def __str__(self):
-        return f'{self.siglum_info}_{self.reference}'
-
-    
-    def __hash__(self):
-        return hash(str(self))
-
+        return f'{self.siglum}_{self.ref}'

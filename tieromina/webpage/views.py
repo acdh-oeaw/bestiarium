@@ -1,16 +1,15 @@
 from copy import deepcopy
 
 import requests
-
 from django.conf import settings
-from django.shortcuts import render, render_to_response
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, render_to_response
 from django.template import RequestContext, loader
 from django.views.generic import TemplateView
-from django.contrib.auth import authenticate, login, logout
 
-from . forms import form_user_login
-from . metadata import PROJECT_METADATA as PM
+from .forms import form_user_login
+from .metadata import PROJECT_METADATA as PM
 
 
 def get_imprint_url():
