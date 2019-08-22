@@ -1,5 +1,5 @@
-from collections import defaultdict
 import logging
+from collections import defaultdict
 from xml.etree import ElementTree as ET
 
 TRANSLITERATION, TRANSCRIPTION, TRANSLATION = 1,2,3
@@ -117,5 +117,3 @@ class Transcription(AlignedRow):
     Transcription of the transliteration
     '''
     pass
-    
-    

@@ -3,32 +3,34 @@ A sheet from the workbook containing omens
 '''
 import logging
 from typing import List
+
 from xlrd import sheet
-from .wbformat import WBFormat
+
 from .comments import Comments
 from .reading import Readings
-from .tablet import Tablet
 from .score import Score
+from .tablet import Tablet
+from .wbformat import WBFormat
 
 
-class Sheet:    
+class Sheet:
     '''
     Represents a sheet in an omens workbook;
     contains score, readings and commentary
     '''
-
     chapter = ''
     omen_num = ''
     tradition = ''
     siglum = ''
-    wbformat=None
-    def __init__(self, sheet:sheet.Sheet, wbformat:WBFormat=None):
+    wbformat = None
+
+    def __init__(self, sheet: sheet.Sheet, wbformat: WBFormat = None):
         self.sheet = sheet
         if wbformat:
             self.wbformat = wbformat
         else:
             self.wbformat = WBFormat(sheet.book)
-            
+
         self.read_omen_name()
         self.read()
         return
@@ -47,19 +49,19 @@ class Sheet:
         if len(omen_parts) > 3:
             self.siglum = omen_parts[2]
         if len(omen_parts) > 4 or len(omen_parts) < 2:
-            logging.error('Sheet name "{}" does not conform '.format(self.sheet.name) +
-                          'to Chapter.Number or Chapter.Tradition.Number ' +
-                          'or Chapter.Tradition.Siglum.Number formats')
+            logging.error(
+                'Sheet name "{}" does not conform '.format(self.sheet.name) +
+                'to Chapter.Number or Chapter.Tradition.Number ' +
+                'or Chapter.Tradition.Siglum.Number formats')
 
         return
 
     @property
-    def omen_name(self) -> str: 
+    def omen_name(self) -> str:
         return (f'Omen {self.chapter}' +
                 f'{("."+self.tradition) if self.tradition else ""}' +
                 f'{("."+self.siglum) if self.siglum else ""}' +
                 f'.{self.omen_num}')
-
 
     def read(self):
         '''
@@ -67,6 +69,7 @@ class Sheet:
         Then reads transliterations, transcriptions and translations
         Then reads commentary
         '''
+
         def read_until(start_row_num=0, end_label_pattern=None):
             relevant_rows = []
             next_row = start_row_num
@@ -74,8 +77,9 @@ class Sheet:
                 next_row += 1
                 row = self.sheet.row(row_num)
                 row_label = row[0].value
-                if self._is_empty(row): continue # skip empty rows
-                elif end_label_pattern and  end_label_pattern in row_label.lower():
+                if self._is_empty(row): continue  # skip empty rows
+                elif end_label_pattern and end_label_pattern in row_label.lower(
+                ):
                     break
                 else:
                     relevant_rows.append(row)
@@ -83,12 +87,13 @@ class Sheet:
             return relevant_rows, next_row
 
         # Read Score
-        score_rows, next_row = read_until(start_row_num=1, end_label_pattern='(trl)')
+        score_rows, next_row = read_until(
+            start_row_num=1, end_label_pattern='(trl)')
         self.read_score(score_rows)
 
         # Read readings (transliteration, transcription and translations)
-        reading_rows, next_row = read_until(start_row_num=next_row,
-                                            end_label_pattern='comment')
+        reading_rows, next_row = read_until(
+            start_row_num=next_row, end_label_pattern='comment')
 
         # Read comments
         comment_rows, _ = read_until(start_row_num=next_row)
@@ -105,7 +110,6 @@ class Sheet:
         for row in score_rows:
             tablet = Tablet(row[0].value, row[1].value)
         return
-   
 
     @staticmethod
     def _is_empty(row: List[sheet.Cell]) -> bool:
@@ -117,7 +121,3 @@ class Sheet:
                 return False
 
         return True
-
-        
-
-

@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from ..tablet import Tablet
 
+
 class TabletTestCase(TestCase):
     def setUp(self):        
         pass
@@ -31,4 +32,3 @@ class TabletTestCase(TestCase):
         self.assertEqual(tablet.siglum, 'VAT 10481')
         self.assertEqual(tablet.joins, ['.1', '.2'])
         return
-

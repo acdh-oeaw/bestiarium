@@ -1,15 +1,16 @@
-import os, logging
-
-from django.shortcuts import render
-from django.views.generic.edit import FormView
-from django.core.files.storage import default_storage
-from django.contrib.auth.mixins import LoginRequiredMixin
+import logging
+import os
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files.storage import default_storage
+from django.shortcuts import render
+from django.views.generic.edit import FormView
+
+from xl2tei.workbook import Workbook
 
 from .forms import UploadSpreadSheet
-from xl2tei.workbook import Workbook
 from .models import Spreadsheet
 
 # Create your views here.
@@ -50,5 +51,3 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
             # raise
             
         return render(self.request, self.template_name, context)
-
-        

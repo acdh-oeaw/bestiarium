@@ -1,8 +1,7 @@
-from django.conf.urls import url, include, handler404
-from django.contrib import admin
 from django.conf import settings
+from django.conf.urls import handler404, include, url
+from django.contrib import admin
 from rest_framework import routers
-
 
 if 'bib' in settings.INSTALLED_APPS:
     from bib.api_views import ZotItemViewSet

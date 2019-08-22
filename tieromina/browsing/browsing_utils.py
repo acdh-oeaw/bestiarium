@@ -1,19 +1,19 @@
 import datetime
-import django_tables2
 import time
-import pandas as pd
-import django_filters
 
+import django_filters
+import django_tables2
+import pandas as pd
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import HTML, Div, Fieldset, Layout, MultiField, Submit
 from django.apps import apps
 from django.conf import settings
 from django.db.models.fields.related import ManyToManyField
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 from django.views.generic.edit import CreateView, UpdateView
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset, Div, MultiField, HTML
 
-from . models import BrowsConf
+from .models import BrowsConf
 
 if 'charts' in settings.INSTALLED_APPS:
     from charts.models import ChartConfig

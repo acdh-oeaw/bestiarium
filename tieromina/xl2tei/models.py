@@ -1,8 +1,10 @@
-from django.db import models
 from datetime import datetime
+
+from django.db import models
 from django.utils.timezone import now
 
 from upload.models import Spreadsheet
+
 
 # Create your models here.
 class Tablet(models.Model):
@@ -130,8 +132,3 @@ class Commentary(models.Model):
     reference = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)    
     text = models.TextField(default='') 
     ctime = models.DateTimeField(default=now)
-    
-    
-
-
-    

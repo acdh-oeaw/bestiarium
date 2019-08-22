@@ -36,8 +36,3 @@ class Comments:
             para.text = line
 
         return export_div
-                            
-                
-            
-
-    

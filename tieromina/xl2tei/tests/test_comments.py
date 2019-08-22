@@ -1,6 +1,7 @@
-from django.test import TestCase
 from xml.etree import ElementTree as ET
+
 import xlrd
+from django.test import TestCase
 
 from ..comments import Comments
 

@@ -1,7 +1,10 @@
-from ..wbformat import WBFormat
-from unittest.mock import patch, call, ANY, PropertyMock, MagicMock
-from django.test import TestCase
+from unittest.mock import ANY, MagicMock, PropertyMock, call, patch
+
 import xlrd
+from django.test import TestCase
+
+from ..wbformat import WBFormat
+
 
 class WorkbookFormatTestCase(TestCase):
     def setUp(self):
@@ -21,7 +24,3 @@ class WorkbookFormatTestCase(TestCase):
         self.assertTrue(self.wb_format.is_line_num(self.wb.sheet_by_index(1).row(2)[2]))
         self.assertTrue(self.wb_format.is_line_num(self.wb.sheet_by_index(1).row(3)[16]))                
         return
-        
-        
-
-    

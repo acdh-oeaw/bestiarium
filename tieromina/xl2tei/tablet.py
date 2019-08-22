@@ -1,6 +1,7 @@
 import logging
 from typing import NamedTuple
 
+
 class Tablet(NamedTuple):
     witness : str
     ref: str = ''    
@@ -22,4 +23,3 @@ class Tablet(NamedTuple):
 
     def __str__(self):
         return f'{self.siglum}_{self.ref}'
-    
