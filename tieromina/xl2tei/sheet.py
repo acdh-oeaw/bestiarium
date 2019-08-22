@@ -2,6 +2,8 @@
 A sheet from the workbook containing omens
 '''
 import logging
+from typing import List
+from xlrd import sheet
 from .wbformat import WBFormat
 from .comments import Comments
 from .reading import Readings
@@ -20,7 +22,7 @@ class Sheet:
     tradition = ''
     siglum = ''
     wbformat=None
-    def __init__(self, sheet, wbformat=None):
+    def __init__(self, sheet:sheet.Sheet, wbformat:WBFormat=None):
         self.sheet = sheet
         if wbformat:
             self.wbformat = wbformat
@@ -52,7 +54,7 @@ class Sheet:
         return
 
     @property
-    def omen_name(self):
+    def omen_name(self) -> str: 
         return (f'Omen {self.chapter}' +
                 f'{("."+self.tradition) if self.tradition else ""}' +
                 f'{("."+self.siglum) if self.siglum else ""}' +
@@ -94,7 +96,7 @@ class Sheet:
 
         return
 
-    def read_score(self, score_rows):
+    def read_score(self, score_rows: List[List[sheet.Cell]]):
         '''
         Reads a score row, makes note of columns that contain line numbers
         and the columns that contain words
@@ -106,7 +108,7 @@ class Sheet:
    
 
     @staticmethod
-    def _is_empty(row):
+    def _is_empty(row: List[sheet.Cell]) -> bool:
         '''
         returns False if the row or column contains at least one non empty cell
         '''
