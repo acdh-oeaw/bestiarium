@@ -12,6 +12,7 @@ from .score import Score
 from .tablet import Tablet
 from .wbformat import WBFormat
 
+
 class Sheet:
     '''
     Represents a sheet in an omens workbook;
@@ -52,6 +53,7 @@ class Sheet:
                 'Sheet name %s does not conform '
                 'to Chapter.Number or Chapter.Tradition.Number '
                 'or Chapter.Tradition.Siglum.Number formats', self.sheet.name)
+
 
     @property
     def omen_name(self) -> str:

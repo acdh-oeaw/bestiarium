@@ -1,7 +1,6 @@
 import logging
 from typing import NamedTuple
 
-
 class Tablet(NamedTuple):
     witness : str
     ref: str = ''    
