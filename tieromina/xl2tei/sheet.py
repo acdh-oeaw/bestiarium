@@ -54,7 +54,6 @@ class Sheet:
                 'to Chapter.Number or Chapter.Tradition.Number '
                 'or Chapter.Tradition.Siglum.Number formats', self.sheet.name)
 
-
     @property
     def omen_name(self) -> str:
         '''
@@ -78,9 +77,10 @@ class Sheet:
                 next_row += 1
                 row = self.sheet.row(row_num)
                 row_label = row[0].value
-                if self._is_empty(row): continue  # skip empty rows
-                elif end_label_pattern and end_label_pattern in row_label.lower(
-                ):
+                if self._is_empty(row):
+                    continue  # skip empty rows
+                elif (end_label_pattern and
+                      end_label_pattern in row_label.lower()):
                     break
                 else:
                     relevant_rows.append(row)
