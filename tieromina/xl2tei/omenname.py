@@ -26,5 +26,5 @@ class OmenName(namedtuple('OmenName', ['omen_name'])):
         if len(omen_parts) > 4 or len(omen_parts) < 2:
             logging.error(
                 'Sheet name %s does not conform '
-                'to Chapter.Number or Chapter.Tradition.Number '
+                'to Chapter.Number or Chapter.Tradition.Number '  
                 'or Chapter.Tradition.Siglum.Number formats', omen_name)

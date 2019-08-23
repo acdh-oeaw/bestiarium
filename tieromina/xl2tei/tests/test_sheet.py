@@ -9,8 +9,9 @@ from ..sheet import Sheet
 
 class SheetTestCase(TestCase):
     def setUp(self):
-        wb = xlrd.open_workbook('xl2tei/tests/Snake_23_1_11.xls',formatting_info=True)
-        self.wb_sheet = wb.sheet_by_index(2)      
+        wb = xlrd.open_workbook('xl2tei/tests/Snake_23_1_11.xls',
+                                formatting_info=True)
+        self.wb_sheet = wb.sheet_by_index(2)
         return
 
     @patch('xl2tei.wbformat.WBFormat')
@@ -18,10 +19,10 @@ class SheetTestCase(TestCase):
     @patch('xl2tei.comments.Comments')
     def test_comment_lines(self, mock_line_num, MockFormat, MockComment):
         sheet = Sheet(self.wb_sheet, wbformat=MockFormat())
-        
+
         return
 
-    @patch('xl2tei.sheet.Sheet.read_score')   
+    @patch('xl2tei.sheet.Sheet.read_score')
     def test_score_lines(self, mock_score):
         sheet = Sheet(self.wb_sheet)
         self.assertEqual(mock_score.call_count, 1)
