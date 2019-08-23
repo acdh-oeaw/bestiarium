@@ -1,7 +1,6 @@
 '''
 A sheet from the workbook containing omens
 '''
-import logging
 from typing import List
 
 from xlrd import sheet
@@ -10,6 +9,7 @@ from .comments import Comments
 from .score import Score
 from .tablet import Tablet
 from .wbformat import WBFormat
+from .omenname import OmenName
 
 
 class Sheet:
@@ -17,10 +17,7 @@ class Sheet:
     Represents a sheet in an omens workbook;
     contains score, readings and commentary
     '''
-    chapter = ''
-    omen_num = ''
-    tradition = ''
-    siglum = ''
+    omen_name: str
     wbformat = None
     score = Score()
 
@@ -31,27 +28,8 @@ class Sheet:
         else:
             self.wbformat = WBFormat(sheet.book)
 
-        self.read_omen_name()
+        self.omen_name = OmenName(sheet.name)
         self.read()
-
-    def read_omen_name(self):
-        '''
-        Reads the omen name from the sheet name and
-        compares it with the value in the top cell.
-        Notes any link given in the top cell.
-        '''
-        omen_parts = self.sheet.name.split('.')
-        self.chapter = omen_parts[0]
-        self.omen_num = omen_parts[-1]
-        if len(omen_parts) > 2:
-            self.tradition = omen_parts[1]
-        if len(omen_parts) > 3:
-            self.siglum = omen_parts[2]
-        if len(omen_parts) > 4 or len(omen_parts) < 2:
-            logging.error(
-                'Sheet name %s does not conform '
-                'to Chapter.Number or Chapter.Tradition.Number '
-                'or Chapter.Tradition.Siglum.Number formats', self.sheet.name)
 
     def read(self):
         '''
