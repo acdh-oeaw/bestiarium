@@ -1,15 +1,10 @@
-import glob
 import logging
-import os
-import re
-import xml.dom.minidom as minidom
-from collections import defaultdict, namedtuple
-from enum import Enum
+from xml.dom import minidom
 from xml.etree import ElementTree as ET
-import xml.dom.minidom as minidom
 import xlrd
-from tqdm import  tqdm
 from .wbformat import WBFormat
+
+from .sheet import Sheet
 
 
 def pretty_print(root):
@@ -21,17 +16,19 @@ def pretty_print(root):
     return pretty_root
 
 
-NAMESPACES =  {'tei': 'http://www.tei-c.org/ns/1.0',
-              'xml': 'http://www.w3.org/XML/1998/namespace'}
+NAMESPACES = {
+    'tei': 'http://www.tei-c.org/ns/1.0',
+    'xml': 'http://www.w3.org/XML/1998/namespace'
+}
 
 for namespace, uri in NAMESPACES.items():
     ET.register_namespace(namespace, uri)
-  
+
 
 class Workbook:
     '''
-    Represents an Excel workbook 
-    containing one or more omens 
+    Represents an Excel workbook
+    containing one or more omens
     from a chapter
     '''
     def __init__(self, wbfile):
@@ -41,8 +38,8 @@ class Workbook:
         except Exception as e:
             raise e
 
-        self.wbformat  = WBFormat(self.book)
-        self.omens ={}
+        self.wbformat = WBFormat(self.book)
+        self.omens = {}
         self.witnesses = {}
         self.chapter = None
         for sheet in self.book.sheets():
@@ -52,11 +49,11 @@ class Workbook:
 
         self.convert_to_tei()
 
-    def convert_to_tei(self):        
+    def convert_to_tei(self):
         '''
-        generates TEI representation 
-        by creating from scratch or 
-        editing to the existing TEI representation 
+        generates TEI representation
+        by creating from scratch or
+        editing to the existing TEI representation
         of this chapter
         '''
         self.tei = ''

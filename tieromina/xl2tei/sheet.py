@@ -53,16 +53,6 @@ class Sheet:
                 'to Chapter.Number or Chapter.Tradition.Number '
                 'or Chapter.Tradition.Siglum.Number formats', self.sheet.name)
 
-    @property
-    def omen_name(self) -> str:
-        '''
-        dumb docstring
-        '''
-        return (f'Omen {self.chapter}'
-                f'{("."+self.tradition) if self.tradition else ""}'
-                f'{("."+self.siglum) if self.siglum else ""}'
-                f'.{self.omen_num}')
-
     def read(self):
         '''
         Reads the score first,
