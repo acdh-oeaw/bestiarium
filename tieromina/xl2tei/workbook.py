@@ -6,15 +6,11 @@ import xml.dom.minidom as minidom
 from collections import defaultdict, namedtuple
 from enum import Enum
 from xml.etree import ElementTree as ET
-
+import xml.dom.minidom as minidom
 import xlrd
-from django.db import DatabaseError, transaction
-from tqdm import tqdm
-
-from .sheet import Sheet
+from tqdm import  tqdm
 from .wbformat import WBFormat
 
-TEI_BASE_LOC = '/mnt/acdh_resources/tieromina'
 
 def pretty_print(root):
     '''

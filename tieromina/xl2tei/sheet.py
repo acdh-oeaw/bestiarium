@@ -7,7 +7,6 @@ from typing import List
 from xlrd import sheet
 
 from .comments import Comments
-from .reading import Readings
 from .score import Score
 from .tablet import Tablet
 from .wbformat import WBFormat
@@ -79,8 +78,8 @@ class Sheet:
                 row_label = row[0].value
                 if self._is_empty(row):
                     continue  # skip empty rows
-                elif (end_label_pattern and
-                      end_label_pattern in row_label.lower()):
+                elif (end_label_pattern
+                      and end_label_pattern in row_label.lower()):
                     break
                 else:
                     relevant_rows.append(row)
@@ -117,5 +116,4 @@ class Sheet:
         for cell in row:
             if cell.value:
                 return False
-
         return True
