@@ -27,6 +27,8 @@ class ScorePart(dict):
     represents a particular lemma or line break or column
     in different tablets
     '''
+
     def add_part(self, tablet, cell_value):
         pass
+
 
