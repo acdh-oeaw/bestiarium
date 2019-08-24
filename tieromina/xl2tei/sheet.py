@@ -6,10 +6,10 @@ from typing import List
 from xlrd import sheet
 
 from .comments import Comments
+from .omenname import OmenName
 from .score import Score
 from .tablet import Tablet
 from .wbformat import WBFormat
-from .omenname import OmenName
 
 
 class Sheet:
