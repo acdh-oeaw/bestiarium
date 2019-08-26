@@ -6,10 +6,10 @@ from typing import List
 from xlrd import sheet
 
 from .comments import Comments
+from .omenname import OmenName
 from .score import Score
 from .tablet import Tablet
 from .wbformat import WBFormat
-from .omenname import OmenName
 
 
 class Sheet:
@@ -18,8 +18,8 @@ class Sheet:
     contains score, readings and commentary
     '''
     omen_name: str
-    wbformat = None
-    score = Score()
+    wbformat: WBFormat = None
+    score: Score = Score()
 
     def __init__(self, sheet: sheet.Sheet, wbformat: WBFormat = None):
         self.sheet = sheet
@@ -37,7 +37,7 @@ class Sheet:
         Then reads transliterations, transcriptions and translations
         Then reads commentary
         '''
-        def read_until(start_row_num=0, end_label_pattern=None):
+        def read_until(start_row_num: int = 0, end_label_pattern: str = None):
             relevant_rows = []
             next_row = start_row_num
             for row_num in range(start_row_num, self.sheet.nrows):

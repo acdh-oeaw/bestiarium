@@ -1,30 +1,36 @@
 #!/usr/bin/env python
+
 import logging
 from collections import namedtuple
 
 
-class OmenName(namedtuple('OmenName', ['omen_name'])):
+class OmenName(
+        namedtuple('OmenName',
+                   ['omen_name', 'chapter', 'omen_num', 'tradition', 'siglum'])
+):
     '''
     Creates a namedtuple instance of the omen name
     '''
     omen_name: str  # originally a single string delimited with '.' is passed
     chapter: str
     omen_num: str
-    tradition: str = None
-    siglum: str = None
+    tradition: str
+    siglum: str
     __slots__ = ()
 
-    def __new__(self, omen_name):
-        self.omen_name = omen_name
+    def __new__(cls, omen_name):
+        omen_name = omen_name
         omen_parts = omen_name.split('.')
-        self.chapter = omen_parts[0]
-        self.omen_num = omen_parts[-1]
-        if len(omen_parts) > 2:
-            self.tradition = omen_parts[1]
-        if len(omen_parts) > 3:
-            self.siglum = omen_parts[2]
+        chapter = omen_parts[0]
+        omen_num = omen_parts[-1]
+        tradition = omen_parts[1] if len(omen_parts) > 2 else None
+        siglum = omen_parts[2] if len(omen_parts) > 3 else None
         if len(omen_parts) > 4 or len(omen_parts) < 2:
             logging.error(
                 'Sheet name %s does not conform '
-                'to Chapter.Number or Chapter.Tradition.Number '  
+                'to Chapter.Number or Chapter.Tradition.Number '
                 'or Chapter.Tradition.Siglum.Number formats', omen_name)
+
+        cls._inst = super().__new__(cls, omen_name, chapter, omen_num,
+                                    tradition, siglum)
+        return cls._inst
