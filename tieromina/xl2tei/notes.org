@@ -1,0 +1,4 @@
+* Tasks
+** TODO 
+   [2019-08-24 Sa]
+   [[file:~/Documents/code/bm/webapp/tieromina/xl2tei/token.py::def%20__init__(self,%20text):]]
