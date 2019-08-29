@@ -37,9 +37,11 @@ class Sheet:
         Then reads transliterations, transcriptions and translations
         Then reads commentary
         '''
+
         def read_until(start_row_num: int = 0, end_label_pattern: str = None):
             relevant_rows = []
             next_row = start_row_num
+
             for row_num in range(start_row_num, self.sheet.nrows):
                 next_row += 1
                 row = self.sheet.row(row_num)
@@ -55,13 +57,13 @@ class Sheet:
             return relevant_rows, next_row
 
         # Read Score
-        score_rows, next_row = read_until(start_row_num=1,
-                                          end_label_pattern='(trl)')
+        score_rows, next_row = read_until(
+            start_row_num=1, end_label_pattern='(trl)')
         self.read_score(score_rows)
 
         # Read readings (transliteration, transcription and translations)
-        reading_rows, next_row = read_until(start_row_num=next_row,
-                                            end_label_pattern='comment')
+        reading_rows, next_row = read_until(
+            start_row_num=next_row, end_label_pattern='comment')
 
         # Read comments
         comment_rows, _ = read_until(start_row_num=next_row)

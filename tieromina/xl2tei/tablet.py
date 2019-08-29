@@ -1,9 +1,10 @@
 import logging
 from typing import NamedTuple
 
+
 class Tablet(NamedTuple):
-    witness : str
-    ref: str = ''    
+    witness: str
+    ref: str = ''
     JOIN_DELIMITER = '+'
 
     @property
@@ -15,9 +16,10 @@ class Tablet(NamedTuple):
         if self.JOIN_DELIMITER in self.witness:
             return self.witness.split(self.JOIN_DELIMITER)[1:]
         return []
-    
+
     @property
     def witness_id(self):
+
         return "wit_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.witness)
 
     def __str__(self):

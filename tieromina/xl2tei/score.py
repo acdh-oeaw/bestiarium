@@ -20,6 +20,7 @@ class Score:
         Adds line break/other position information
         '''
         # self.parts[position][str(tablet)] = Token(cell_value)
+        pass
 
 
 class ScorePart(dict):
@@ -30,5 +31,3 @@ class ScorePart(dict):
 
     def add_part(self, tablet, cell_value):
         pass
-
-
