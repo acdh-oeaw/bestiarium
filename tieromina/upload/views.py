@@ -16,6 +16,7 @@ from .models import Spreadsheet
 # Create your views here.
 UPLOAD_LOC = '/'
 
+
 class UploadSpreadSheet(LoginRequiredMixin, FormView):
     template_name = 'upload/upload_spreadsheet.html'
     form_class = UploadSpreadSheet
@@ -24,12 +25,13 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+
         self.helper.form_tag = True
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-1'
         self.helper.field_class = 'col-md-11'
-        self.helper.add_input(Submit('submit', 'save'),)
-        
+        self.helper.add_input(Submit('submit', 'save'), )
+
     def form_valid(self, form, **kwargs):
         context = super().get_context_data(**kwargs)
         cd = form.cleaned_data
@@ -41,13 +43,13 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
                 destination.write(chunk)
 
         try:
-            wb = Workbook(destination.name )
+            wb = Workbook(destination.name)
             spreadsheet = Spreadsheet(name=uploaded_file)
             spreadsheet.save()
-            
+
             wb.save_to_db(spreadsheet)
-        except Exception as e:            
+        except Exception as e:
             context['error'] = repr(e)
             # raise
-            
+
         return render(self.request, self.template_name, context)
