@@ -19,6 +19,7 @@ class Tablet(NamedTuple):
 
     @property
     def witness_id(self):
+
         return "wit_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.witness)
 
     def __str__(self):

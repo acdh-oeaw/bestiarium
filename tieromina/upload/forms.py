@@ -17,4 +17,8 @@ class UploadSpreadSheet(forms.Form):
         self.helper = FormHelper()
         self.helper.form_tag = True
         self.helper.form_class = 'p-3'
-        self.helper.add_input(Submit('submit', 'SAVE', css_class='btn btn-primary btn-lg btn-block'),)
+
+        self.helper.add_input(
+            Submit(
+                'submit', 'SAVE',
+                css_class='btn btn-primary btn-lg btn-block'), )

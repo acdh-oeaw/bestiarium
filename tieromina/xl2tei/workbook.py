@@ -1,10 +1,11 @@
 import logging
 from xml.dom import minidom
 from xml.etree import ElementTree as ET
+
 import xlrd
-from .wbformat import WBFormat
 
 from .sheet import Sheet
+from .wbformat import WBFormat
 
 
 def pretty_print(root):
@@ -31,6 +32,7 @@ class Workbook:
     containing one or more omens
     from a chapter
     '''
+
     def __init__(self, wbfile):
         self.wbfile = wbfile
         try:
