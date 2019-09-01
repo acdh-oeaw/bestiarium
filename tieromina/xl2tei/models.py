@@ -54,11 +54,13 @@ class Omen(models.Model):
     '''
     Individual omen
     '''
+
     omen_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
     omen_num = models.CharField(max_length=100)
     ctime = models.DateTimeField(default=now)
-    spreadsheet = models.ForeignKey(
-        Spreadsheet, on_delete=models.CASCADE, default='')
+    spreadsheet = models.ForeignKey(Spreadsheet,
+                                    on_delete=models.CASCADE,
+                                    default='')
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
     tablet = models.ManyToManyField(Tablet)
 
@@ -73,8 +75,9 @@ class Token(models.Model):
     '''
     position = models.IntegerField()
     omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
-    segment_type = models.CharField(
-        max_length=2, choices=TYPE_CHOICES, default=PROTASIS)
+    segment_type = models.CharField(max_length=2,
+                                    choices=TYPE_CHOICES,
+                                    default=PROTASIS)
     ctime = models.DateTimeField(default=now)
 
 
@@ -85,8 +88,10 @@ class Reading(models.Model):
     reading_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
     omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
     ctime = models.DateTimeField(default=now)
-    reference = models.ForeignKey(
-        Reference, on_delete=models.CASCADE, blank=True, null=True)
+    reference = models.ForeignKey(Reference,
+                                  on_delete=models.CASCADE,
+                                  blank=True,
+                                  null=True)
 
 
 class Transliteration(models.Model):
@@ -95,8 +100,10 @@ class Transliteration(models.Model):
     '''
 
     token = models.ForeignKey(Token, on_delete=models.CASCADE)
-    reference = models.ForeignKey(
-        Reference, blank=True, null=True, on_delete=models.CASCADE)
+    reference = models.ForeignKey(Reference,
+                                  blank=True,
+                                  null=True,
+                                  on_delete=models.CASCADE)
     text = models.CharField(max_length=100, default='')
     reading = models.ForeignKey(Reading, on_delete=models.CASCADE)
     ctime = models.DateTimeField(default=now)
@@ -107,8 +114,10 @@ class Transcription(models.Model):
     Transcription
     '''
     token = models.ForeignKey(Token, on_delete=models.CASCADE)
-    reference = models.ForeignKey(
-        Reference, blank=True, null=True, on_delete=models.CASCADE)
+    reference = models.ForeignKey(Reference,
+                                  blank=True,
+                                  null=True,
+                                  on_delete=models.CASCADE)
     text = models.CharField(max_length=100, default='')
     reading = models.ForeignKey(Reading, on_delete=models.CASCADE)
     ctime = models.DateTimeField(default=now)
@@ -119,10 +128,12 @@ class Translation(models.Model):
     Modernlanguage translation (en/de row)
     '''
     lang = models.CharField(max_length=100)  # language
-    translation_id = models.CharField(
-        max_length=100, primary_key=True)  # TEI ID
-    reference = models.ForeignKey(
-        Reference, blank=True, null=True, on_delete=models.CASCADE)
+    translation_id = models.CharField(max_length=100,
+                                      primary_key=True)  # TEI ID
+    reference = models.ForeignKey(Reference,
+                                  blank=True,
+                                  null=True,
+                                  on_delete=models.CASCADE)
     text = models.TextField(default='')
     reading = models.ForeignKey(Reading, on_delete=models.CASCADE)
     ctime = models.DateTimeField(default=now)
@@ -133,7 +144,9 @@ class Commentary(models.Model):
     Philological commentary
     '''
     omen = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
-    reference = models.ForeignKey(
-        Reference, blank=True, null=True, on_delete=models.CASCADE)
+    reference = models.ForeignKey(Reference,
+                                  blank=True,
+                                  null=True,
+                                  on_delete=models.CASCADE)
     text = models.TextField(default='')
     ctime = models.DateTimeField(default=now)
