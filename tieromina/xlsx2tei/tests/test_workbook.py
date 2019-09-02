@@ -6,9 +6,17 @@ from ..workbook import Workbook
 
 
 class WorkbookTestCase(TestCase):
-    test_file = 'xl2tei/tests/Snake_23_1_11.xls'
+    test_file = 'xlsx2tei/tests/Snakes 23.1-11.xlsx'
 
     def test_wbfile(self):
         wb = Workbook(self.test_file)
         self.assertEqual(wb.wbfile, self.test_file)
+        self.assertIsNotNone(wb.z)
         return
+
+    def test_get_sheet(self):
+        wb = Workbook(self.test_file)
+        sheet = wb.get_sheet(1)
+        self.assertIsNotNone(sheet)
+        sheet = wb.get_sheet(100)
+        self.assertIsNone(sheet)
