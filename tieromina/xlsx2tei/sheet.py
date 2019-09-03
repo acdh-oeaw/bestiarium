@@ -67,6 +67,7 @@ class OmenSheet(Sheet):
     Represents one omen,
     and its relation to other omens
     '''
+
     def __init__(self, *, workbook, sheet_xml):
         super().__init__(workbook=workbook, sheet_xml=sheet_xml)
         self.read_omen()
@@ -76,4 +77,4 @@ class OmenSheet(Sheet):
             first_col_val = row.get('A')
             for col_name, cell in row.items():
                 texts = cell.findall('.//ns:t', NS)
-                print(row_name, col_name, [t.text for t in texts])
+                print(col_name, row_name, [t.text for t in texts])

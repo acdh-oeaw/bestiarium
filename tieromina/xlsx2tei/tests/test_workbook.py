@@ -14,6 +14,9 @@ class WorkbookTestCase(TestCase):
         self.assertIsNotNone(wb.z)
         self.assertEqual(len(wb.sheets), 11)
         self.assertEqual(len(wb.shared_strings), 570)
+        self.assertEqual(len(wb.cell_formats), 102)
+        self.assertEqual(len(wb.fonts), 29)
+        self.assertEqual(len(wb.background), 3)
         return
 
     def test_get_sheet(self):
