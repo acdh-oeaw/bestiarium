@@ -1,11 +1,15 @@
+from pprint import pprint
 from unittest.mock import PropertyMock, patch
+from xml.etree import ElementTree as ET
 
 from django.test import TestCase
 
+from ..omensworkbook import OmensWorkbook
 from ..workbook import Workbook
 
 
 class WorkbookTestCase(TestCase):
+
     test_file = 'xlsx2tei/tests/Snakes 23.1-11.xlsx'
 
     def test_wbfile(self):
@@ -26,3 +30,14 @@ class WorkbookTestCase(TestCase):
         sheet = wb.get_sheet(100)
         self.assertIsNone(sheet)
         # TODO: Test the printed warning somehow
+
+
+class OmensWorkbookTestCase(TestCase):
+    test_file = 'xlsx2tei/tests/Snakes 23.1-11.xlsx'
+
+    def test_wb_file(self):
+        wb = OmensWorkbook(self.test_file)
+        sheet = wb.get_sheet(1)
+        cell = sheet.contents[3].get('C')
+        print('Sheet')
+        pprint(sheet.contents)

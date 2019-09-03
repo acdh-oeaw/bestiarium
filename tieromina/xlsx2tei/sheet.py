@@ -4,6 +4,8 @@ A single sheet from a workbook
 from collections import defaultdict
 from xml.etree import ElementTree as ET
 
+from .cell import Cell
+
 NS = {'ns': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 
 
@@ -30,13 +32,28 @@ class Sheet:
             for c, cell in enumerate(cells):
                 cell_contents = self.get_cell_contents(cell)
                 if cell_contents:
-                    row_contents[cell.attrib.get('r').rstrip(
-                        row_name)] = cell_contents
+                    cell_format = self.workbook.cell_formats[int(
+                        cell.attrib.get('s'))]
+                    background = self.workbook.background[int(
+                        cell_format.attrib.get('fillId')
+                    )] if 'fillId' in cell_format.attrib else None
+                    font = self.workbook.fonts[int(
+                        cell_format.attrib.get('fontId')
+                    )] if 'fontId' in cell_format.attrib else None
+                    row_contents[cell.attrib.get('r').rstrip(row_name)] = Cell(
+                        **{
+                            Cell.CONTENTS: cell_contents,
+                            Cell.FONT: font,
+                            Cell.BACKGROUND: background
+                        })
 
             if row_contents:
                 self.contents[int(row_name)] = row_contents
 
         # print(self.contents)
+
+    def get_cell(self, row_name: str, col_name: str) -> Cell:
+        return self.contents[int(row_name)].get(col_name)
 
     @classmethod
     def col_name2num(cls, letter: str):
@@ -59,22 +76,3 @@ class Sheet:
             idx = int(cell.find('ns:v', NS).text)
             si = self.workbook.shared_strings[idx]
             return si
-
-
-class OmenSheet(Sheet):
-    '''
-    A single sheet from the omens workbook
-    Represents one omen,
-    and its relation to other omens
-    '''
-
-    def __init__(self, *, workbook, sheet_xml):
-        super().__init__(workbook=workbook, sheet_xml=sheet_xml)
-        self.read_omen()
-
-    def read_omen(self):
-        for row_name, row in self.contents.items():
-            first_col_val = row.get('A')
-            for col_name, cell in row.items():
-                texts = cell.findall('.//ns:t', NS)
-                print(col_name, row_name, [t.text for t in texts])

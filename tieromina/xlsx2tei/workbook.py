@@ -10,7 +10,7 @@ import sys
 from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
-from .sheet import OmenSheet
+from .sheet import Sheet
 
 NS = {'ns': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 
@@ -37,23 +37,20 @@ class Workbook:
         self.fonts = styles_xml.findall('ns:fonts/ns:font', NS)
         self.background = styles_xml.findall('ns:fills/ns:fill', NS)
 
-    # self.ss_list = ET.XML(ss_xml).findall(n('si'))
+    def get_sheet_xml(self, sheet_num: int):
+        try:
+            sheet_xml = self.z.read(f'xl/worksheets/sheet{sheet_num}.xml')
+            return sheet_xml
+        except KeyError:
+            logging.warning('Sheet "%s" not found!', sheet_num)
+
     def get_sheet(self, sheet_num: int):
         '''
         Returns the sheet XML given the sheet number
         '''
-        try:
-            sheet_xml = self.z.read(f'xl/worksheets/sheet{sheet_num}.xml')
+        sheet_xml = self.get_sheet_xml(sheet_num)
+        if sheet_xml:
             return Sheet(workbook=self, sheet_xml=sheet_xml)
-        except KeyError:
-            logging.warning('Sheet "%s" not found!', sheet_num)
 
-    def get_tei(self):
-        '''
-        Returns the TEI of the sheet
-        '''
-        # Form header
-        for sheet_id, sheet_name in self.sheets.items():
-            sheet = self.get_sheet(sheet_id)
-
-        return
+    def __str__(self):
+        return ET.tostring(self.fonts)
