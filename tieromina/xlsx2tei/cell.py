@@ -9,13 +9,19 @@ class Cell:
     '''
 
     ADDRESS, CONTENTS, FONT, BACKGROUND = 'address', 'contents', 'font', 'background'
+    formats = None
 
     def __init__(self, **kwargs):
         self.contents = kwargs.get(Cell.CONTENTS)
-        self.texts = self.contents.findall('.//ns:t', NS)
-
         self.font = kwargs.get(Cell.FONT)
         self.background = kwargs.get(Cell.BACKGROUND)
+
+    @property
+    def text(self) -> str:
+        if isinstance(self.contents, str):
+            return str(self.contents)
+
+        return str([t.text for t in self.contents.findall('.//ns:t', NS)])
 
     @property
     def font_color(self):
@@ -32,7 +38,7 @@ class Cell:
                 return color.attrib.get('rgb')
 
     def __str__(self):
-        return (f'{[t.text for t in self.texts]}')
+        return self.text
 
     def __repr__(self):
-        return (f'{[t.text for t in self.texts]}')
+        return self.text

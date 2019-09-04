@@ -39,5 +39,6 @@ class OmensWorkbookTestCase(TestCase):
         wb = OmensWorkbook(self.test_file)
         sheet = wb.get_sheet(1)
         cell = sheet.contents[3].get('C')
-        print('Sheet')
-        pprint(sheet.contents)
+        print(sheet.contents[3])
+        # print('Sheet')
+        # pprint(sheet.contents)

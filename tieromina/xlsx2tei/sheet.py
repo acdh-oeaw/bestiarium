@@ -76,3 +76,6 @@ class Sheet:
             idx = int(cell.find('ns:v', NS).text)
             si = self.workbook.shared_strings[idx]
             return si
+        elif len(cell):
+            raw_text_elem = cell.find('ns:v', NS)
+            return raw_text_elem.text
