@@ -58,7 +58,7 @@ class Sheet:
     @classmethod
     def col_name2num(cls, letter: str):
         """ A -> 0, B -> 1, Z -> 25, AA -> 26, BA -> 52 """
-        base26digits = [1 + ord(x) - ord("A") for x in letter]
+        base26digits = [1 + ord(x) - ord('A') for x in letter]
         return sum([
             x * 26**(len(base26digits) - k - 1)
             for k, x in enumerate(base26digits)
