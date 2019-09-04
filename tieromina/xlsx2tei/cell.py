@@ -20,8 +20,8 @@ class Cell:
     def text(self) -> str:
         if isinstance(self.contents, str):
             return str(self.contents)
-
-        return str([t.text for t in self.contents.findall('.//ns:t', NS)])
+        else:
+            return str([t.text for t in self.contents.findall('.//ns:t', NS)])
 
     @property
     def font_color(self):
@@ -42,3 +42,7 @@ class Cell:
 
     def __repr__(self):
         return self.text
+
+
+class FormattedText:
+    pass
