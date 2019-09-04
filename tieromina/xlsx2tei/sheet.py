@@ -41,11 +41,9 @@ class Sheet:
                         cell_format.attrib.get('fontId')
                     )] if 'fontId' in cell_format.attrib else None
                     row_contents[cell.attrib.get('r').rstrip(row_name)] = Cell(
-                        **{
-                            Cell.CONTENTS: cell_contents,
-                            Cell.FONT: font,
-                            Cell.BACKGROUND: background
-                        })
+                        contents=cell_contents,
+                        font=font,
+                        background=background)
 
             if row_contents:
                 self.contents[int(row_name)] = row_contents

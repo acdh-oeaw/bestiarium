@@ -39,6 +39,7 @@ class OmensWorkbookTestCase(TestCase):
         wb = OmensWorkbook(self.test_file)
         sheet = wb.get_sheet(1)
         cell = sheet.contents[3].get('C')
-        print(sheet.contents[3])
+        # assert sheet.contents[3] is sheet.contents[2]
+        print(sheet.contents[4], sheet.contents[3])
         # print('Sheet')
         # pprint(sheet.contents)
