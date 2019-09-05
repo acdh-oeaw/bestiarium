@@ -97,15 +97,3 @@ class FormattedText(NamedTuple):
     '''
     text: str
     fmt: 'Fmt' = Fmt()
-
-    def __str__(self):
-        if isinstance(self.text, str):
-            return self.text
-        else:
-            return "Not a string!"
-
-    def __repr__(self):
-        if isinstance(self.text, str):
-            return self.text
-        else:
-            return str(self.text)
