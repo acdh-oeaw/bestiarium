@@ -31,32 +31,33 @@ class Cell:
                     fmt=Fmt(color=self.font_color, bgcolor=self.bgcolor)))
         elif isinstance(self.catchall, ET.Element):
             # si contains only one t tag
-            if len(self.catchall) == 1 and self.catchall[0].tag == 't':
-                self.text.append(FormattedText(text=self.catchall[0].text))
+            if len(self.catchall) == 1 and self.catchall[0].tag.endswith('}t'):
+                self.text.append(
+                    FormattedText(text=self.catchall[0].text, fmt=Fmt()))
             else:
                 # si -> r -> rPr (format), t (text)
                 for elem in self.catchall:  # r
+                    fmt = Fmt()
                     if elem.tag.endswith('}r'):
-                        color_tag = elem.find('./ns:rPr/ns:color', NS)
+                        color_tag = elem.find('ns:rPr/ns:color', NS)
                         color = color_tag.attrib.get(
                             'rgb') if color_tag is not None else None
                         italics = True if elem.find('./ns:rPr/ns:i',
                                                     NS) else False
                         subscript = True if elem.find(
-                            './ns:rPr/ns:vertAlign[@val="subscript"]',
+                            'ns:rPr/ns:vertAlign[@val="subscript"]',
                             NS) else False
                         superscript = True if elem.find(
-                            './ns:rPr/ns:vertAlign[@val="superscript"]',
+                            'ns:rPr/ns:vertAlign[@val="superscript"]',
                             NS) else False
-                        text = elem.find('./ns:rPr/ns:t', NS)
-                        self.text.append(
-                            FormattedText(
-                                text=text,
-                                fmt=Fmt(
-                                    color=color,
-                                    italics=italics,
-                                    subscript=subscript,
-                                    superscript=superscript)))
+
+                        text = elem.find('./ns:t', NS).text
+                        fmt = Fmt(
+                            color=color,
+                            italics=italics,
+                            subscript=subscript,
+                            superscript=superscript)
+                        self.text.append(FormattedText(text=text, fmt=fmt))
 
     @property
     def font_color(self):
@@ -76,7 +77,7 @@ class Cell:
         return str(self.text)
 
     def __repr__(self):
-        return str(self.text)
+        return str(len(self.text))
 
 
 class Fmt(NamedTuple):
@@ -98,7 +99,13 @@ class FormattedText(NamedTuple):
     fmt: 'Fmt' = Fmt()
 
     def __str__(self):
-        return self.text
+        if isinstance(self.text, str):
+            return self.text
+        else:
+            return "Not a string!"
 
     def __repr__(self):
-        return self.text
+        if isinstance(self.text, str):
+            return self.text
+        else:
+            return str(self.text)
