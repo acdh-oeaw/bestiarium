@@ -32,8 +32,7 @@ class Cell:
         elif isinstance(self.catchall, ET.Element):
             # si contains only one t tag
             if len(self.catchall) == 1 and self.catchall[0].tag.endswith('}t'):
-                self.text.append(
-                    FormattedText(text=self.catchall[0].text, fmt=Fmt()))
+                self.text.append(FormattedText(text=self.catchall[0].text))
             else:
                 # si -> r -> rPr (format), t (text)
                 for elem in self.catchall:  # r

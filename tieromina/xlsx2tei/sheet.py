@@ -74,6 +74,7 @@ class Sheet:
             idx = int(cell.find('ns:v', NS).text)
             si = self.workbook.shared_strings[idx]
             return si
-        elif len(cell):
+        elif cell is not None:
             raw_text_elem = cell.find('ns:v', NS)
-            return raw_text_elem.text
+            if raw_text_elem:
+                return raw_text_elem.text
