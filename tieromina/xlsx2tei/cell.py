@@ -47,13 +47,13 @@ class Cell:
                         color = color_tag.attrib.get(
                             'rgb') if color_tag is not None else None
                         italics = True if elem.find('./ns:rPr/ns:i',
-                                                    NS) else False
+                                                    NS) is not None else False
                         subscript = True if elem.find(
                             'ns:rPr/ns:vertAlign[@val="subscript"]',
-                            NS) else False
+                            NS) is not None else False
                         superscript = True if elem.find(
                             'ns:rPr/ns:vertAlign[@val="superscript"]',
-                            NS) else False
+                            NS) is not None else False
 
                         text = elem.find('./ns:t', NS).text
                         fmt = Fmt(

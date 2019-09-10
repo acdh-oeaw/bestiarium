@@ -18,9 +18,9 @@ class Sheet:
     def __init__(self, *, workbook, sheet_xml: ET.ElementTree):
         self.sheet = ET.ElementTree(ET.XML(sheet_xml)).getroot()
         self.workbook = workbook
-        self._read()
+        self.read()
 
-    def _read(self):
+    def read(self):
         '''
         Parses the XML structure
         extracts cell contents and
@@ -45,7 +45,7 @@ class Sheet:
 
             if cell is not None:
                 raw_text_elem = cell.find('ns:v', NS)
-                if raw_text_elem:
+                if raw_text_elem is not None:
                     return raw_text_elem.text
 
         rows = self.sheet.findall('ns:sheetData/ns:row', NS)
