@@ -4,7 +4,9 @@ from xml.etree import ElementTree as ET
 
 from django.test import TestCase
 
+from ..omensheet import OmenSheet
 from ..omensworkbook import OmensWorkbook
+from ..sheet import Sheet
 from ..workbook import Workbook
 
 

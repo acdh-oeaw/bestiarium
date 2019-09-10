@@ -1,3 +1,6 @@
+'''
+Omen specific reading of a sheet from a workbook
+'''
 import logging
 from xml.etree import ElementTree as ET
 
@@ -13,11 +16,11 @@ class OmenSheet(Sheet):
     and its relation to other omens
     '''
 
-    def __init__(self, *, workbook, sheet_xml):
+    def __init__(self, *, workbook, sheet_xml: ET.ElementTree):
         super().__init__(workbook=workbook, sheet_xml=sheet_xml)
-        self.read_omen()
+        self.read()
 
-    def read_omen(self):
+    def read(self):
         for row_name, row in self.contents.items():
             first_col_val = row.get('A')
             for col_name, cell in row.items():

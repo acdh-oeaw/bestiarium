@@ -1,4 +1,7 @@
-from typing import Any, NamedTuple
+'''
+Represents information within a cell in an Omens workbook
+'''
+from typing import NamedTuple
 from xml.etree import ElementTree as ET
 
 NS = {'ns': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
@@ -77,9 +80,6 @@ class Cell:
     def __str__(self):
         return str(self.text)
 
-    def __repr__(self):
-        return str(len(self.text))
-
 
 class Fmt(NamedTuple):
     '''
@@ -87,9 +87,9 @@ class Fmt(NamedTuple):
     '''
     color: str = None
     bgcolor: str = None
-    italics: bool = None
-    subscript: bool = None
-    superscript: bool = None
+    italics: bool = False
+    subscript: bool = False
+    superscript: bool = False
 
 
 class FormattedText(NamedTuple):
@@ -98,3 +98,26 @@ class FormattedText(NamedTuple):
     '''
     text: str
     fmt: 'Fmt' = Fmt()
+
+    def __str__(self):
+        return self.text
+
+    @property
+    def color(self):
+        return self.fmt.color
+
+    @property
+    def bgcolor(self):
+        return self.fmt.bgcolor
+
+    @property
+    def italics(self):
+        return self.fmt.italics
+
+    @property
+    def subscript(self):
+        return self.fmt.subscript
+
+    @property
+    def superscript(self):
+        return self.fmt.superscript

@@ -1,3 +1,6 @@
+'''
+Includes specific methods to analyse workbooks contains omens
+'''
 import logging
 
 from .omensheet import OmenSheet
@@ -6,10 +9,8 @@ from .workbook import Workbook
 
 class OmensWorkbook(Workbook):
     '''
+    Sub class of Workbook; does omen specific analysis
     '''
-
-    def __init__(self, wbfile):
-        super().__init__(wbfile)
 
     def get_sheet(self, sheet_num: int) -> OmenSheet:
         sheet_xml = self.get_sheet_xml(sheet_num)

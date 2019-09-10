@@ -18,19 +18,9 @@ class Sheet:
     def __init__(self, *, workbook, sheet_xml: ET.ElementTree):
         self.sheet = ET.ElementTree(ET.XML(sheet_xml)).getroot()
         self.workbook = workbook
-        self.read()
+        self._read()
 
-    def read(self):
-        '''
-        Reads the omen information from the sheet
-        '''
-        self._quick_read()
-        for row_name, cells in self.contents.items():
-            for col_name, cell in cells.items():
-
-                pass
-
-    def _quick_read(self):
+    def _read(self):
         '''
         Parses the XML structure
         extracts cell contents and
@@ -47,12 +37,13 @@ class Sheet:
             given the row and column
             '''
 
-            if len(cell) and 't' in cell.attrib and cell.attrib['t'] == 's':
+            if cell is not None and 't' in cell.attrib and cell.attrib['t'] == 's':
                 # shared string
                 idx = int(cell.find('ns:v', NS).text)
                 si = self.workbook.shared_strings[idx]
                 return si
-            elif cell is not None:
+
+            if cell is not None:
                 raw_text_elem = cell.find('ns:v', NS)
                 if raw_text_elem:
                     return raw_text_elem.text

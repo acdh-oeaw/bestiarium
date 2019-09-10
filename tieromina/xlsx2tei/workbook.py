@@ -2,11 +2,7 @@
 Reads an xlsx Workbook
 Thanks to https://gist.github.com/brendano/22764
 '''
-import itertools
 import logging
-import os
-import re
-import sys
 from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
@@ -38,6 +34,9 @@ class Workbook:
         self.background = styles_xml.findall('ns:fills/ns:fill', NS)
 
     def get_sheet_xml(self, sheet_num: int):
+        '''
+        Returns the corresponding XML for a given sheet number
+        '''
         try:
             sheet_xml = self.z.read(f'xl/worksheets/sheet{sheet_num}.xml')
             return sheet_xml
