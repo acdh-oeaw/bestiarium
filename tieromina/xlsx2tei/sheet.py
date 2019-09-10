@@ -18,11 +18,26 @@ class Sheet:
     def __init__(self, *, workbook, sheet_xml: ET.ElementTree):
         self.sheet = ET.ElementTree(ET.XML(sheet_xml)).getroot()
         self.workbook = workbook
-        self.quick_read()
+        self.read()
 
-    def quick_read(self):
+    def read(self):
         '''
-        Reads the contents of the sheet
+        Reads the omen information from the sheet
+        '''
+        self._quick_read()
+        for row_name, cells in self.contents.items():
+            for col_name, cell in cells.items():
+
+                pass
+
+    def _quick_read(self):
+        '''
+        Parses the XML structure
+        extracts cell contents and
+        formating information for all cells
+        Updates the contents attribute
+        self.contents [int: row_name] = row_contents
+        row_contents[str: colname] = Cell
         '''
 
         def get_cell_contents() -> ET.Element:
