@@ -36,8 +36,12 @@ class SheetTestCase(TestCase):
         self.assertFalse(self.sheet.get_cell(3, 'A').text[0].italics)
 
         self.assertEqual(str(self.sheet.get_cell(3, 'C').text[0]), '1')
-        self.assertFalse(self.sheet.get_cell(3, 'C').text[0].italics)
+        self.assertTrue(self.sheet.get_cell(3, 'C').text[0].italics)
 
+    def test_in_cell_formatting(self):
         print(self.sheet.get_cell(4, 'L').text)
         self.assertTrue(self.sheet.get_cell(4, 'L').text[1].italics)
+        self.assertEqual(str(self.sheet.get_cell(4, 'L').text[1]), 'ut')
+        self.assertEqual(str(self.sheet.get_cell(4, 'L').text[0]), 'ŠUB-')
+
         # self.assertEqual(str(self.sheet.contents[3]['C'].text[0]), '1')
