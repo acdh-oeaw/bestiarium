@@ -56,14 +56,21 @@ class Sheet:
             for c, cell in enumerate(cells):
                 cell_contents = get_cell_contents()
                 if cell_contents:
-                    cell_format = self.workbook.cell_formats[int(
-                        cell.attrib.get('s'))]
-                    background = self.workbook.background[int(
-                        cell_format.attrib.get('fillId')
-                    )] if 'fillId' in cell_format.attrib else None
-                    font = self.workbook.fonts[int(
-                        cell_format.attrib.get('fontId')
-                    )] if 'fontId' in cell_format.attrib else None
+                    if 't' in cell.attrib:
+                        cell_format = self.workbook.cell_formats[int(
+                            cell.attrib.get('s'))]
+                        background = self.workbook.background[int(
+                            cell_format.attrib.get('fillId')
+                        )] if 'fillId' in cell_format.attrib else None
+                        font = self.workbook.fonts[int(
+                            cell_format.attrib.get('fontId')
+                        )] if 'fontId' in cell_format.attrib else None
+                        pass
+                    else:
+                        font_id = cell.attrib.get('s')
+                        font = self.workbook.fonts[int(font_id)]
+                        background = None
+
                     row_contents[cell.attrib.get('r').rstrip(row_name)] = Cell(
                         contents=cell_contents,
                         font=font,

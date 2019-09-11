@@ -33,7 +33,10 @@ class Cell:
             self.text.append(
                 FormattedText(
                     text=self.catchall,
-                    fmt=Fmt(color=self.font_color, bgcolor=self.bgcolor)))
+                    fmt=Fmt(
+                        color=self.font_color,
+                        bgcolor=self.bgcolor,
+                        italics=self.italics)))
         elif isinstance(self.catchall, ET.Element):
             # si contains only one t tag
             if len(self.catchall) == 1 and self.catchall[0].tag.endswith('}t'):
@@ -64,17 +67,23 @@ class Cell:
                         self.text.append(FormattedText(text=text, fmt=fmt))
 
     @property
+    def italics(self):
+        if self.font:
+            return self.font.find('ns:i', NS) is not None
+        return False
+
+    @property
     def font_color(self):
         if self.font:
             color = self.font.find('ns:color', NS)
-            if color:
+            if color is not None:
                 return color.attrib.get('rgb')
 
     @property
     def bgcolor(self):
         if self.background:
             color = self.background.find('ns:PatternFill/ns:fgColor', NS)
-            if color:
+            if color is not None:
                 return color.attrib.get('rgb')
 
     def __str__(self):
