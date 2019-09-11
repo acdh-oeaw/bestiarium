@@ -14,34 +14,27 @@ class Cell:
 
     ADDRESS, CONTENTS, FONT, BACKGROUND = 'address', 'contents', 'font', 'background'
 
-    def __init__(self, contents, font=None, background=None):
+    def __init__(self, contents, fmt=None):
         self.catchall = contents  # just a holder for what comes in
         if isinstance(contents, ET.Element):
             # ET.dump(contents)
             pass
-        self.font = font
-        self.background = background
-        self.text = []
+        self.fmt = fmt
+        self.tokens = []
         self.read()
 
     def read(self):
         '''
-        Converts different parts of the formatted cell into a list of FormattedText objects
+        Converts different parts of the formatted cell into a list of Token objects
         '''
-        self.text = []
+        self.tokens = []
         if isinstance(self.catchall, str):
             # number or something else, didn't come from SharedStrings
-            self.text.append(
-                FormattedText(
-                    text=self.catchall,
-                    fmt=Fmt(
-                        color=self.font_color,
-                        bgcolor=self.bgcolor,
-                        italics=self.italics)))
+            self.tokens.append(Token(text=self.catchall, fmt=self.fmt))
         elif isinstance(self.catchall, ET.Element):
             # si contains only one t tag
             if len(self.catchall) == 1 and self.catchall[0].tag.endswith('}t'):
-                self.text.append(FormattedText(text=self.catchall[0].text))
+                self.tokens.append(Token(text=self.catchall[0].text))
             else:
                 # si -> r -> rPr (format), t (text)
                 for elem in self.catchall:  # r
@@ -61,48 +54,44 @@ class Cell:
 
                         text = elem.find('./ns:t', NS).text
                         fmt = Fmt(
-                            color=color,
-                            italics=italics,
                             subscript=subscript,
-                            superscript=superscript)
-                        self.text.append(FormattedText(text=text, fmt=fmt))
+                            superscript=superscript,
+                            italics=italics)
+                        self.tokens.append(Token(text=text, fmt=fmt))
 
     @property
-    def italics(self):
-        if self.font:
-            return self.font.find('ns:i', NS) is not None
-        return False
+    def italics(self) -> bool:
+        return self.fmt.italics if self.fmt else False
+
+    @property
+    def bold(self):
+        return self.fmt.bold if self.fmt else False
 
     @property
     def font_color(self):
-        if self.font:
-            color = self.font.find('ns:color', NS)
-            if color is not None:
-                return color.attrib.get('rgb')
+        return self.fmt.color if self.fmt else None
 
     @property
     def bgcolor(self):
-        if self.background:
-            color = self.background.find('ns:PatternFill/ns:fgColor', NS)
-            if color is not None:
-                return color.attrib.get('rgb')
+        return self.fmt.bgcolor if self.fmt else None
 
     def __str__(self):
-        return str(self.text)
+        return str(self.tokens)
 
 
 class Fmt(NamedTuple):
     '''
     Holds text format properties
     '''
-    color: str = None
-    bgcolor: str = None
+    bold: bool = False
     italics: bool = False
     subscript: bool = False
     superscript: bool = False
+    color: str = None
+    bgcolor: str = None
 
 
-class FormattedText(NamedTuple):
+class Token(NamedTuple):
     '''
     Holds a few formatting properties
     '''
@@ -113,16 +102,20 @@ class FormattedText(NamedTuple):
         return self.text
 
     @property
+    def italics(self):
+        return self.fmt.italics
+
+    @property
+    def bold(self):
+        return self.fmt.bold
+
+    @property
     def color(self):
         return self.fmt.color
 
     @property
     def bgcolor(self):
-        return self.fmt.bgcolor
-
-    @property
-    def italics(self):
-        return self.fmt.italics
+        return self.fmt.color
 
     @property
     def subscript(self):

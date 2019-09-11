@@ -15,42 +15,60 @@ class SheetTestCase(TestCase):
     sheet_num = 0
 
     def setUp(self):
-        mock_workbook = MagicMock()
+        self.mock_workbook = MagicMock()
         with open('xlsx2tei/tests/sheet1.xml', 'r') as f:
             sheet_xml = f.read()
+
+        self.sheet_root = ET.fromstring(sheet_xml)
         styles_xml = ET.parse('xlsx2tei/tests/styles.xml').getroot()
-        ss_xml = ET.parse('xlsx2tei/tests/sharedStrings.xml').getroot()
-        mock_workbook.shared_strings = ss_xml.findall('ns:si', NS)
-        mock_workbook.cell_formats = styles_xml.findall('ns:cellXfs/ns:xf', NS)
-        mock_workbook.fonts = styles_xml.findall('ns:fonts/ns:font', NS)
-        mock_workbook.background = styles_xml.findall('ns:fills/ns:fill', NS)
-        self.sheet = Sheet(sheet_xml=sheet_xml, workbook=mock_workbook)
+        self.ss_xml = ET.parse('xlsx2tei/tests/sharedStrings.xml').getroot()
+        self.mock_workbook.shared_strings = self.ss_xml.findall('ns:si', NS)
+        self.mock_workbook.cell_formats = styles_xml.findall(
+            'ns:cellXfs/ns:xf', NS)
+        self.mock_workbook.fonts = styles_xml.findall('ns:fonts/ns:font', NS)
+        self.mock_workbook.background = styles_xml.findall(
+            'ns:fills/ns:fill', NS)
+        self.sheet = Sheet(sheet_xml=sheet_xml, workbook=self.mock_workbook)
+
+    def get_cell(self, address):
+        return self.sheet_root.find(f'.//*[@r="{address}"]')
 
     def test_number_of_rows(self):
         self.assertEqual(len(self.sheet.contents), 17)
 
-    def test_cell_values(self):
-        self.assertEqual(str(self.sheet.get_cell(1, 'A').text[0]), 'Omen 23.1')
-        self.assertEqual(str(self.sheet.get_cell(3, 'A').text[0]), 'K 02925+')
-        self.assertEqual(str(self.sheet.get_cell(3, 'C').text[0]), '1')
-        self.assertEqual(str(self.sheet.get_cell(9, 'D').text[0]), '˹DIŠ˺')
+    def test_extacted_format(self):
+        cell = self.get_cell('A1')
+        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
+            self.sheet.extract_format(cell)
+            MockFmt.assert_called_once_with(
+                color=None, bgcolor=None, bold=True, italics=False)
 
-    def test_italics_whole_cell(self):
-        self.assertFalse(self.sheet.get_cell(1, 'A').italics)
-        self.assertFalse(self.sheet.get_cell(3, 'A').italics)
-        self.assertTrue(self.sheet.get_cell(3, 'C').italics)
+        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
+            cell = self.get_cell('C3')
+            self.sheet.extract_format(cell)
+            MockFmt.assert_called_once_with(
+                color='FFFF0000', bgcolor=None, bold=False, italics=True)
 
-    def test_multiple_tokens_in_cell(self):
-        self.assertEqual(str(self.sheet.get_cell(4, 'L').text[0]), 'ŠUB-')
-        self.assertEqual(str(self.sheet.get_cell(4, 'L').text[1]), 'ut')
+        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
+            cell = self.get_cell('M12')
+            self.sheet.extract_format(cell)
+            MockFmt.assert_called_once_with(
+                bgcolor='FF00B0F0', color=None, bold=False, italics=True)
 
-    def test_italics_partial(self):
-        self.assertTrue(self.sheet.get_cell(4, 'L').text[1].italics)
-        self.assertFalse(self.sheet.get_cell(4, 'L').text[0].italics)
+        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
+            cell = self.get_cell('P12')
+            self.sheet.extract_format(cell)
+            MockFmt.assert_called_once_with(
+                bgcolor='FF00B0F0', color=None, bold=False, italics=False)
 
-    def test_background_color(self):
-        # 12: M, N, O, P
-        # self.assertEqual(
-        #     self.sheet.get_cell(12, 'M').text[0].color, 'FF00B0F0')
-        self.assertEqual(
-            self.sheet.get_cell(12, 'P').text[0].bgcolor, 'FF00B0F0')
+        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
+            cell = self.get_cell('C3')
+            self.sheet.extract_format(cell)
+            MockFmt.assert_called_once_with(
+                color='FFFF0000', bgcolor=None, bold=False, italics=True)
+
+        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
+            cell = self.get_cell('C8')
+            self.sheet.extract_format(cell)
+            MockFmt.assert_called_once_with(
+                color='FFFF0000', bgcolor=None, bold=False, italics=True)

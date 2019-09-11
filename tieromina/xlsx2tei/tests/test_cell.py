@@ -4,30 +4,19 @@ from xml.etree import ElementTree as ET
 
 from django.test import TestCase
 
-from ..cell import Cell, FormattedText
+from ..cell import Cell
 
-ET.register_namespace(
-    'ns', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main')
-ET.register_namespace('nss', 'http://ns')
+NS = {'ns': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 
 
 class CellTestCase(TestCase):
-    def test_simple_cell(self):
-        cell = Cell('1')
-        # self.assertEqual(cell.text[0]._asdict(), FormattedText(1)._asdict())
-        self.assertIsNone(cell.font)
-        self.assertIsNone(cell.background)
-        self.assertEqual(cell.text, [FormattedText('1')])
-        pass
+    def setUp(self):
+        ss_xml = ET.parse('xlsx2tei/tests/sharedStrings.xml').getroot()
+        self.shared_strings = ss_xml.findall('ns:si', NS)
 
-    def test_shared_string_single(self):
-        # cell_content = ET.fromstring(
-        #     '''{http://schemas.openxmlformats.org/spreadsheetml/2006/main}si>
-        #     <{http://schemas.openxmlformats.org/spreadsheetml/2006/main}t>Omen 23.2</{http://schemas.openxmlformats.org/spreadsheetml/2006/main}t>
-        #     </{http://schemas.openxmlformats.org/spreadsheetml/2006/main}si>'''
-        # )
-        cell_content = ET.XML('<si><t>Omen 23.2</t></si>')
-        cell = Cell(cell_content)
-        self.assertIsNone(cell.font)
-        self.assertIsNone(cell.background)
-        # self.assertEqual(cell.text, [FormattedText('Omen 23.2')])
+    def test_multiple_tokens_in_cell(self):
+        cell = Cell(self.shared_strings[13])
+        self.assertEqual(str(cell.tokens[0]), 'ŠUB-')
+        self.assertEqual(str(cell.tokens[1]), 'ut')
+        self.assertTrue(cell.tokens[1].italics)
+        self.assertFalse(cell.tokens[0].italics)

@@ -4,7 +4,7 @@ A single sheet from a workbook
 from collections import defaultdict
 from xml.etree import ElementTree as ET
 
-from .cell import Cell
+from .cell import Cell, Fmt
 
 NS = {'ns': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 
@@ -56,18 +56,9 @@ class Sheet:
             for c, cell in enumerate(cells):
                 cell_contents = get_cell_contents()
                 if cell_contents:
-                    cell_format = self.workbook.cell_formats[int(
-                        cell.attrib.get('s'))]
-                    background = self.workbook.background[int(
-                        cell_format.attrib.get('fillId')
-                    )] if 'fillId' in cell_format.attrib else None
-                    font = self.workbook.fonts[int(
-                        cell_format.attrib.get('fontId')
-                    )] if 'fontId' in cell_format.attrib else None
+                    fmt = self.extract_format(cell)
                     row_contents[cell.attrib.get('r').rstrip(row_name)] = Cell(
-                        contents=cell_contents,
-                        font=font,
-                        background=background)
+                        contents=cell_contents, fmt=fmt)
 
             if row_contents:
                 self.contents[int(row_name)] = row_contents
@@ -85,3 +76,28 @@ class Sheet:
             x * 26**(len(base26digits) - k - 1)
             for k, x in enumerate(base26digits)
         ]) - 1
+
+    def extract_format(self, cell):
+        '''
+        returns a Fmt tuple
+        '''
+        xf_idx = int(cell.attrib.get('s'))
+        xf = self.workbook.cell_formats[xf_idx]
+        font_idx = int(xf.attrib.get('fontId'))
+        font = self.workbook.fonts[font_idx]
+        italics = font.find('ns:i', NS) is not None
+        boldface = font.find('ns:b', NS) is not None
+        if font.find('ns:color', NS) is not None:
+            color = font.find('ns:color', NS).attrib.get('rgb')
+        else:
+            color = None
+
+        fill_idx = int(xf.attrib.get('fillId'))
+        fill = self.workbook.background[fill_idx]
+        if fill.find('ns:patternFill/ns:fgColor', NS) is not None:
+            bgcolor = fill.find('ns:patternFill/ns:fgColor',
+                                NS).attrib.get('rgb')
+        else:
+            bgcolor = None
+        return Fmt(
+            bold=boldface, italics=italics, color=color, bgcolor=bgcolor)
