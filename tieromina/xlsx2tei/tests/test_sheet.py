@@ -26,22 +26,31 @@ class SheetTestCase(TestCase):
         mock_workbook.background = styles_xml.findall('ns:fills/ns:fill', NS)
         self.sheet = Sheet(sheet_xml=sheet_xml, workbook=mock_workbook)
 
-    def test_cell_values(self):
+    def test_number_of_rows(self):
         self.assertEqual(len(self.sheet.contents), 17)
 
+    def test_cell_values(self):
         self.assertEqual(str(self.sheet.get_cell(1, 'A').text[0]), 'Omen 23.1')
-        self.assertFalse(self.sheet.get_cell(1, 'A').text[0].italics)
-
         self.assertEqual(str(self.sheet.get_cell(3, 'A').text[0]), 'K 02925+')
-        self.assertFalse(self.sheet.get_cell(3, 'A').text[0].italics)
-
         self.assertEqual(str(self.sheet.get_cell(3, 'C').text[0]), '1')
-        self.assertTrue(self.sheet.get_cell(3, 'C').text[0].italics)
+        self.assertEqual(str(self.sheet.get_cell(9, 'D').text[0]), '˹DIŠ˺')
 
-    def test_in_cell_formatting(self):
-        print(self.sheet.get_cell(4, 'L').text)
-        self.assertTrue(self.sheet.get_cell(4, 'L').text[1].italics)
-        self.assertEqual(str(self.sheet.get_cell(4, 'L').text[1]), 'ut')
+    def test_italics_whole_cell(self):
+        self.assertFalse(self.sheet.get_cell(1, 'A').italics)
+        self.assertFalse(self.sheet.get_cell(3, 'A').italics)
+        self.assertTrue(self.sheet.get_cell(3, 'C').italics)
+
+    def test_multiple_tokens_in_cell(self):
         self.assertEqual(str(self.sheet.get_cell(4, 'L').text[0]), 'ŠUB-')
+        self.assertEqual(str(self.sheet.get_cell(4, 'L').text[1]), 'ut')
 
-        # self.assertEqual(str(self.sheet.contents[3]['C'].text[0]), '1')
+    def test_italics_partial(self):
+        self.assertTrue(self.sheet.get_cell(4, 'L').text[1].italics)
+        self.assertFalse(self.sheet.get_cell(4, 'L').text[0].italics)
+
+    def test_background_color(self):
+        # 12: M, N, O, P
+        # self.assertEqual(
+        #     self.sheet.get_cell(12, 'M').text[0].color, 'FF00B0F0')
+        self.assertEqual(
+            self.sheet.get_cell(12, 'P').text[0].bgcolor, 'FF00B0F0')

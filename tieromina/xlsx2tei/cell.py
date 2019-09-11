@@ -17,7 +17,8 @@ class Cell:
     def __init__(self, contents, font=None, background=None):
         self.catchall = contents  # just a holder for what comes in
         if isinstance(contents, ET.Element):
-            ET.dump(contents)
+            # ET.dump(contents)
+            pass
         self.font = font
         self.background = background
         self.text = []
