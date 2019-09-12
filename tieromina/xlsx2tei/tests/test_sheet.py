@@ -36,19 +36,36 @@ class SheetTestCase(TestCase):
     def test_number_of_rows(self):
         self.assertEqual(len(self.sheet.contents), 17)
 
-    def test_extacted_format(self):
+    def test_extacted_format_none(self):
         cell = self.get_cell('A1')
         with patch('xlsx2tei.sheet.Fmt') as MockFmt:
             self.sheet.extract_format(cell)
             MockFmt.assert_called_once_with(
                 color=None, bgcolor=None, bold=True, italics=False)
 
+    def test_extracted_format_color(self):
         with patch('xlsx2tei.sheet.Fmt') as MockFmt:
             cell = self.get_cell('C3')
             self.sheet.extract_format(cell)
             MockFmt.assert_called_once_with(
                 color='FFFF0000', bgcolor=None, bold=False, italics=True)
+        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
+            cell = self.get_cell('C8')
+            self.sheet.extract_format(cell)
+            MockFmt.assert_called_once_with(
+                color='FFFF0000', bgcolor=None, bold=False, italics=True)
+        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
+            cell = self.get_cell('A6')
+            self.sheet.extract_format(cell)
+            MockFmt.assert_called_once_with(
+                color='FF808080', bgcolor=None, bold=False, italics=False)
+        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
+            cell = self.get_cell('B6')
+            self.sheet.extract_format(cell)
+            MockFmt.assert_called_once_with(
+                color='FF808080', bgcolor=None, bold=False, italics=False)
 
+    def test_extracted_format_bgcolor(self):
         with patch('xlsx2tei.sheet.Fmt') as MockFmt:
             cell = self.get_cell('M12')
             self.sheet.extract_format(cell)
@@ -60,15 +77,3 @@ class SheetTestCase(TestCase):
             self.sheet.extract_format(cell)
             MockFmt.assert_called_once_with(
                 bgcolor='FF00B0F0', color=None, bold=False, italics=False)
-
-        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
-            cell = self.get_cell('C3')
-            self.sheet.extract_format(cell)
-            MockFmt.assert_called_once_with(
-                color='FFFF0000', bgcolor=None, bold=False, italics=True)
-
-        with patch('xlsx2tei.sheet.Fmt') as MockFmt:
-            cell = self.get_cell('C8')
-            self.sheet.extract_format(cell)
-            MockFmt.assert_called_once_with(
-                color='FFFF0000', bgcolor=None, bold=False, italics=True)
