@@ -1,10 +1,8 @@
-from pprint import pprint
-from unittest.mock import MagicMock, PropertyMock, patch
+from unittest.mock import MagicMock, patch
 from xml.etree import ElementTree as ET
 
 from django.test import TestCase
 
-from ..omensheet import OmenSheet
 from ..sheet import Sheet
 
 NS = {'ns': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
