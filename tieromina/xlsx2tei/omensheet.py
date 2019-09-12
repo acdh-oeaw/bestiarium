@@ -18,11 +18,16 @@ class OmenSheet(Sheet):
 
     def __init__(self, *, workbook, sheet_xml: ET.ElementTree):
         super().__init__(workbook=workbook, sheet_xml=sheet_xml)
-        self.read()
 
-    def read(self):
-        for row_name, row in self.contents.items():
-            first_col_val = row.get('A')
-            for col_name, cell in row.items():
-                # print(cell)
+        self.title = self.contents[1]['A'].text
+        self.read_omen()
+
+    def read_omen(self):
+        for row_num, cells in self.contents.items():
+            if row_num == 1:  # Omen name, skip
+                continue
+            for col_name, cell in cells:
                 pass
+
+    def get_val_at_column(col_name: str):
+        pass

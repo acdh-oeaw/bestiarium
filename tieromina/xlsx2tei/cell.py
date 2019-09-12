@@ -60,6 +60,11 @@ class Cell:
                         self.tokens.append(Token(text=text, fmt=fmt))
 
     @property
+    def text(self) -> str:
+        # returns text without any information about formatting and property
+        return ' '.join([str(token) for token in self.tokens])
+
+    @property
     def italics(self) -> bool:
         return self.fmt.italics if self.fmt else False
 
@@ -77,6 +82,9 @@ class Cell:
 
     def __str__(self):
         return str(self.tokens)
+
+    def __repr__(self):
+        return f'Format: {self.fmt} Tokens: {self.tokens}'
 
 
 class Fmt(NamedTuple):
