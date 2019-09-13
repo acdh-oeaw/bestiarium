@@ -10,6 +10,7 @@ class Omen:
     transcription, translations
     and commentary
     '''
+    tokens: str = []
     score = None
     readings = None
     comment = None
