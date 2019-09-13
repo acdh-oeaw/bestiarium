@@ -1,6 +1,7 @@
 '''
 Omen - represents all the parts of a particular omen sheet
 '''
+from .score import Score
 
 
 class Omen:
@@ -10,10 +11,10 @@ class Omen:
     transcription, translations
     and commentary
     '''
-    tokens: str = []
     score = None
     readings = None
     comment = None
+    tokens: list = []
 
     def set_title(self, title: str):
         self.title = title
