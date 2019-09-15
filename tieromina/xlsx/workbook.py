@@ -33,7 +33,8 @@ class Workbook:
         sheets = wb_xml.find('ns:sheets', NS)
 
         for sheet_num, elem in enumerate(sheets):
-            sheet_xml = self.z.read(f'xl/worksheets/sheet{sheet_num+1}.xml')
+            sheet_xml = ET.XML(
+                self.z.read(f'xl/worksheets/sheet{sheet_num+1}.xml'))
             yield Sheet(sheet_xml=sheet_xml,
                         style=self.style,
                         shared_strings=self.shared_strings)

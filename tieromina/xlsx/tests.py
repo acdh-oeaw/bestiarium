@@ -4,6 +4,7 @@ from xml.etree import ElementTree as ET
 
 from django.test import TestCase
 
+from .omensworkbook import OmensWorkbook
 from .sheet import Sheet
 from .workbook import Style, Workbook
 
@@ -94,3 +95,12 @@ class SheetTestCase(TestCase):
                 assert token.text == '-ik'
                 assert token.format.italics
         assert i == 1
+
+
+class OmensWorkbookTestCase(TestCase):
+    test_file = 'xlsx/test_data/Snakes 23.1-11.xlsx'
+
+    def test_tei(self):
+        omens_workbook = OmensWorkbook(self.test_file)
+        tei = omens_workbook.export_to_tei()
+        print(tei)

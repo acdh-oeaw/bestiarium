@@ -43,6 +43,17 @@ class Sheet:
         '''
         return self.sheet.find(f'.//*[@r="{address}"]')
 
+    def get_text_at(self, address) -> str:
+        '''
+        Returns the cell text without any formatting
+        '''
+        cell = self.get_cell_at(address)
+        text = ''
+        for token in self.get_tokens_in_cell(cell):
+            text = text + token.text
+
+        return text
+
     def get_tokens_in_cell(self, cell) -> Token:
         '''
         Yields the text contents of the cell
