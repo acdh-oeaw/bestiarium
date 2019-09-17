@@ -139,3 +139,16 @@ class Sheet:
             bgcolor = None
         return Format(
             bold=boldface, italics=italics, color=color, bgcolor=bgcolor)
+
+    def get_column_name(self, cell):
+        '''
+        Returns the column name from the cell address
+        '''
+        address = cell.attrib.get('r')
+        column_name = ''
+        for char in address:
+            if char.isalpha():
+                column_name += char
+            else:
+                return column_name
+        return column_name

@@ -4,6 +4,7 @@ from xml.etree import ElementTree as ET
 
 from django.test import TestCase
 
+from .omensheet import OmenSheet
 from .omensworkbook import OmensWorkbook
 from .sheet import Sheet
 from .workbook import Style, Workbook
@@ -119,3 +120,22 @@ class OmensWorkbookTestCase(TestCase):
         tei = omens_workbook.export_to_tei()
         tei_root = ET.fromstring(tei)
         assert len(tei_root.findall('.//ns:text/ns:body/ns:div', NS)) == 9
+
+
+class OmenSheetTestCase(TestCase):
+    def setUp(self):
+        sheet_xml = ET.parse('xlsx/test_data/sheet1.xml').getroot()
+        with open('xlsx/test_data/styles.xml', 'r') as f:
+            style_xml = f.read()
+
+        style = Style(style_xml)
+        shared_strings_xml = ET.parse(
+            'xlsx/test_data/sharedStrings.xml').getroot()
+        sheet = Sheet(
+            sheet_xml=sheet_xml,
+            style=style,
+            shared_strings=shared_strings_xml)
+        self.omen_sheet = OmenSheet(sheet)
+
+    def test_comments(self):
+        self.assertEqual(len(self.omen_sheet.commentary), 2)

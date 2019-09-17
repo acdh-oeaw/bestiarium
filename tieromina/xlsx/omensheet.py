@@ -39,10 +39,16 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
 
     @property
     def witness_id(self):
+        '''
+        returns a string  representation of the witness that can be legally used in an XML attribute
+        '''
         return "wit_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.siglum)
 
 
 class ScoreLine:
+    '''
+    Line containing score from a particular witness
+    '''
     lemmas: List  # list of cells
     witness: Witness
 
@@ -53,16 +59,20 @@ class Commentary(UserList):
     '''
     title: str = 'Philological commentary'
 
-    def set_title(self, title):
-        self.title = title
+    def __init__(self, title=None):
+        super().__init__()
+        if title: self.title = title
 
 
 class OmenSheet(Sheet):
+    '''
+    A subclasss of Sheet, reads a spreadsheet containing an Omen
+    '''
     witnesses: List[Witness] = []
     score: Dict[Witness, ScoreLine]
     protasis: List[str]
     apodosis: List[str]
-    commentary: Commentary = Commentary()
+    commentary: Commentary = None
 
     def __init__(self, sheet):
         super().__init__(
@@ -79,14 +89,15 @@ class OmenSheet(Sheet):
         '''
         if (not cell_text and prev_row_type == ROWTYPE_COMMENT
             ) or 'comment' in cell_text.lower():
+            self.commentary = Commentary(cell_text)
             return ROWTYPE_COMMENT
-        if 'trl' in cell_text.lower():
+        if '(trl)' in cell_text.lower():
             return ROWTYPE_TRANSLITERATION
-        if 'trs' in cell_text.lower():
+        if '(trs)' in cell_text.lower():
             return ROWTYPE_TRANSCRIPTION
-        if 'en' or 'de' in cell_text.lower():
+        if any(lang for lang in ('(en)', '(de)') if lang in cell_text.lower()):
             return ROWTYPE_TRANSLATION
-        if '(' or ')' not in cell_text:
+        if '(' not in cell_text:
             return ROWTYPE_SCORE
 
         raise ('Unknown row type')
@@ -96,19 +107,17 @@ class OmenSheet(Sheet):
         Reads the spreadsheet into an OmenSheet representation
         '''
         row_type = None  # initial guess can also be omen name?
+        # TODO:  omen connections
+        self.omen_name = self.get_text_from_cell(self.get_cell_at('A1'))
         for row_num, row in enumerate(self.get_rows()):
-            if self.is_empty_row(row):
+            if self.is_empty_row(row) or row_num == 0:
                 continue
 
             for col_num, cell in enumerate(self.get_cells_in_row(row)):
                 cell_text = self.get_text_from_cell(cell)
+                if not cell_text: continue
 
-                if not cell_text:  # SKIP empty cells
-                    continue
-
-                if row_num == 0 and col_num == 0:  # Omen name
-                    self.omen_name = cell_text
-                elif col_num == 0:  # first cell in the row
+                if self.get_column_name(cell) == 'A':  # first cell in the row
                     row_type = self.get_row_type(cell_text, row_type)
                     continue
 
