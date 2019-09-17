@@ -62,12 +62,13 @@ class Sheet:
         for token in self.get_tokens_in_cell(cell):
             text = text + token.text
 
-        return text
+        return text.strip()
 
     def get_tokens_in_cell(self, cell) -> Token:
         '''
         Yields the text contents of the cell
         without formatting info
+        TODO: preserve space tag in shared strings
         '''
         cell_format = self.extract_cell_format(cell)
 
