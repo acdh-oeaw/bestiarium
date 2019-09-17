@@ -152,3 +152,7 @@ class Sheet:
             else:
                 return column_name
         return column_name
+
+    def find_cell_in_row(self, row, column_name):
+        row_name = row.attrib.get('r')
+        return row.find(f'ns:c[@r="{column_name}{row_name}"]', NS)

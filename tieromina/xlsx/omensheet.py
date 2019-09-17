@@ -70,9 +70,10 @@ class OmenSheet(Sheet):
     '''
     witnesses: List[Witness] = []
     score: Dict[Witness, ScoreLine]
-    protasis: List[str]
-    apodosis: List[str]
+    protasis: List[str] = []
+    apodosis: List[str] = []
     commentary: Commentary = None
+    reading: Dict = None
 
     def __init__(self, sheet):
         super().__init__(
@@ -82,11 +83,15 @@ class OmenSheet(Sheet):
 
         self.read()
 
-    def get_row_type(self, cell_text, prev_row_type):
+    def get_row_type(self, row, prev_row_type):
         '''
         Returns the row type based on the contents of cell_text
         Expects the cell in the first column but does not validate
         '''
+        first_cell = self.find_cell_in_row(row, 'A')
+        if not first_cell: return prev_row_type
+        cell_text = self.get_text_from_cell(first_cell)
+
         if (not cell_text and prev_row_type == ROWTYPE_COMMENT
             ) or 'comment' in cell_text.lower():
             self.commentary = Commentary(cell_text)
@@ -102,6 +107,29 @@ class OmenSheet(Sheet):
 
         raise ('Unknown row type')
 
+    def add_comment(self, row):
+        '''
+        Adds philological commentary to the commentary attribute in the class
+        '''
+        for col_num, cell in enumerate(self.get_cells_in_row(row)):
+            if self.get_column_name(
+                    cell) == 'A' or not self.get_text_from_cell(cell):
+                continue
+
+            self.commentary.append(cell)
+
+    def add_scoreline(self, row):
+        pass
+
+    def add_transliteration(self, row):
+        pass
+
+    def add_transcription(self, row):
+        pass
+
+    def add_translation(self, row):
+        pass
+
     def read(self):
         '''
         Reads the spreadsheet into an OmenSheet representation
@@ -112,17 +140,25 @@ class OmenSheet(Sheet):
         for row_num, row in enumerate(self.get_rows()):
             if self.is_empty_row(row) or row_num == 0:
                 continue
+            # Find row type
+            row_type = self.get_row_type(row, row_type)
+            if row_type == ROWTYPE_SCORE:
+                self.add_scoreline(row)
+            elif row_type == ROWTYPE_COMMENT:
+                self.add_comment(row)
+            elif row_type == ROWTYPE_TRANSLITERATION:
+                self.add_transliteration(row)
+            elif row_type == ROWTYPE_TRANSCRIPTION:
+                self.add_transcription(row)
+            elif row_type == ROWTYPE_TRANSLATION:
+                self.add_translation(row)
 
-            for col_num, cell in enumerate(self.get_cells_in_row(row)):
-                cell_text = self.get_text_from_cell(cell)
-                if not cell_text: continue
-
-                if self.get_column_name(cell) == 'A':  # first cell in the row
-                    row_type = self.get_row_type(cell_text, row_type)
-                    continue
-
-                if row_type == ROWTYPE_COMMENT:
-                    self.commentary.append(cell)
+    def get_witness(self, row):
+        col1, ref = self.find_cell_in_row(row, 'A'), self.find_cell_in_row(
+            row, 'B')
+        return Witness(
+            col1=self.get_text_from_cell(col1),
+            reference=self.get_text_from_cell(ref))
 
     def is_position_cell(self, cell):
         '''
