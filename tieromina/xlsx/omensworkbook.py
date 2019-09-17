@@ -83,24 +83,3 @@ class OmensWorkbook(Workbook):
             body.append(omen_div)
 
         return pretty_print(root)
-
-
-class Position:
-    '''
-    Line, column, obverse and reverse information about the position of the omen in the tablet
-    '''
-
-    def __init__(self, cell_value):
-        self.cell_value = cell_value
-
-        self.reverse = 'Reverse' if 'r.' in cell_value else 'Obverse'
-
-        if cell_value and not cell_value.startswith(
-                'r') and not cell_value[0].isnumeric():
-            self.column_break = cell_value.split()[0]
-            self.line_break = ' '.join(cell_value.split()[1:])
-        else:
-            self.line_break = cell_value
-            self.column_break = None
-
-        return

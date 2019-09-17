@@ -2,7 +2,9 @@
 Deconstructs omen encoded in a spreadsheet to an object
 Exports the omen object into a div element for TEI
 '''
-from collections import UserList, namedtuple
+import logging
+import re
+from collections import UserList, defaultdict, namedtuple
 from typing import Dict, List
 from xml.etree import ElementTree as ET
 
@@ -18,13 +20,30 @@ ROWTYPE_TRANSLATION = 'TRANSLATION'
 ROWTYPE_COMMENT = 'COMMENT'
 
 
+class ReadingId(namedtuple('ReadingId', 'label, siglum, reference')):
+    def __new__(cls, col1: str, col2: str = None):
+        reference = col2 if col2 else ''
+
+        m = re.match(
+            r'^(?P<label>[a-zA-Z\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$',
+            col1)
+        if m:
+            label = m.group('label')
+            siglum = m.group('siglum')
+        else:
+            logging.warning(
+                'Unexpected format in "%s" - unable to match regular expression',
+                col1)
+            label = col1
+            siglum = ''
+        return super().__new__(
+            cls, label=label, siglum=siglum, reference=reference)
+
+
 class Witness(namedtuple('Witness', 'siglum, joins, reference')):
     '''
     A witness - siglum, joins and if applicable, reference
     '''
-    siglum: str
-    joins: tuple = None
-    reference: str = None
 
     def __new__(cls, col1: str, reference: str):
         '''
@@ -65,7 +84,42 @@ class Commentary(UserList):
 
 
 class Reading:
-    pass
+    '''
+    Contains the translations, transliterations and transcriptions of the omen
+    '''
+
+    translation: Dict = defaultdict(list)
+    transcription: Dict = defaultdict(list)
+    transliteration: Dict = defaultdict(list)
+
+
+class ReadingLine(UserList):
+    '''
+    A line - translation/transcription or transliteration
+    Reading-id: 
+    '''
+    reading_id: ReadingId
+
+
+class Position:
+    '''
+    Line, column, obverse and reverse information about the position of the omen in the tablet
+    '''
+
+    def __init__(self, cell_value):
+        self.cell_value = cell_value
+
+        self.reverse = 'Reverse' if 'r.' in cell_value else 'Obverse'
+
+        if cell_value and not cell_value.startswith(
+                'r') and not cell_value[0].isnumeric():
+            self.column_break = cell_value.split()[0]
+            self.line_break = ' '.join(cell_value.split()[1:])
+        else:
+            self.line_break = cell_value
+            self.column_break = None
+
+        return
 
 
 class OmenSheet(Sheet):
@@ -76,7 +130,7 @@ class OmenSheet(Sheet):
     protasis: List[str] = []
     apodosis: List[str] = []
     commentary: Commentary = None
-    reading: Reading = None
+    reading: Reading = Reading()
 
     def __init__(self, sheet):
         super().__init__(
@@ -139,7 +193,17 @@ class OmenSheet(Sheet):
         '''
         Add transliteration to readings
         '''
-        pass
+        col1, ref = self.find_cell_in_row(row, 'A'), self.find_cell_in_row(
+            row, 'B')
+        reading_id = ReadingId(
+            col1=self.get_text_from_cell(col1) if col1 else '',
+            col2=self.get_text_from_cell(ref) if ref else '')
+
+        for col_num, cell in enumerate(self.get_cells_in_row(row)):
+            cell_text = self.get_text_from_cell(cell)
+            if (self.get_column_name(cell) in 'AB' or not cell_text):
+                continue
+            self.reading.transliteration[reading_id].append(cell_text)
 
     def add_transcription(self, row):
         '''
@@ -191,7 +255,12 @@ class OmenSheet(Sheet):
         '''
         Creates a hashable representation of the reading group - CopyText or Var or ...
         '''
-        pass
+        col1, ref = self.find_cell_in_row(row, 'A'), self.find_cell_in_row(
+            row, 'B')
+        witness = Witness(
+            col1=self.get_text_from_cell(col1),
+            reference=self.get_text_from_cell(ref))
+        return witness
 
     def is_position_cell(self, cell):
         '''
