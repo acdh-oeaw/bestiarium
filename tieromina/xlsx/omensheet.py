@@ -64,16 +64,19 @@ class Commentary(UserList):
         if title: self.title = title
 
 
+class Reading:
+    pass
+
+
 class OmenSheet(Sheet):
     '''
     A subclasss of Sheet, reads a spreadsheet containing an Omen
     '''
-    witnesses: List[Witness] = []
     score: Dict = {}
     protasis: List[str] = []
     apodosis: List[str] = []
     commentary: Commentary = None
-    reading: Dict = None
+    reading: Reading = None
 
     def __init__(self, sheet):
         super().__init__(

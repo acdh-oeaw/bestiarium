@@ -75,7 +75,7 @@ class OmensWorkbook(Workbook):
             omen_sheet = OmenSheet(sheet)
 
             # Add witnesses from the omen to TEI
-            for witness in omen_sheet.witnesses:
+            for witness in omen_sheet.score.keys():
                 pass
 
             # Add omen div to TEI
