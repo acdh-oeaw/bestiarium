@@ -16,6 +16,7 @@ class Sheet:
     A single sheet from a workbook
     Initialised with shared styles and strings
     '''
+
     def __init__(self, *, sheet_xml, style, shared_strings):
         self.sheet = sheet_xml
         self.style = style
@@ -26,8 +27,9 @@ class Sheet:
         Yields the row name and the row
         '''
         rows = self.sheet.findall('ns:sheetData/ns:row', NS)
-        row_name = row.attrib.get('r')
-        yield row_name, row
+        for row in rows:
+            row_name = row.attrib.get('r')
+            yield row
 
     def get_cells_in_row(self, row):
         '''
@@ -43,11 +45,10 @@ class Sheet:
         '''
         return self.sheet.find(f'.//*[@r="{address}"]')
 
-    def get_text_at(self, address) -> str:
+    def get_text_from_cell(self, cell) -> str:
         '''
         Returns the cell text without any formatting
         '''
-        cell = self.get_cell_at(address)
         text = ''
         for token in self.get_tokens_in_cell(cell):
             text = text + token.text
@@ -87,12 +88,13 @@ class Sheet:
                     superscript = True if elem.find(
                         'ns:rPr/ns:vertAlign[@val="superscript"]',
                         NS) is not None else False
-                    fmt = Format(subscript=subscript,
-                                 superscript=superscript,
-                                 italics=italics,
-                                 bold=boldface,
-                                 color=color,
-                                 bgcolor=cell_format.bgcolor)
+                    fmt = Format(
+                        subscript=subscript,
+                        superscript=superscript,
+                        italics=italics,
+                        bold=boldface,
+                        color=color,
+                        bgcolor=cell_format.bgcolor)
 
                     yield Token(text=elem.find('./ns:t', NS).text, format=fmt)
 
@@ -100,9 +102,8 @@ class Sheet:
             # raw text element
             raw_text_elem = cell.find('ns:v', NS)
             if raw_text_elem is not None:
-                yield Token(text=raw_text_elem.text,
-                            format=cell_format,
-                            complete=True)
+                yield Token(
+                    text=raw_text_elem.text, format=cell_format, complete=True)
 
     def extract_cell_format(self, cell) -> Format:
         '''
@@ -126,7 +127,5 @@ class Sheet:
                                 NS).attrib.get('rgb')
         else:
             bgcolor = None
-        return Format(bold=boldface,
-                      italics=italics,
-                      color=color,
-                      bgcolor=bgcolor)
+        return Format(
+            bold=boldface, italics=italics, color=color, bgcolor=bgcolor)

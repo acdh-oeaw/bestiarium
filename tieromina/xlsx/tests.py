@@ -106,8 +106,19 @@ class OmensWorkbookTestCase(TestCase):
         tei = omens_workbook.export_to_tei()
         print(tei)
 
+    def test_omen(self):
+        omens_workbook = OmensWorkbook('xlsx/test_data/Snakes 23.1-11.xlsx')
+        tei = omens_workbook.export_to_tei()
+        tei_root = ET.fromstring(tei)
+        omen = tei_root.find('.//ns:div[@n="Omen 23.1"]', NS)
+        ET.dump(omen)
+
     def test_number_of_omens(self):
         omens_workbook = OmensWorkbook('xlsx/test_data/Snakes 23.1-11.xlsx')
         tei = omens_workbook.export_to_tei()
         tei_root = ET.fromstring(tei)
         assert len(tei_root.findall('.//ns:text/ns:body/ns:div', NS)) == 11
+        omens_workbook = OmensWorkbook('xlsx/test_data/Snakes 23.12-20.xlsx')
+        tei = omens_workbook.export_to_tei()
+        tei_root = ET.fromstring(tei)
+        assert len(tei_root.findall('.//ns:text/ns:body/ns:div', NS)) == 9
