@@ -2,6 +2,7 @@
 Deconstructs omen encoded in a spreadsheet to an object
 Exports the omen object into a div element for TEI
 '''
+from typing import NamedTuple
 from xml.etree import ElementTree as ET
 
 from .sheet import Sheet
@@ -15,6 +16,20 @@ ROWTYPE_TRANSCRIPTION = 'TRANSCRIPTION'
 ROWTYPE_TRANSLATION = 'TRANSLATION'
 ROWTYPE_COMMENT = 'COMMENT'
 
+ROWTYPE_ORDER = [
+    'OMEN_NAME',
+]
+
+
+class Witness(NamedTuple):
+
+    siglum: str
+    ref: str = ''
+
+    @property
+    def witness_id(self):
+        return "wit_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.siglum)
+
 
 class OmenSheet(Sheet):
     def __init__(self, sheet):
@@ -25,11 +40,29 @@ class OmenSheet(Sheet):
         self.read()
 
     def read(self):
-        A1 = self.get_cell_at('A1')
-        self.omen_name = self.get_text_from_cell(A1)
+        '''
+        Reads the spreadsheet into an OmenSheet representation
+        '''
         self.witnesses = []
 
-    def get_omen_div(self):
+        for row_num, row in enumerate(self.get_rows()):
+            if self.is_empty_row(row):
+                continue
+
+            for col_num, cell in enumerate(self.get_cells_in_row(row)):
+                if row_num == 0 and col_num == 0:  # Omen name
+                    self.omen_name = self.get_text_from_cell(cell)
+
+    def is_position_cell(self, cell):
+        '''
+        Returns True if the cell contains line number formatting
+        '''
+        for token in self.get_tokens_in_cell(cell):
+            if token.format.color == LINENUM_COLOR and token.text:
+                return True
+
+    @property
+    def omen_div(self):
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
         score = ET.SubElement(omen_div, 'div', {'type': 'score'})

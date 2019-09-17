@@ -60,14 +60,6 @@ class OmensWorkbook(Workbook):
 
         return root
 
-    def is_position_cell(self, sheet, cell):
-        '''
-        Returns True if the cell contains line number formatting
-        '''
-        for token in sheet.get_tokens_in_cell(cell):
-            if token.format.color == LINENUM_COLOR and token.text:
-                return True
-
     def export_to_tei(self):
         '''
         Updates the TEI representation of a chapter with the omens in the workbook
@@ -87,7 +79,7 @@ class OmensWorkbook(Workbook):
                 pass
 
             # Add omen div to TEI
-            omen_div = omen_sheet.get_omen_div()
+            omen_div = omen_sheet.omen_div
             body.append(omen_div)
 
         return pretty_print(root)

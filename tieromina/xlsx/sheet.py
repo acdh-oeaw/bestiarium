@@ -31,6 +31,15 @@ class Sheet:
             row_name = row.attrib.get('r')
             yield row
 
+    def is_empty_row(self, row):
+        '''
+        Returns True if the row does not contain any text
+        '''
+        for cell in self.get_cells_in_row(row):
+            if self.get_text_from_cell(cell).strip():
+                return False
+        return True
+
     def get_cells_in_row(self, row):
         '''
         Yields the cells in a row
