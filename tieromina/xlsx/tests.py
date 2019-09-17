@@ -139,3 +139,6 @@ class OmenSheetTestCase(TestCase):
 
     def test_comments(self):
         self.assertEqual(len(self.omen_sheet.commentary), 2)
+
+    def test_score(self):
+        print(self.omen_sheet.score)

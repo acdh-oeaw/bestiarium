@@ -23,7 +23,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
     A witness - siglum, joins and if applicable, reference
     '''
     siglum: str
-    joins: list = None
+    joins: tuple = None
     reference: str = None
 
     def __new__(cls, col1: str, reference: str):
@@ -33,7 +33,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
         '''
         witness_parts = col1.split('+.')
         siglum = witness_parts[0].rstrip('+')
-        joins = witness_parts[1:]
+        joins = tuple(witness_parts[1:])
         return super().__new__(
             cls, siglum=siglum, joins=joins, reference=reference)
 
@@ -69,7 +69,7 @@ class OmenSheet(Sheet):
     A subclasss of Sheet, reads a spreadsheet containing an Omen
     '''
     witnesses: List[Witness] = []
-    score: Dict[Witness, ScoreLine]
+    score: Dict = {}
     protasis: List[str] = []
     apodosis: List[str] = []
     commentary: Commentary = None
@@ -119,7 +119,18 @@ class OmenSheet(Sheet):
             self.commentary.append(cell)
 
     def add_scoreline(self, row):
-        pass
+        '''
+        Adds the scoreline to the score attribute
+        '''
+        witness = self.get_witness(row)
+        if witness.__hash__ in self.score.keys():
+            raise ValueError(f'Duplicate witness+reference {row}')
+        self.score[witness] = []
+        for col_num, cell in enumerate(self.get_cells_in_row(row)):
+            cell_text = self.get_text_from_cell(cell)
+            if (self.get_column_name(cell) in 'AB' or not cell_text):
+                continue
+            self.score[witness].append(cell_text)
 
     def add_transliteration(self, row):
         pass
@@ -156,9 +167,10 @@ class OmenSheet(Sheet):
     def get_witness(self, row):
         col1, ref = self.find_cell_in_row(row, 'A'), self.find_cell_in_row(
             row, 'B')
-        return Witness(
+        witness = Witness(
             col1=self.get_text_from_cell(col1),
             reference=self.get_text_from_cell(ref))
+        return witness
 
     def is_position_cell(self, cell):
         '''
