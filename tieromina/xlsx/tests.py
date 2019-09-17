@@ -8,6 +8,8 @@ from .omensworkbook import OmensWorkbook
 from .sheet import Sheet
 from .workbook import Style, Workbook
 
+NS = {'ns': 'http://www.tei-c.org/ns/1.0'}
+
 
 class WorkbookTestCase(TestCase):
 
@@ -43,9 +45,10 @@ class SheetTestCase(TestCase):
         style = Style(style_xml)
         shared_strings_xml = ET.parse(
             'xlsx/test_data/sharedStrings.xml').getroot()
-        self.sheet = Sheet(sheet_xml=sheet_xml,
-                           style=style,
-                           shared_strings=shared_strings_xml)
+        self.sheet = Sheet(
+            sheet_xml=sheet_xml,
+            style=style,
+            shared_strings=shared_strings_xml)
 
     def test_bold_cell(self):
         cell = self.sheet.get_cell_at('A1')
@@ -98,9 +101,13 @@ class SheetTestCase(TestCase):
 
 
 class OmensWorkbookTestCase(TestCase):
-    test_file = 'xlsx/test_data/Snakes 23.1-11.xlsx'
-
     def test_tei(self):
-        omens_workbook = OmensWorkbook(self.test_file)
+        omens_workbook = OmensWorkbook('xlsx/test_data/Snakes 23.1-11.xlsx')
         tei = omens_workbook.export_to_tei()
         print(tei)
+
+    def test_number_of_omens(self):
+        omens_workbook = OmensWorkbook('xlsx/test_data/Snakes 23.1-11.xlsx')
+        tei = omens_workbook.export_to_tei()
+        tei_root = ET.fromstring(tei)
+        assert len(tei_root.findall('.//ns:text/ns:body/ns:div', NS)) == 11

@@ -27,6 +27,7 @@ class OmensWorkbook(Workbook):
     An XLSX workbook containing omens in different sheets
     Exportable as TEI
     '''
+
     def __init__(self, wbfile):
         super().__init__(wbfile)
 
@@ -62,7 +63,7 @@ class OmensWorkbook(Workbook):
             return
 
         # TODO: extract existing representation and update
-        root = ET.Element('TEI', {'xmlns': 'http://www.tei-c.org/ns/1.0'})
+        root = ET.Element('TEI', {'xmlns': NS['tei']})
         add_outline()  # add TEI skeleton
         body = root.find('./text/body')
 
