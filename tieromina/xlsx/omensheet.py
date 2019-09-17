@@ -133,12 +133,21 @@ class OmenSheet(Sheet):
             self.score[witness].append(cell_text)
 
     def add_transliteration(self, row):
+        '''
+        Add transliteration to readings
+        '''
         pass
 
     def add_transcription(self, row):
+        '''
+        Add transcription to readings
+        '''
         pass
 
     def add_translation(self, row):
+        '''
+        Add translation to omen
+        '''
         pass
 
     def read(self):
@@ -165,12 +174,21 @@ class OmenSheet(Sheet):
                 self.add_translation(row)
 
     def get_witness(self, row):
+        '''
+        Creates a hashable representation of the siglum+reference
+        '''
         col1, ref = self.find_cell_in_row(row, 'A'), self.find_cell_in_row(
             row, 'B')
         witness = Witness(
             col1=self.get_text_from_cell(col1),
             reference=self.get_text_from_cell(ref))
         return witness
+
+    def get_reading_id(self, row):
+        '''
+        Creates a hashable representation of the reading group - CopyText or Var or ...
+        '''
+        pass
 
     def is_position_cell(self, cell):
         '''
