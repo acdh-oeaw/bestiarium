@@ -64,3 +64,6 @@ class Cell:
 
     def __str__(self):
         return self.full_text
+
+    def __repr__(self):
+        return f'Number of tokens: {len(self.tokens)}\nFull text: {self.full_text}'

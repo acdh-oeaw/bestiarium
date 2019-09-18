@@ -36,13 +36,26 @@ class Sheet:
         rows = self.sheet.findall('ns:sheetData/ns:row', NS)
         for row in rows:
             row_name = row.attrib.get('r')
-            yield row
+            yield row_name, row
 
-    def get_cells(self) -> Cell:
+    def get_cells(self, row) -> Cell:
+        '''
+        Yields standalone cell instances representing the contents of a cell
+        '''
         elems = row.findall('ns:c', NS)
         for c in elems:
             cell = self._get_cell_from_element(c)
             yield cell
+
+    def is_empty_row(self, row) -> bool:
+        '''
+        Returns True if the row is empty
+        '''
+        for cell in self.get_cells(row):
+            if cell.full_text:
+                return False
+
+        return True
 
     def _get_cell_from_element(self, cell_element):
         '''
