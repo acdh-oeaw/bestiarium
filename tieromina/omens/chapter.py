@@ -1,30 +1,14 @@
 '''
 A chapter containing one of more omens, derived from one of more workbooks
 '''
-from xml.dom import minidom
+
 from xml.etree import ElementTree as ET
 
 from .omen import Omen
+from .util import element2string
 from .workbook import Workbook
 
 NS = {'tei': 'http://www.tei-c.org/ns/1.0'}
-
-
-def element2string(root):
-    '''
-    Converts element into an actual string (not bytes!)
-    why is this necessary? :sigh:
-    '''
-    dom = minidom.parseString(ET.tostring(root))
-    pretty_root = dom.toprettyxml(indent="  ", newl="\n")
-    return pretty_root
-
-
-def pretty_print(root):
-    '''
-    pretty prints xml elements
-    '''
-    print(element2string(root))
 
 
 class Chapter:

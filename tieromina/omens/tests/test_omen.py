@@ -3,9 +3,9 @@ from xml.etree import ElementTree as ET
 
 from django.test import TestCase
 
-from ..chapter import pretty_print
 from ..omen import Omen
 from ..sheet import Sheet
+from ..util import pretty_print
 from ..workbook import Style
 
 NS = {'ns': 'http://www.tei-c.org/ns/1.0'}
@@ -27,5 +27,4 @@ class OmenTestCase(TestCase):
         self.omen = Omen(sheet)
 
     def test_omen_div(self):
-        omen_div = pretty_print(self.omen.tei_div)
-        print(omen_div)
+        pretty_print(self.omen.tei_div)
