@@ -43,7 +43,6 @@ class Omen:
             logging.debug('ROW: %s - %s ', row_num, row_type)
             if row_type == ROWTYPE_SCORE:
                 self.score.add_row(cells)
-                pass
             elif row_type == ROWTYPE_READING:
                 pass
             elif row_type == ROWTYPE_COMMENT:
@@ -53,8 +52,8 @@ class Omen:
     def tei(self):
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
-        score = ET.SubElement(omen_div, 'div', {'type': 'score'})
-        ab = ET.SubElement(score, 'ab')
+        score_div = self.score.tei
+        omen_div.append(score_div)
         row_type = None
         comments_div = self.commentary.tei
         omen_div.append(comments_div)
