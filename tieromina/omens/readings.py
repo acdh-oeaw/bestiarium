@@ -1,7 +1,8 @@
 '''
 Represents the readings of an omen
 '''
-from collections import namedtuple
+from collections import UserDict, UserList
+from typing import NamedTuple
 
 
 class ReadingId(NamedTuple):

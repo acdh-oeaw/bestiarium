@@ -10,18 +10,26 @@ from .workbook import Workbook
 NS = {'tei': 'http://www.tei-c.org/ns/1.0'}
 
 
+def element2string(root):
+    '''
+    Converts element into an actual string (not bytes!)
+    why is this necessary? :sigh:
+    '''
+    dom = minidom.parseString(ET.tostring(root))
+    pretty_root = dom.toprettyxml(indent="  ", newl="\n")
+    return pretty_root
+
+
 def pretty_print(root):
     '''
     pretty prints xml elements
     '''
-    dom = minidom.parseString(ET.tostring(root))
-    pretty_root = dom.toprettyxml(indent="  ", newl="\n")
-    # print(pretty_root)
-    return pretty_root
+    print(element2string(root))
 
 
 class Chapter:
-    name: str = ''
+    def __init__(self):
+        self.name = ''
 
     def _get_tei_outline(self):
         '''
@@ -66,7 +74,7 @@ class Chapter:
                 pass
 
             # Add omen div to TEI
-            omen_div = omen.omen_div
+            omen_div = omen.tei_div
             body.append(omen_div)
 
-        return pretty_print(root)
+        return element2string(root)
