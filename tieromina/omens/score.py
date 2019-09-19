@@ -8,6 +8,7 @@ from typing import List
 from xml.etree import ElementTree as ET
 
 from .cell import Cell
+from .lemma import Lemma
 from .position import Position
 
 logger = logging.getLogger(__name__)
@@ -17,7 +18,6 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
     '''
     A witness - siglum, joins and if applicable, reference
     '''
-
     def __new__(cls, row):
         '''
         Converts the first two column values for a score line into an immutable namedtuple,
@@ -39,8 +39,10 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
         except IndexError as ie:
             reference = ''
 
-        return super().__new__(
-            cls, siglum=siglum, joins=joins, reference=reference)
+        return super().__new__(cls,
+                               siglum=siglum,
+                               joins=joins,
+                               reference=reference)
 
     @property
     def xml_id(self):
@@ -56,7 +58,6 @@ class ScoreLine(UserList):
     '''
     A line from the score of the omen
     '''
-
     def __init__(self, row: List[Cell]):
         super().__init__()
         self.witness = Witness(row)
@@ -71,28 +72,14 @@ class ScoreLine(UserList):
                 self.data.append(position.line)
             else:
                 ## Lemma
-                pass
-
-
-class Lemma:
-    '''
-    Lemma as specified in the score
-    Equivalent of "Cell"
-    '''
-
-    @property
-    def tei(self):
-        '''
-        returns the TEI representation
-        '''
-        pass
+                lemma = Lemma(cell)
+                self.data.append(lemma)
 
 
 class Score(UserDict):
     '''
     A dict of score lines, identified by witness
     '''
-
     def add_row(self, row: List[Cell]):
         '''
         Adds the row to score
