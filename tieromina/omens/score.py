@@ -1,6 +1,7 @@
 '''
 Omen score - gathered from different witnesses
 '''
+import logging
 import re
 from collections import UserDict, UserList, namedtuple
 from typing import List
@@ -9,6 +10,8 @@ from xml.etree import ElementTree as ET
 from .cell import Cell
 
 LINENUM_COLOR = 'FFFF0000'
+
+logger = logging.getLogger(__name__)
 
 
 class Witness(namedtuple('Witness', 'siglum, joins, reference')):
@@ -27,7 +30,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
                 siglum = witness_parts[0].rstrip('+')
                 joins = tuple(witness_parts[1:])
             else:
-                logging.error('First cell from column A missing')
+                logger.error('First cell from column A missing')
                 raise ValueError('col1 must be column A')
         except IndexError as ie:
             raise ie
@@ -59,11 +62,16 @@ class ScoreLine(UserList):
         super().__init__()
         self.witness = Witness(row)
         for cell in row:
-            for token in cell.tokens:
-                if token.format.color == LINENUM_COLOR and token.format.italics:
-                    position = Position(token.text)
-                    if position.column: self.data.append(position.column)
-                    if position.line: self.data.append(position.line)
+            for i, token in enumerate(cell.tokens):
+                if token.format.color == LINENUM_COLOR:
+                    if token.format.italics:
+                        position = Position(token.text)
+                        if position.column: self.data.append(position.column)
+                        if position.line: self.data.append(position.line)
+                    else:  # non italicised text in line number cell
+                        logger.warning(
+                            'Non italicised text in line/column number cell: %s',
+                            token)
 
 
 class Position:
