@@ -26,10 +26,9 @@ class Omen:
     '''
 
     def __init__(self, sheet):
-        A1 = sheet.get_cell_at('A1')
-        self.omen_name = A1.full_text
-        self.commentary = Commentary()
-        self.score = {}
+        self.omen_name: str = sheet.get_cell_at('A1').full_text
+        self.commentary: Commentary = Commentary()
+        self.score: Score = Score
         self._read(sheet)
 
     def _read(self, sheet):
