@@ -41,7 +41,7 @@ class Omen:
                 continue
             # Find row type
             cells = list(self.sheet.get_cells(row))
-            row_type = self.get_row_type(cells[0], row_type)
+            row_type = Omen.get_row_type(cells[0], row_type)
             logging.debug('ROW: %s - %s ', row_num, row_type)
             if row_type == ROWTYPE_SCORE:
                 # self.add_scoreline(row)
@@ -62,7 +62,8 @@ class Omen:
         omen_div.append(comments_div)
         return omen_div
 
-    def get_row_type(self, cell, prev_row_type):
+    @staticmethod
+    def get_row_type(cell, prev_row_type):
         '''
         Returns the row type based on the contents of cell_text
         Expects the cell in the first column but does not validate
