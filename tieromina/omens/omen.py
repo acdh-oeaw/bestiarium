@@ -13,51 +13,8 @@ LINENUM_COLOR = 'FFFF0000'
 
 ROWTYPE_BLANK = 'BLANK'
 ROWTYPE_SCORE = 'SCORE'
-ROWTYPE_TRANSLITERATION = 'TRANSLITERATION'
-ROWTYPE_TRANSCRIPTION = 'TRANSCRIPTION'
-ROWTYPE_TRANSLATION = 'TRANSLATION'
+ROWTYPE_READING = 'READING'
 ROWTYPE_COMMENT = 'COMMENT'
-
-
-class ReadingId(namedtuple('ReadingId', 'label, siglum, reference')):
-    '''
-    A hashable representation of a reading label
-    '''
-
-    def __new__(cls, col1: Cell, col2: Cell):
-        reference = col2.full_text
-
-        m = re.match(
-            r'^(?P<label>[a-zA-Z\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$',
-            col1.full_text)
-        if m:
-            label = m.group('label')
-            siglum = m.group('siglum')
-        else:
-            logging.warning(
-                'Unexpected format in "%s" - unable to match regular expression',
-                col1)
-            label = col1.full_text
-            siglum = ''
-        return super().__new__(
-            cls, label=label, siglum=siglum, reference=reference)
-
-
-class Witness(namedtuple('Witness', 'siglum, joins, reference')):
-    '''
-    A witness - siglum, joins and if applicable, reference
-    '''
-
-    def __new__(cls, col1: Cell, reference: Cell):
-        '''
-        Converts the first two column values for a score line into an immutable namedtuple,
-        so it can be used as a key in the score dict
-        '''
-        witness_parts = col1.split('+.')
-        siglum = witness_parts[0].rstrip('+')
-        joins = tuple(witness_parts[1:])
-        return super().__new__(
-            cls, siglum=siglum, joins=joins, reference=reference)
 
 
 class Commentary(UserList):
@@ -96,23 +53,16 @@ class Omen:
             if self.sheet.is_empty_row(row) or row_num == 1:
                 continue
             # Find row type
-            first_cell = self.sheet.get_cell_at(f'A{row_num}')
-            row_type = self.get_row_type(first_cell, row_type)
+            cells = list(self.sheet.get_cells(row))
+            row_type = self.get_row_type(cells[0], row_type)
             print(row_num, row_type)
             if row_type == ROWTYPE_SCORE:
                 # self.add_scoreline(row)
                 pass
+            elif row_type == ROWTYPE_READING:
+                pass
             elif row_type == ROWTYPE_COMMENT:
                 self._add_comment(row)
-            elif row_type == ROWTYPE_TRANSLITERATION:
-                # self.add_transliteration(row)
-                pass
-            elif row_type == ROWTYPE_TRANSCRIPTION:
-                # self.add_transcription(row)
-                pass
-            elif row_type == ROWTYPE_TRANSLATION:
-                # self.add_translation(row)
-                pass
 
     @property
     def omen_div(self):
@@ -133,33 +83,36 @@ class Omen:
 
         return omen_div
 
-    def get_row_type(self, first_cell, prev_row_type):
+    def get_row_type(self, cell, prev_row_type):
         '''
         Returns the row type based on the contents of cell_text
         Expects the cell in the first column but does not validate
         '''
-        if not first_cell: return prev_row_type
-        cell_text = first_cell.full_text
+        if not cell or cell.column_name != 'A': return prev_row_type
 
-        if (not cell_text and prev_row_type == ROWTYPE_COMMENT
-            ) or 'comment' in cell_text.lower():
+        if (not cell.full_text and prev_row_type == ROWTYPE_COMMENT
+            ) or 'comment' in cell.full_text.lower():
             if not prev_row_type == ROWTYPE_COMMENT:
-                self.commentary = Commentary(cell_text)
+                self.commentary = Commentary(cell.full_text)
             return ROWTYPE_COMMENT
-        if '(trl)' in cell_text.lower():
-            return ROWTYPE_TRANSLITERATION
-        if '(trs)' in cell_text.lower():
-            return ROWTYPE_TRANSCRIPTION
-        if any(lang for lang in ('(en)', '(de)') if lang in cell_text.lower()):
-            return ROWTYPE_TRANSLATION
-        if '(' not in cell_text:
-            return ROWTYPE_SCORE
 
-        raise ('Unknown row type')
+        if any(
+                rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
+                if rdg in cell.full_text.lower()):
+            return ROWTYPE_READING
+
+        return ROWTYPE_SCORE
+
+    def _add_scoreline(self, row):
+        '''
+        Adds the score line to the score attribute
+        '''
+        # Create a score object
+        pass
 
     def _add_comment(self, row):
         '''
-        Adds philological commentary to the commentary attribute in the class
+        Adds philological commentary to the commentary attribute
         '''
         for cell in self.sheet.get_cells(row):
             if cell.column_name == 'A' or not cell.full_text:
