@@ -31,11 +31,11 @@ class Cell:
     A list of "Token" objects, the address of the cell and some methods
     '''
 
-    def __init__(self, address):
+    def __init__(self, address: str = ''):
         self.tokens = []
         self.address = address
 
-    def add_token(self, token):
+    def add_token(self, token: Token):
         self.tokens.append(token)
 
     @property

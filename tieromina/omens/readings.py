@@ -41,10 +41,14 @@ class Readings(UserDict):
         if not m: raise ValueError('Unrecognised row header %s', row)
         reading_id = ReadingId(
             label=m.group('label'), siglum=m.group('siglum'))
+        if reading_id not in self.data:
+            self.data[reading_id] = []
 
         reading_line = ReadingLine(m.group('rdg_type'))
+        self.data[reading_id].append(reading_line)
 
         return
 
-    def construct_key(self, row):
+    @property
+    def tei(self):
         pass
