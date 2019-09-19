@@ -6,6 +6,8 @@ from typing import List
 
 from .cell import Cell
 
+LINENUM_COLOR = 'FFFF0000'
+
 
 class Witness(namedtuple('Witness', 'siglum, joins, reference')):
     '''
@@ -17,11 +19,17 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
         Converts the first two column values for a score line into an immutable namedtuple,
         so it can be used as a key in the score dict
         '''
-        witness_parts = col1.full_text.split('+.')
-        siglum = witness_parts[0].rstrip('+')
-        joins = tuple(witness_parts[1:])
+        if col1.column_name == 'A':
+            witness_parts = col1.full_text.split('+.')
+            siglum = witness_parts[0].rstrip('+')
+            joins = tuple(witness_parts[1:])
+        else:
+            raise ValueError('col1 must be column A')
+
+        reference = col2.full_text if col2.column_name == 'B' else ''
+
         return super().__new__(
-            cls, siglum=siglum, joins=joins, reference=col2.full_text)
+            cls, siglum=siglum, joins=joins, reference=reference)
 
 
 class Scoreline:
@@ -70,6 +78,7 @@ class Score(UserDict):
         Adds the row to score
         '''
         # construct witness
+        witness = Witness(row[0], row[1])
         # self.data[witness] = Scoreline(row)
         pass
 
@@ -79,3 +88,10 @@ class Score(UserDict):
         returns the TEI representation
         '''
         pass
+
+    @property
+    def witnesses(self):
+        '''
+        returns witnesses from the keys
+        '''
+        return list(self.data.keys())

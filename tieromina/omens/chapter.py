@@ -54,7 +54,7 @@ class Chapter:
             omen = Omen(sheet)
 
             # Add witnesses from the omen to TEI
-            for witness in omen.score.keys():
+            for witness in omen.score.witnesses:
                 pass
 
             # Add omen div to TEI

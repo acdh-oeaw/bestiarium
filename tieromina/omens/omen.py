@@ -12,8 +12,6 @@ from .commentary import Commentary
 from .readings import Readings
 from .score import Score
 
-LINENUM_COLOR = 'FFFF0000'
-
 ROWTYPE_BLANK = 'BLANK'
 ROWTYPE_SCORE = 'SCORE'
 ROWTYPE_READING = 'READING'
@@ -28,7 +26,7 @@ class Omen:
     def __init__(self, sheet):
         self.omen_name: str = sheet.get_cell_at('A1').full_text
         self.commentary: Commentary = Commentary()
-        self.score: Score = Score
+        self.score: Score = Score()
         self._read(sheet)
 
     def _read(self, sheet):
