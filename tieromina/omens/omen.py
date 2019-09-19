@@ -40,7 +40,7 @@ class Omen:
             # Find row type
             cells = list(sheet.get_cells(row))
             row_type = Omen.get_row_type(cells[0], row_type)
-            logging.debug('ROW: %s - %s ', row_num, row_type)
+            # logging.debug('ROW: %s - %s ', row_num, row_type)
             if row_type == ROWTYPE_SCORE:
                 self.score.add_row(cells)
             elif row_type == ROWTYPE_READING:

@@ -63,7 +63,7 @@ class Cell:
         return column_name
 
     def __str__(self):
-        return self.full_text
+        return f'[Cell {self.address}]: {self.tokens}'
 
     def __repr__(self):
         return f'Number of tokens: {len(self.tokens)}\nFull text: {self.full_text}'
