@@ -1,6 +1,7 @@
 '''
 Omen score - gathered from different witnesses
 '''
+import re
 from collections import UserDict, UserList, namedtuple
 from typing import List
 from xml.etree import ElementTree as ET
@@ -41,7 +42,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
 
     @property
     def xml_id(self):
-        return "wit_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.siglum)
+        return "#wit_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.siglum)
 
     @property
     def tei(self):
@@ -49,7 +50,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
         wit.text = witness.siglum
 
 
-class Scoreline(UserList):
+class ScoreLine(UserList):
     '''
     A line from the score of the omen
     '''
@@ -60,9 +61,9 @@ class Scoreline(UserList):
         for cell in row:
             for token in cell.tokens:
                 if token.format.color == LINENUM_COLOR and token.format.italics:
-                    self.data.append(Position(token.text))
-
-        print(self.data)
+                    position = Position(token.text)
+                    if position.column: self.data.append(position.column)
+                    if position.line: self.data.append(position.line)
 
 
 class Position:
@@ -74,18 +75,17 @@ class Position:
     def __init__(self, text):
         # NOTE: Formatting is ignored
 
-        self.reverse = 'r.' in text  # Obverse or reverse
         self.text = text.replace('r. ', '')
         parts = self.text.split()
 
         if parts[0][0].isnumeric():
             # Only line number - multiple columns obverse/reverse is not indicated
-            self.line = Line(self.text)
+            self.line = LineInfo(self.text, reverse='r.' in text)
             self.column = None
 
         elif parts[0].isalpha():
-            self.column = Column(parts[0])
-            self.line = Line(' '.join(parts[1:]))
+            self.column = ColumnInfo(parts[0])
+            self.line = LineInfo(' '.join(parts[1:]))
         else:
             raise ValueError('Neither line nor column: "%s"', text)
 
@@ -94,30 +94,26 @@ class Position:
             f'Reverse: {self.reverse}, Line: {self.line}, Column: {self.column}'
         )
 
-    @property
-    def tei(self):
-        position_tei = []
-        if self.line: position_tei.append(self.line.tei)
-        if self.column: position_tei.append(self.column.tei)
-        return position_tei
 
-
-class Line:
+class LineInfo:
     '''
     Line number information in the tablet
     '''
 
-    def __init__(self, text):
+    def __init__(self, text, reverse=False):
         self.broken = "'" in text
+        self.reverse = reverse
         self.text = text.replace("'", '')
 
     @property
     def tei(self):
         cb = ET.Element('lb', {'n': self.text})
+        if self.reverse:
+            cb.attrib['reverse'] = 'True'
         return cb
 
 
-class Column:
+class ColumnInfo:
     '''
     Column number information in the tablet
     '''
@@ -155,7 +151,7 @@ class Score(UserDict):
         Adds the row to score
         '''
         # construct witness
-        scoreline = Scoreline(row)
+        scoreline = ScoreLine(row)
         self.data[scoreline.witness] = scoreline
 
     @property
@@ -166,11 +162,13 @@ class Score(UserDict):
         score = ET.Element('div', {'type': 'score'})
         ab = ET.SubElement(score, 'ab')
         for witness, scoreline in self.data.items():
-            print(scoreline)
             for item in scoreline:
-                if isinstance(item.tei, list):  # add line/column info
-                    for elem in item.tei:
-                        ab.append(elem)
+                item_tei = item.tei
+
+                if isinstance(item, LineInfo) or isinstance(item, ColumnInfo):
+                    item_tei.attrib['ed'] = scoreline.witness.xml_id
+                    ab.append(item_tei)
+
         return score
 
     @property
