@@ -28,19 +28,20 @@ class Omen:
     def __init__(self, sheet):
         A1 = sheet.get_cell_at('A1')
         self.omen_name = A1.full_text
-        self.sheet = sheet
         self.commentary = Commentary()
         self.score = {}
-        self.read()
+        self.read(sheet)
 
-    def read(self):
-
+    def read(self, sheet):
+        '''
+        Reads the spreadsheet and constructs the omen object
+        '''
         row_type = None
-        for row_num, row in self.sheet.get_rows():
-            if self.sheet.is_empty_row(row) or row_num == 1:
+        for row_num, row in sheet.get_rows():
+            if sheet.is_empty_row(row) or row_num == 1:
                 continue
             # Find row type
-            cells = list(self.sheet.get_cells(row))
+            cells = list(sheet.get_cells(row))
             row_type = Omen.get_row_type(cells[0], row_type)
             logging.debug('ROW: %s - %s ', row_num, row_type)
             if row_type == ROWTYPE_SCORE:
