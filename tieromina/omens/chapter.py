@@ -58,7 +58,7 @@ class Chapter:
                 pass
 
             # Add omen div to TEI
-            omen_div = omen.tei_div
+            omen_div = omen.tei
             body.append(omen_div)
 
         return element2string(root)

@@ -27,4 +27,4 @@ class OmenTestCase(TestCase):
         self.omen = Omen(sheet)
 
     def test_omen_div(self):
-        pretty_print(self.omen.tei_div)
+        pretty_print(self.omen.tei)

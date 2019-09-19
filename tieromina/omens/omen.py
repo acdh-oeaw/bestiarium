@@ -53,13 +53,13 @@ class Omen:
                 self.commentary.add_row(cells)
 
     @property
-    def tei_div(self):
+    def tei(self):
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
         score = ET.SubElement(omen_div, 'div', {'type': 'score'})
         ab = ET.SubElement(score, 'ab')
         row_type = None
-        comments_div = self.commentary.tei_div
+        comments_div = self.commentary.tei
         omen_div.append(comments_div)
         return omen_div
 

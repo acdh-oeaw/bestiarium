@@ -16,7 +16,7 @@ class Commentary(UserList):
         self.title = ''
 
     @property
-    def tei_div(self):
+    def tei(self):
         '''
         constructs a div element using TEI representation of comments
         '''
