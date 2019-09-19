@@ -30,9 +30,9 @@ class Omen:
         self.omen_name = A1.full_text
         self.commentary = Commentary()
         self.score = {}
-        self.read(sheet)
+        self._read(sheet)
 
-    def read(self, sheet):
+    def _read(self, sheet):
         '''
         Reads the spreadsheet and constructs the omen object
         '''
