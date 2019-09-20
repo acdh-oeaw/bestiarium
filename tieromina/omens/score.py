@@ -80,6 +80,11 @@ class Score(UserDict):
     '''
     A dict of score lines, identified by witness
     '''
+    def __init__(self, omen_prefix):
+        super().__init__()
+        self.omen_prefix = omen_prefix
+        logging.debug('Score for "%s"', self.omen_prefix)
+
     def add_row(self, row: List[Cell]):
         '''
         Adds the row to score
@@ -97,8 +102,14 @@ class Score(UserDict):
         ab = ET.SubElement(score, 'ab')
         for witness, scoreline in self.data.items():
             for item in scoreline:
-                item_tei = item.tei
-                ab.append(item_tei)
+                if isinstance(item, Lemma):
+                    # construct word identifier
+                    # add new /find corresponding word node
+                    # append word TEI to the node
+                    continue
+                else:  # line/column information
+                    item_tei = item.tei
+                    ab.append(item_tei)
 
         return score
 

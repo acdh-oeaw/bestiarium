@@ -22,12 +22,30 @@ class Omen:
     '''
     An omen - described by its score, transliteration transcription, translation and commentary
     '''
+    omen_name: str
 
     def __init__(self, sheet):
-        self.omen_name: str = sheet.get_cell_at('A1').full_text
+        self.omen_name: str = sheet
         self.commentary: Commentary = Commentary()
-        self.score: Score = Score()
+        self.score: Score = Score(self.omen_prefix)
         self._read(sheet)
+
+    @property
+    def omen_prefix(self):
+        return self.omen_name.lstrip('Omen ')
+
+    @property
+    def omen_name(self):
+        return self.__omen_name
+
+    @omen_name.setter
+    def omen_name(self, sheet):
+        val = sheet.get_cell_at('A1').full_text
+        if '=' in val:
+            parts = val.split('=')
+            self.__omen_name = parts[0]
+        else:
+            self.__omen_name = val
 
     def _read(self, sheet):
         '''
@@ -71,9 +89,8 @@ class Omen:
                 or 'comment' in cell.full_text.lower()):
             return ROWTYPE_COMMENT
 
-        if any(
-                rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
-                if rdg in cell.full_text.lower()):
+        if any(rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
+               if rdg in cell.full_text.lower()):
             return ROWTYPE_READING
 
         return ROWTYPE_SCORE
