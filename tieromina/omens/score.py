@@ -13,6 +13,9 @@ from .position import Position
 
 logger = logging.getLogger(__name__)
 
+XML_NS = u'http://www.w3.org/XML/1998/namespace'
+NS = {'xml': XML_NS}
+
 
 class Witness(namedtuple('Witness', 'siglum, joins, reference')):
     '''
@@ -62,7 +65,7 @@ class ScoreLine(UserList):
         super().__init__()
         self.witness = Witness(row)
         for cell in row:
-            if not cell.full_text: continue
+            if not cell.full_text or cell.column_name in 'AB': continue
 
             # determine cell type (position - column/line number or lemma)
             if Position.is_position_cell(cell):  # Position:
@@ -98,15 +101,30 @@ class Score(UserDict):
         '''
         returns the TEI representation
         '''
+
         score = ET.Element('div', {'type': 'score'})
         ab = ET.SubElement(score, 'ab')
         for witness, scoreline in self.data.items():
             for item in scoreline:
                 if isinstance(item, Lemma):
                     # construct word identifier
-                    # add new /find corresponding word node
-                    # append word TEI to the node
-                    continue
+                    word_id = f'{self.omen_prefix}.{item.xml_id}'
+                    id_attrib_name = '{' + XML_NS + '}id'
+                    word_node = ab.find(f'.//*[@xml:id="{word_id}"]/app', NS)
+
+                    # This is the correct way to check if the node exists
+                    # if not Node is True even if find returns a match
+                    if word_node is None:
+                        # add new /find corresponding word node
+                        word_parent = ET.Element('w',
+                                                 {id_attrib_name: word_id})
+                        ab.append(word_parent)
+                        word_node = ET.SubElement(word_parent, 'app')
+
+                    # Add lemma to the word node
+                    lemma_tei = item.tei
+                    lemma_tei.attrib['wit'] = witness.xml_id
+                    word_node.append(lemma_tei)
                 else:  # line/column information
                     item_tei = item.tei
                     ab.append(item_tei)

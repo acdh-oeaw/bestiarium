@@ -13,10 +13,17 @@ class Lemma(Cell):
         self.tokens = cell.tokens
 
     @property
+    def xml_id(self):
+        return f'w{self.column_name}'
+
+    @property
     def tei(self):
         '''
         returns the TEI representation
+        TODO: Align this with the convention
         '''
-        w = ET.Element('w')
-        w.text = self.full_text
+        w = ET.Element('rdg')
+        for token in self.tokens:
+            t = ET.SubElement(w, 'token')
+            t.text = token.text
         return w

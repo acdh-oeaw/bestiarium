@@ -32,7 +32,7 @@ class Omen:
 
     @property
     def omen_prefix(self):
-        return self.omen_name.lstrip('Omen ')
+        return self.omen_name.lower().replace(' ', '')
 
     @property
     def omen_name(self):
