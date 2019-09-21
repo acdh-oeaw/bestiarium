@@ -30,7 +30,6 @@ class Cell:
     '''
     A list of "Token" objects, the address of the cell and some methods
     '''
-
     def __init__(self, address: str = ''):
         self.tokens = []
         self.address = address
@@ -54,13 +53,26 @@ class Cell:
         '''
         Returns the column name from the cell address
         '''
-        column_name = ''
+        col_name = ''
         for char in self.address:
             if char.isalpha():
-                column_name += char
+                col_name += char
             else:
-                return column_name
-        return column_name
+                return col_name
+        return col_name
+
+    @property
+    def row_name(self):
+        '''
+        Returns the row name from the cell address
+        '''
+        r_name = ''
+        for char in self.address:
+            if char.isalpha():
+                pass
+            else:
+                r_name += char
+        return r_name
 
     def __str__(self):
         return f'[Cell {self.address}]: {self.tokens}'
