@@ -76,6 +76,14 @@ class ScoreLine(UserList):
                 lemma = Lemma(cell, self.witness)
                 self.data.append(lemma)
 
+    def connect_damaged_ends(self):
+        '''
+        The lemmas are reviewed once again and
+        damages that span across lemmas
+        are appropriately connected
+        '''
+        pass
+
 
 class Score(UserDict):
     '''

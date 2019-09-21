@@ -1,21 +1,20 @@
 from xml.etree import ElementTree as ET
 
-from .cell import Cell
+from .cell import Cell, Token
 
 
-class Lemma(Cell):
+class Lemma:
     '''
     Lemma as specified in the score
     Equivalent of "Cell"
     '''
     def __init__(self, cell, witness):
         self.witness = witness
-        self.address = cell.address
-        self.tokens = cell.tokens
+        self.cell = cell
 
     @property
     def xml_id(self):
-        return f'w{self.column_name}'
+        return f'w{self.cell.column_name}'
 
     @property
     def tei(self):
@@ -24,7 +23,19 @@ class Lemma(Cell):
         TODO: Align this with the convention
         '''
         w = ET.Element('rdg', {'wit': self.witness.xml_id})
-        for token in self.tokens:
-            t = ET.SubElement(w, 'token')
-            t.text = token.text
+        w.text = ''
+        anchor = None
+        for token in self.cell.tokens:
+            for char in token.text:
+                if char == '[':
+                    anchor = ET.SubElement(w, 'anchor', {'type': 'breakStart'})
+                    anchor.tail = ''
+                elif char == ']':
+                    anchor = ET.SubElement(w, 'anchor', {'type': 'breakEnd'})
+                    anchor.tail = ''
+                else:
+                    if anchor is not None:
+                        anchor.tail += char
+                    else:
+                        w.text += char
         return w
