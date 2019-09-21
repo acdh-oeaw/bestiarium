@@ -75,7 +75,7 @@ class ScoreLine(UserList):
                 self.data.append(position.line)
             else:
                 ## Lemma
-                lemma = Lemma(cell)
+                lemma = Lemma(cell, self.witness)
                 self.data.append(lemma)
 
 

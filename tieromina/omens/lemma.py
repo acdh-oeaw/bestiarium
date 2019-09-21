@@ -8,7 +8,8 @@ class Lemma(Cell):
     Lemma as specified in the score
     Equivalent of "Cell"
     '''
-    def __init__(self, cell):
+    def __init__(self, cell, witness):
+        self.witness = witness
         self.address = cell.address
         self.tokens = cell.tokens
 
