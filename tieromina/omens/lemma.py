@@ -23,7 +23,7 @@ class Lemma(Cell):
         returns the TEI representation
         TODO: Align this with the convention
         '''
-        w = ET.Element('rdg')
+        w = ET.Element('rdg', {'wit': self.witness.xml_id})
         for token in self.tokens:
             t = ET.SubElement(w, 'token')
             t.text = token.text
