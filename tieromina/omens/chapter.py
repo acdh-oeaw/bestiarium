@@ -4,11 +4,10 @@ A chapter containing one of more omens, derived from one of more workbooks
 
 from xml.etree import ElementTree as ET
 
+from .namespaces import NS
 from .omen import Omen
 from .util import element2string
 from .workbook import Workbook
-
-NS = {'tei': 'http://www.tei-c.org/ns/1.0'}
 
 
 class Chapter:

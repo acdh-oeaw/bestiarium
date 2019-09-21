@@ -9,12 +9,10 @@ from xml.etree import ElementTree as ET
 
 from .cell import Cell
 from .lemma import Lemma
+from .namespaces import NS, XML_NS
 from .position import Position
 
 logger = logging.getLogger(__name__)
-
-XML_NS = u'http://www.w3.org/XML/1998/namespace'
-NS = {'xml': XML_NS}
 
 
 class Witness(namedtuple('Witness', 'siglum, joins, reference')):
@@ -122,9 +120,7 @@ class Score(UserDict):
                         word_node = ET.SubElement(word_parent, 'app')
 
                     # Add lemma to the word node
-                    lemma_tei = item.tei
-                    lemma_tei.attrib['wit'] = witness.xml_id
-                    word_node.append(lemma_tei)
+                    word_node.append(item.tei)
                 else:  # line/column information
                     item_tei = item.tei
                     ab.append(item_tei)
