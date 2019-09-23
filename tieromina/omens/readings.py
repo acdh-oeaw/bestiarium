@@ -1,12 +1,15 @@
 '''
 Represents the readings of an omen
 '''
+import logging
 import re
 from collections import UserDict, UserList, defaultdict
 from typing import NamedTuple
 from xml.etree import ElementTree as ET
 
 from .lemma import Lemma
+
+logger = logging.getLogger(__name__)
 
 
 class ReadingId(NamedTuple):
@@ -50,9 +53,25 @@ class ReadingLine(UserList):
             ab.attrib['type'] = 'translation'
             ab.attrib['lang'] = self.rdg_type
 
-        for word in self.words:
-            w = word.reading_tei
-            ab.append(w)
+        if self.rdg_type in ('trl', 'trs'):
+            for word in self.words:
+                w = word.reading_tei
+                ab.append(w)
+
+        else:
+
+            for i, word in enumerate(self.words):
+                if i == 0:
+                    w = word.reading_tei
+                    w.tag = 'ab'
+                    ab = w
+                    ab.attrib['lang'] = self.rdg_type
+                else:
+                    ab.text += ' ' + w.text
+                    logger.warning(
+                        'Unexpected values in translation row; expecting only one cell, \n%s',
+    x                    word)
+
         return ab
 
 
