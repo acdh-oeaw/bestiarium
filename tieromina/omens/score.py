@@ -131,7 +131,7 @@ class Score(UserDict):
                         word_node = ET.SubElement(word_parent, 'app')
 
                     # Add lemma to the word node
-                    word_node.append(item.tei)
+                    word_node.append(item.score_tei)
                 else:  # line/column information
                     item_tei = item.tei
                     ab.append(item_tei)

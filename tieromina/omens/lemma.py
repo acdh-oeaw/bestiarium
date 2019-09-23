@@ -137,7 +137,7 @@ class Lemma:
         return f'w{self.column_name}'
 
     @property
-    def tei(self):
+    def score_tei(self):
         '''
         returns the TEI representation
         TODO: Align this with the convention
