@@ -28,6 +28,7 @@ class Omen:
         self.omen_name: str = sheet
         self.commentary: Commentary = Commentary()
         self.score: Score = Score(self.omen_prefix)
+        self.readings: Readings = Readings()
         self._read(sheet)
 
     @property
@@ -62,7 +63,7 @@ class Omen:
             if row_type == ROWTYPE_SCORE:
                 self.score.add_row(cells)
             elif row_type == ROWTYPE_READING:
-                pass
+                self.readings.add_to_readings(cells)
             elif row_type == ROWTYPE_COMMENT:
                 self.commentary.add_row(cells)
 
@@ -71,8 +72,9 @@ class Omen:
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
         score_div = self.score.tei
-        omen_div.append(score_div)
-        row_type = None
+        omen_div.append(score_div)  #
+        for reading_group in self.readings.tei:
+            omen_div.append(reading_group)  #
         comments_div = self.commentary.tei
         omen_div.append(comments_div)
         return omen_div
@@ -89,8 +91,9 @@ class Omen:
                 or 'comment' in cell.full_text.lower()):
             return ROWTYPE_COMMENT
 
-        if any(rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
-               if rdg in cell.full_text.lower()):
+        if any(
+                rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
+                if rdg in cell.full_text.lower()):
             return ROWTYPE_READING
 
         return ROWTYPE_SCORE
