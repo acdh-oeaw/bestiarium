@@ -97,8 +97,7 @@ class Lemma:
     Equivalent of "Cell"
     '''
 
-    def __init__(self, cell, witness):
-        self.witness = witness
+    def __init__(self, cell):
         self.column_name = cell.column_name
         self.tokens = []
         token_text = ''
@@ -108,7 +107,7 @@ class Lemma:
                     Token(text=token_text, fmt=chunk.cell_format))
                 token_text = ''
             for char in chunk.text:
-                if char in ' []˹˺':
+                if char in '[]˹˺':
                     # TODO: Check that spaces mean nothing in general
                     self.tokens.append(
                         Token(text=token_text, fmt=chunk.cell_format))
@@ -136,13 +135,22 @@ class Lemma:
     def xml_id(self):
         return f'w{self.column_name}'
 
-    @property
-    def score_tei(self):
+    def score_tei(self, witness):
         '''
         returns the TEI representation
         TODO: Align this with the convention
         '''
-        w = ET.Element('rdg', {'wit': self.witness.xml_id})
+        w = ET.Element('rdg', {'wit': witness.xml_id})
+        w = self.tei_body(w)
+        return w
+
+    @property
+    def reading_tei(self):
+        w = ET.Element('w')
+        w = self.tei_body(w)
+        return w
+
+    def tei_body(self, w):
         w.text = ''
         anchor = None
         for token in self.tokens:

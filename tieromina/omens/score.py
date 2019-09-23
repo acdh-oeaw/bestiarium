@@ -74,7 +74,7 @@ class ScoreLine(UserList):
                 self.data.append(position.line)
             else:
                 ## Lemma
-                lemma = Lemma(cell, self.witness)
+                lemma = Lemma(cell)
                 self.data.append(lemma)
 
     def connect_damaged_ends(self):
@@ -131,7 +131,7 @@ class Score(UserDict):
                         word_node = ET.SubElement(word_parent, 'app')
 
                     # Add lemma to the word node
-                    word_node.append(item.score_tei)
+                    word_node.append(item.score_tei(witness))
                 else:  # line/column information
                     item_tei = item.tei
                     ab.append(item_tei)
