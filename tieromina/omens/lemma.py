@@ -32,12 +32,17 @@ class BreakStart(Token):
 
     def __init__(self, text, fmt):
         super().__init__(text=text, fmt=fmt, plain_txt=False)
-        self.end_token = None
+        self.span_to = ''
 
     @property
     def tei(self):
-        anchor = ET.Element('anchor', {'type': 'breakStart'})
-        anchor.tail = ''
+        if self.text == '[':
+            anchor = ET.Element('anchor', {'type': 'breakStart'})
+            anchor.tail = ''
+        elif self.text == '˹':
+            anchor = ET.Element('damageSpan', {'spanTo': self.span_to})
+            anchor.tail = ''
+
         return anchor
 
     @property
@@ -137,7 +142,6 @@ class Lemma:
         returns the TEI representation
         TODO: Align this with the convention
         '''
-        print(self.tokens)
         w = ET.Element('rdg', {'wit': self.witness.xml_id})
         w.text = ''
         anchor = None
