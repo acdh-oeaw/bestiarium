@@ -2,6 +2,7 @@ import logging
 from xml.etree import ElementTree as ET
 
 from .cell import Cell, Chunk
+from .namespaces import XML_ID
 
 logger = logging.getLogger(__name__)
 
@@ -188,6 +189,6 @@ class Lemma:
                     logger.warning('Empty span to attribute for %s in %s',
                                    token, ET.tostring(anchor))
 
-                anchor.attrib['xml:id'] = f'{prefix}_{token.xml_id}'
+                anchor.attrib[XML_ID] = token.xml_id
                 w.append(anchor)
         return w

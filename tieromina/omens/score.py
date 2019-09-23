@@ -60,8 +60,9 @@ class ScoreLine(UserList):
     A line from the score of the omen
     '''
 
-    def __init__(self, row: List[Cell]):
+    def __init__(self, row: List[Cell], omen_prefix):
         super().__init__()
+        self.omen_prefix = omen_prefix
         self.witness = Witness(row)
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
@@ -74,7 +75,7 @@ class ScoreLine(UserList):
                 self.data.append(position.line)
             else:
                 ## Lemma
-                lemma = Lemma(cell)
+                lemma = Lemma(cell, omen_prefix=self.omen_prefix)
                 self.data.append(lemma)
 
         self.connect_damaged_ends()
@@ -112,7 +113,7 @@ class Score(UserDict):
         Adds the row to score
         '''
         # construct witness
-        scoreline = ScoreLine(row)
+        scoreline = ScoreLine(row, self.omen_prefix)
         self.data[scoreline.witness] = scoreline
 
     @property
@@ -127,14 +128,15 @@ class Score(UserDict):
             for item in scoreline:
                 if isinstance(item, Lemma):
                     # construct word identifier
-                    word_id = f'{self.omen_prefix}.{item.xml_id}'
-                    word_node = ab.find(f'.//*[@{XML_ID}="{word_id}"]/app', NS)
+                    # word_id = f'{self.omen_prefix}.{item.xml_id}'
+                    word_node = ab.find(f'.//*[@{XML_ID}="{item.xml_id}"]/app',
+                                        NS)
 
                     # This is the correct way to check if the node exists
                     # if not Node is True even if find returns a match
                     if word_node is None:
                         # add new /find corresponding word node
-                        word_parent = ET.Element('w', {XML_ID: word_id})
+                        word_parent = ET.Element('w', {XML_ID: item.xml_id})
                         ab.append(word_parent)
                         word_node = ET.SubElement(word_parent, 'app')
 

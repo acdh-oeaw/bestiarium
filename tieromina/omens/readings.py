@@ -41,7 +41,7 @@ class ReadingLine(UserList):
         self.rdg_type = m.group('rdg_type')
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
-            self.words.append(Lemma(cell))
+            self.words.append(Lemma(cell, omen_prefix=self.omen_prefix))
 
     @property
     def tei(self):
