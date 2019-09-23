@@ -7,7 +7,7 @@ from ..sheet import Sheet
 from ..util import pretty_print
 from ..workbook import Style
 
-NS = {'ns': 'http://www.tei-c.org/ns/1.0'}
+NS = {'tei': 'http://www.tei-c.org/ns/1.0'}
 
 
 class OmenTestCase(TestCase):
@@ -26,4 +26,5 @@ class OmenTestCase(TestCase):
             style=self.style,
             shared_strings=self.shared_strings_xml)
         omen = Omen(sheet)
-        pretty_print(omen.tei)
+        score = omen.tei.find('div[@type="score"]', NS)
+        pretty_print(score)

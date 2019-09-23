@@ -8,9 +8,82 @@ class Token:
     A unit smaller than a chunk - separating breaks/damages from the words and noting where they stop
     '''
 
-    def __init__(self, text, fmt):
+    def __init__(self, text, fmt, plain_txt=True):
+        self.plain_text = plain_txt
         self.text = text
         self.fmt = fmt
+
+    @property
+    def xml_id(self):
+        return self._xml_id
+
+    @xml_id.setter
+    def xml_id(self, xml_id):
+        self._xml_if = xml_id
+
+    def __repr__(self):
+        return str(self.__dict__)
+
+
+class BreakStart(Token):
+    '''
+    Anchor to mark the beginning of a break
+    '''
+
+    def __init__(self, text, fmt):
+        super().__init__(text=text, fmt=fmt, plain_txt=False)
+        self.end_token = None
+
+    @property
+    def tei(self):
+        anchor = ET.Element('anchor', {'type': 'breakStart'})
+        anchor.tail = ''
+        return anchor
+
+    @property
+    def end_token(self):
+        return self._end_token
+
+    @end_token.setter
+    def end_token(self, end_token):
+        self._end_token = end_token
+
+
+class BreakEnd(Token):
+    '''
+    Anchor to mark the end of a break
+    '''
+
+    def __init__(self, text, fmt):
+        super().__init__(text=text, fmt=fmt, plain_txt=False)
+
+    @property
+    def tei(self):
+        anchor = ET.Element('anchor', {'type': 'breakEnd'})
+        anchor.tail = ''
+        return anchor
+
+
+class Missing(Token):
+    '''
+    Missing signs
+    '''
+
+    def __init__(self, text, fmt):
+        super().__init__(text=text, fmt=fmt, plain_txt=False)
+        self.quantity = 1
+
+    def widen_gap(self):
+        self.quantity += 1
+
+    @property
+    def tei(self):
+
+        anchor = ET.Element('gap', {
+            'quantity': self.quantity,
+            'unit': 'signs'
+        })
+        anchor.tail = ''
 
 
 class Lemma:
@@ -23,8 +96,36 @@ class Lemma:
         self.witness = witness
         self.column_name = cell.column_name
         self.tokens = []
+        token_text = ''
         for chunk in cell.chunks:
-            self.tokens.append(Token(chunk.text, chunk.cell_format))
+            if token_text:
+                self.tokens.append(
+                    Token(text=token_text, fmt=chunk.cell_format))
+                token_text = ''
+            for char in chunk.text:
+                if char in ' []˹˺':
+                    # TODO: Check that spaces mean nothing in general
+                    self.tokens.append(
+                        Token(text=token_text, fmt=chunk.cell_format))
+                    token_text = ''
+                    if char in '[˹':
+                        self.tokens.append(
+                            BreakStart(text=char, fmt=chunk.cell_format))
+                    elif char in '˺]':
+                        self.tokens.append(
+                            BreakEnd(text=char, fmt=chunk.cell_format))
+                    elif char == 'x':
+                        if isinstance(self.tokens[-1], Missing):
+                            self.tokens[-1].widen_gap()
+                        else:
+                            self.tokens.append(Missing(fmt=chunk.cell_format))
+                    else:
+                        pass
+                else:
+                    token_text += char
+
+        if token_text:
+            self.tokens.append(Token(text=token_text, fmt=chunk.cell_format))
 
     @property
     def xml_id(self):
@@ -36,20 +137,18 @@ class Lemma:
         returns the TEI representation
         TODO: Align this with the convention
         '''
+        print(self.tokens)
         w = ET.Element('rdg', {'wit': self.witness.xml_id})
         w.text = ''
         anchor = None
         for token in self.tokens:
-            for char in token.text:
-                if char == '[':
-                    anchor = ET.SubElement(w, 'anchor', {'type': 'breakStart'})
-                    anchor.tail = ''
-                elif char == ']':
-                    anchor = ET.SubElement(w, 'anchor', {'type': 'breakEnd'})
-                    anchor.tail = ''
+            if token.plain_text is True:
+                if anchor is not None:
+                    anchor.tail += token.text
                 else:
-                    if anchor is not None:
-                        anchor.tail += char
-                    else:
-                        w.text += char
+                    w.text += token.text
+            else:
+                print(token.tei)
+                anchor = token.tei
+                w.append(anchor)
         return w
