@@ -27,8 +27,8 @@ class Commentary(UserList):
         for comment in self.data:
             p = ET.SubElement(comments_div, 'p')
             p.text = ''  # comment.address + '\n'
-            for token in comment.tokens:
-                p.text += token.text
+            for chunk in comment.chunks:
+                p.text += chunk.text
         return comments_div
 
     def add_row(self, row):

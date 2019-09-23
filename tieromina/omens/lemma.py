@@ -1,13 +1,16 @@
 from xml.etree import ElementTree as ET
 
-from .cell import Cell, Token
+from .cell import Cell, Chunk
 
 
-class LemmaToken:
-    def __init__(self, token):
-        self.text = token.text
-        self.format = token.format
-        self.complete = token.complete
+class Token:
+    '''
+    A unit smaller than a chunk - separating breaks/damages from the words and noting where they stop
+    '''
+
+    def __init__(self, text, fmt):
+        self.text = text
+        self.fmt = fmt
 
 
 class Lemma:
@@ -15,12 +18,13 @@ class Lemma:
     Lemma as specified in the score
     Equivalent of "Cell"
     '''
+
     def __init__(self, cell, witness):
         self.witness = witness
         self.column_name = cell.column_name
         self.tokens = []
-        for token in cell.tokens:
-            self.tokens.append(LemmaToken(token))
+        for chunk in cell.chunks:
+            self.tokens.append(Token(chunk.text, chunk.cell_format))
 
     @property
     def xml_id(self):

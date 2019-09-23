@@ -17,8 +17,8 @@ class Position:
 
     @staticmethod
     def is_position_cell(cell):
-        for token in cell.tokens:
-            if token.format.color == LINENUM_COLOR and token.format.italics:
+        for chunk in cell.chunks:
+            if chunk.cell_format.color == LINENUM_COLOR and chunk.cell_format.italics:
                 return True
 
     def __init__(self, cell, witness):
@@ -29,11 +29,11 @@ class Position:
         self.supplement_text = ''
 
         # Separate text that does not confirm to line number formatting
-        for token in cell.tokens:
-            if token.format.color == LINENUM_COLOR and token.format.italics:
-                self.text += token.text  # Line/column number info
+        for chunk in cell.chunks:
+            if chunk.cell_format.color == LINENUM_COLOR and chunk.cell_format.italics:
+                self.text += chunk.text  # Line/column number info
             else:
-                self.supplement_text += token.text  # Any other info
+                self.supplement_text += chunk.text  # Any other info
 
         if self.supplement_text:
             logger.warning(

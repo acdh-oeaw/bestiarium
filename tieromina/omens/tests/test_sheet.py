@@ -9,7 +9,7 @@ NS = {'ns': 'http://www.tei-c.org/ns/1.0'}
 
 
 class SheetTestCase(TestCase):
-    # TODO: Rewite tests by mocking token
+    # TODO: Rewite tests by mocking chunk
     def setUp(self):
         sheet_xml = ET.parse('omens/tests/test_data/sheet1.xml').getroot()
         with open('omens/tests/test_data/styles.xml', 'r') as f:
@@ -25,6 +25,6 @@ class SheetTestCase(TestCase):
 
     def test_bold_cell(self):
         cell = self.sheet.get_cell_at('A1')
-        for i, token in enumerate(cell.tokens):
-            assert token.format.bold == True
-            assert token.complete
+        for i, chunk in enumerate(cell.chunks):
+            assert chunk.cell_format.bold == True
+            assert chunk.complete

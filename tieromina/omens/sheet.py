@@ -4,7 +4,7 @@ A single sheet from a workbook
 from collections import defaultdict
 from xml.etree import ElementTree as ET
 
-from .cell import Cell, Format, Token
+from .cell import Cell, CellFormat, Chunk
 from .namespaces import NS
 
 
@@ -13,6 +13,7 @@ class Sheet:
     A single sheet from a workbook
     Initialised with shared styles and strings
     '''
+
     def __init__(self, *, sheet_xml, style, shared_strings):
         self.sheet = sheet_xml
         self.style = style
@@ -61,14 +62,14 @@ class Sheet:
         Returns a standalone cell object representation of the cell data
         '''
         cell = Cell(cell_element.attrib.get('r'))
-        for token in self._get_tokens(cell_element):
-            cell.add_token(token)
+        for chunk in self._get_chunks(cell_element):
+            cell.add_chunk(chunk)
 
         return cell
 
-    def _get_tokens(self, cell_element):
+    def _get_chunks(self, cell_element):
         '''
-        Yields units of text along with their formatting (Token instance)
+        Yields units of text along with their formatting (Chunk instance)
         TODO: preserve space tag in shared strings
         '''
         if not cell_element:
@@ -81,11 +82,12 @@ class Sheet:
             si = self.shared_strings[idx]
             # Read si and related formatting
             if len(si) == 1 and si[0].tag.endswith('}t'):
-                # only one "token" in the shared string
+                # only one "chunk" in the shared string
                 # No extra formatting
-                yield Token(text=si[0].text, format=cell_format, complete=True)
+                yield Chunk(
+                    text=si[0].text, cell_format=cell_format, complete=True)
             else:
-                # multiple tokens and in-cell formatting
+                # multiple chunks and in-cell formatting
                 for elem in si:  # r elements
                     color_tag = elem.find(
                         'spreadsheetml:rPr/spreadsheetml:color', NS)
@@ -104,27 +106,30 @@ class Sheet:
                     superscript = True if elem.find(
                         'spreadsheetml:rPr/spreadsheetml:vertAlign[@val="superscript"]',
                         NS) is not None else False
-                    fmt = Format(subscript=subscript,
-                                 superscript=superscript,
-                                 italics=italics,
-                                 bold=boldface,
-                                 color=color,
-                                 bgcolor=cell_format.bgcolor)
+                    fmt = CellFormat(
+                        subscript=subscript,
+                        superscript=superscript,
+                        italics=italics,
+                        bold=boldface,
+                        color=color,
+                        bgcolor=cell_format.bgcolor)
 
-                    yield Token(text=elem.find('./spreadsheetml:t', NS).text,
-                                format=fmt)
+                    yield Chunk(
+                        text=elem.find('./spreadsheetml:t', NS).text,
+                        cell_format=fmt)
 
         else:
             # raw text element
             raw_text_elem = cell_element.find('spreadsheetml:v', NS)
             if raw_text_elem is not None:
-                yield Token(text=raw_text_elem.text,
-                            format=cell_format,
-                            complete=True)
+                yield Chunk(
+                    text=raw_text_elem.text,
+                    cell_format=cell_format,
+                    complete=True)
 
-    def _extract_cell_format(self, cell) -> Format:
+    def _extract_cell_format(self, cell) -> CellFormat:
         '''
-        returns a Format tuple
+        returns a CellFormat tuple
         '''
         xf_idx = int(cell.attrib.get('s'))
         xf = self.style.xfs[xf_idx]
@@ -146,7 +151,5 @@ class Sheet:
                 NS).attrib.get('rgb')
         else:
             bgcolor = None
-        return Format(bold=boldface,
-                      italics=italics,
-                      color=color,
-                      bgcolor=bgcolor)
+        return CellFormat(
+            bold=boldface, italics=italics, color=color, bgcolor=bgcolor)

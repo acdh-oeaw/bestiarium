@@ -4,9 +4,9 @@ A standalone representation of contents inside a cell in a spreadsheet
 from typing import NamedTuple
 
 
-class Format(NamedTuple):
+class CellFormat(NamedTuple):
     '''
-    Holds text format properties
+    Holds text cell_format properties
     at a cell level or within a cell
     '''
     bold: bool = False
@@ -17,25 +17,26 @@ class Format(NamedTuple):
     bgcolor: str = None
 
 
-class Token(NamedTuple):
+class Chunk(NamedTuple):
     '''
     Smallest unit of information in a cell with the same formatting
     '''
     text: str
-    format: Format
-    complete: bool = False  # whether this is the only token in the cell
+    cell_format: CellFormat
+    complete: bool = False  # whether this is the only chunk in the cell
 
 
 class Cell:
     '''
-    A list of "Token" objects, the address of the cell and some methods
+    A list of "Chunk" objects, the address of the cell and some methods
     '''
+
     def __init__(self, address: str = ''):
-        self.tokens = []
+        self.chunks = []
         self.address = address
 
-    def add_token(self, token: Token):
-        self.tokens.append(token)
+    def add_chunk(self, chunk: Chunk):
+        self.chunks.append(chunk)
 
     @property
     def full_text(self):
@@ -43,8 +44,8 @@ class Cell:
         Returns full text from the cell without formatting
         '''
         text = ''
-        for token in self.tokens:
-            text = text + token.text
+        for chunk in self.chunks:
+            text = text + chunk.text
 
         return text
 
@@ -75,7 +76,7 @@ class Cell:
         return r_name
 
     def __str__(self):
-        return f'[Cell {self.address}]: {self.tokens}'
+        return f'[Cell {self.address}]: {self.chunks}'
 
     def __repr__(self):
-        return f'Number of tokens: {len(self.tokens)}\nFull text: {self.full_text}'
+        return f'Number of chunks: {len(self.chunks)}\nFull text: {self.full_text}'
