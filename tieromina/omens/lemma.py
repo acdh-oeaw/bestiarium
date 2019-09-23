@@ -3,6 +3,13 @@ from xml.etree import ElementTree as ET
 from .cell import Cell, Token
 
 
+class LemmaToken:
+    def __init__(self, token):
+        self.text = token.text
+        self.format = token.format
+        self.complete = token.complete
+
+
 class Lemma:
     '''
     Lemma as specified in the score
@@ -10,11 +17,14 @@ class Lemma:
     '''
     def __init__(self, cell, witness):
         self.witness = witness
-        self.cell = cell
+        self.column_name = cell.column_name
+        self.tokens = []
+        for token in cell.tokens:
+            self.tokens.append(LemmaToken(token))
 
     @property
     def xml_id(self):
-        return f'w{self.cell.column_name}'
+        return f'w{self.column_name}'
 
     @property
     def tei(self):
@@ -25,7 +35,7 @@ class Lemma:
         w = ET.Element('rdg', {'wit': self.witness.xml_id})
         w.text = ''
         anchor = None
-        for token in self.cell.tokens:
+        for token in self.tokens:
             for char in token.text:
                 if char == '[':
                     anchor = ET.SubElement(w, 'anchor', {'type': 'breakStart'})
