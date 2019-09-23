@@ -19,7 +19,7 @@ class Token:
 
     @xml_id.setter
     def xml_id(self, xml_id):
-        self._xml_if = xml_id
+        self._xml_id = xml_id
 
     def __repr__(self):
         return str(self.__dict__)
@@ -152,7 +152,6 @@ class Lemma:
                 else:
                     w.text += token.text
             else:
-                print(token.tei)
                 anchor = token.tei
                 w.append(anchor)
         return w

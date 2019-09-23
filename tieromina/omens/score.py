@@ -19,6 +19,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
     '''
     A witness - siglum, joins and if applicable, reference
     '''
+
     def __new__(cls, row):
         '''
         Converts the first two column values for a score line into an immutable namedtuple,
@@ -40,14 +41,13 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
         except IndexError as ie:
             reference = ''
 
-        return super().__new__(cls,
-                               siglum=siglum,
-                               joins=joins,
-                               reference=reference)
+        return super().__new__(
+            cls, siglum=siglum, joins=joins, reference=reference)
 
     @property
     def xml_id(self):
-        return "#wit_" + re.sub("[^A-Za-z0-9\-_:\.]+", "_", self.siglum)
+        return ("wit_" + re.sub("[^A-Za-z0-9\-_\.]+", "_", self.siglum) +
+                re.sub("[^A-Za-z0-9\-_\.]+", "_", self.reference))
 
     @property
     def tei(self):
@@ -59,6 +59,7 @@ class ScoreLine(UserList):
     '''
     A line from the score of the omen
     '''
+
     def __init__(self, row: List[Cell]):
         super().__init__()
         self.witness = Witness(row)
@@ -89,6 +90,7 @@ class Score(UserDict):
     '''
     A dict of score lines, identified by witness
     '''
+
     def __init__(self, omen_prefix):
         super().__init__()
         self.omen_prefix = omen_prefix
@@ -122,8 +124,9 @@ class Score(UserDict):
                     # if not Node is True even if find returns a match
                     if word_node is None:
                         # add new /find corresponding word node
-                        word_parent = ET.Element('w',
-                                                 {id_attrib_name: word_id})
+                        word_parent = ET.Element('w', {
+                            id_attrib_name: word_id
+                        })
                         ab.append(word_parent)
                         word_node = ET.SubElement(word_parent, 'app')
 
