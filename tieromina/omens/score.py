@@ -8,8 +8,8 @@ from typing import List
 from xml.etree import ElementTree as ET
 
 from .cell import Cell
-from .lemma import Lemma
-from .namespaces import NS, XML_NS
+from .lemma import BreakEnd, BreakStart, Lemma
+from .namespaces import NS, XML_ID, XML_NS
 from .position import Position
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
 
     @property
     def tei(self):
-        wit = ET.Element('witness', {'xml:id': self.xml_id})
+        wit = ET.Element('witness', {XML_ID: self.xml_id})
         wit.text = witness.siglum
 
 
@@ -77,13 +77,24 @@ class ScoreLine(UserList):
                 lemma = Lemma(cell)
                 self.data.append(lemma)
 
+        self.connect_damaged_ends()
+
     def connect_damaged_ends(self):
         '''
         The lemmas are reviewed once again and
         damages that span across lemmas
         are appropriately connected
         '''
-        pass
+        damage_stack = []
+        for lemma in self.data:
+            if isinstance(lemma, Lemma):
+                for token in lemma.tokens:
+                    if isinstance(token, BreakStart):
+                        damage_stack.append(token.xml_id)
+                    elif isinstance(token, BreakEnd):
+                        damage_start = damage_stack.pop()
+                        token.corresp = damage_start
+                        print(token)
 
 
 class Score(UserDict):
@@ -117,21 +128,18 @@ class Score(UserDict):
                 if isinstance(item, Lemma):
                     # construct word identifier
                     word_id = f'{self.omen_prefix}.{item.xml_id}'
-                    id_attrib_name = '{' + XML_NS + '}id'
-                    word_node = ab.find(f'.//*[@xml:id="{word_id}"]/app', NS)
+                    word_node = ab.find(f'.//*[@{XML_ID}="{word_id}"]/app', NS)
 
                     # This is the correct way to check if the node exists
                     # if not Node is True even if find returns a match
                     if word_node is None:
                         # add new /find corresponding word node
-                        word_parent = ET.Element('w', {
-                            id_attrib_name: word_id
-                        })
+                        word_parent = ET.Element('w', {XML_ID: word_id})
                         ab.append(word_parent)
                         word_node = ET.SubElement(word_parent, 'app')
 
                     # Add lemma to the word node
-                    word_node.append(item.score_tei(witness))
+                    word_node.append(item.score_tei(witness, self.omen_prefix))
                 else:  # line/column information
                     item_tei = item.tei
                     ab.append(item_tei)

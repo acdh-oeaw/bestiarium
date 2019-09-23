@@ -5,14 +5,17 @@ Philological commentary of the omen
 from collections import UserList
 from xml.etree import ElementTree as ET
 
+from .namespaces import XML_ID
+
 
 class Commentary(UserList):
     '''
     List of comments from the omen sheet; each cell in an item in the cell
     '''
 
-    def __init__(self):
+    def __init__(self, omen_prefix):
         super().__init__()
+        self.omen_prefix = omen_prefix
         self.title = ''
 
     @property
@@ -26,6 +29,7 @@ class Commentary(UserList):
 
         for comment in self.data:
             p = ET.SubElement(comments_div, 'p')
+            p.attrib[XML_ID] = f'{self.omen_prefix}_{comment.address}'
             p.text = ''  # comment.address + '\n'
             for chunk in comment.chunks:
                 p.text += chunk.text

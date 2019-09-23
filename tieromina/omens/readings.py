@@ -27,8 +27,9 @@ class ReadingLine(UserList):
     reading_type: str
     words: list
 
-    def __init__(self, row: list):
+    def __init__(self, row: list, omen_prefix):
         super().__init__()
+        self.omen_prefix = omen_prefix
         self.words = []
         m = re.match(
             r'^(?P<label>[a-zA-Z\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$',
@@ -55,14 +56,13 @@ class ReadingLine(UserList):
 
         if self.rdg_type in ('trl', 'trs'):
             for word in self.words:
-                w = word.reading_tei
+                w = word.reading_tei(self.omen_prefix)
                 ab.append(w)
 
-        else:
-
+        else:  # No W tag in translations - but it contains text, might contain anchor elements for breaks
             for i, word in enumerate(self.words):
                 if i == 0:
-                    w = word.reading_tei
+                    w = word.reading_tei(self.omen_prefix)
                     w.tag = 'ab'
                     ab = w
                     ab.attrib['lang'] = self.rdg_type
@@ -84,15 +84,16 @@ class Readings(UserDict):
      - translation
     '''
 
-    def __init__(self):
+    def __init__(self, omen_prefix):
         super().__init__()
+        self.omen_prefix = omen_prefix
         self.data = defaultdict(list)
 
     def add_to_readings(self, row: list):
         '''
         Identifies the score line and adds it to the score
         '''
-        reading_line = ReadingLine(row)
+        reading_line = ReadingLine(row, self.omen_prefix)
         self.data[reading_line.reading_id].append(reading_line)
 
     @property

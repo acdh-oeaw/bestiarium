@@ -1,6 +1,9 @@
+import logging
 from xml.etree import ElementTree as ET
 
 from .cell import Cell, Chunk
+
+logger = logging.getLogger(__name__)
 
 
 class Token:
@@ -8,10 +11,11 @@ class Token:
     A unit smaller than a chunk - separating breaks/damages from the words and noting where they stop
     '''
 
-    def __init__(self, text, fmt, plain_txt=True):
+    def __init__(self, text, fmt, xml_id='', plain_txt=True):
         self.plain_text = plain_txt
         self.text = text
         self.fmt = fmt
+        self.xml_id = xml_id
 
     @property
     def xml_id(self):
@@ -30,8 +34,8 @@ class BreakStart(Token):
     Anchor to mark the beginning of a break
     '''
 
-    def __init__(self, text, fmt):
-        super().__init__(text=text, fmt=fmt, plain_txt=False)
+    def __init__(self, text, fmt, xml_id):
+        super().__init__(text=text, fmt=fmt, xml_id=xml_id, plain_txt=False)
         self.span_to = ''
 
     @property
@@ -59,12 +63,16 @@ class BreakEnd(Token):
     Anchor to mark the end of a break
     '''
 
-    def __init__(self, text, fmt):
-        super().__init__(text=text, fmt=fmt, plain_txt=False)
+    def __init__(self, text, fmt, xml_id):
+        super().__init__(text=text, fmt=fmt, xml_id=xml_id, plain_txt=False)
+        self.corresp = ''
 
     @property
     def tei(self):
-        anchor = ET.Element('anchor', {'type': 'breakEnd'})
+        anchor = ET.Element('anchor', {
+            'type': 'breakEnd',
+            'corresp': self.corresp
+        })
         anchor.tail = ''
         return anchor
 
@@ -97,27 +105,40 @@ class Lemma:
     Equivalent of "Cell"
     '''
 
-    def __init__(self, cell):
+    def __init__(self, cell, omen_prefix=''):
         self.column_name = cell.column_name
         self.tokens = []
         token_text = ''
+        self.omen_prefix = omen_prefix
+        word_id = ''
         for chunk in cell.chunks:
             if token_text:
                 self.tokens.append(
-                    Token(text=token_text, fmt=chunk.cell_format))
+                    Token(
+                        text=token_text, xml_id=word_id,
+                        fmt=chunk.cell_format))
                 token_text = ''
-            for char in chunk.text:
+
+            word_id = f'{self.omen_prefix}_{cell.address}'
+            for pos, char in enumerate(chunk.text):
+                anchor_id = f'{self.omen_prefix}_{cell.address}_{pos}'
                 if char in '[]˹˺':
                     # TODO: Check that spaces mean nothing in general
                     self.tokens.append(
-                        Token(text=token_text, fmt=chunk.cell_format))
+                        Token(
+                            text=token_text,
+                            xml_id=anchor_id,
+                            fmt=chunk.cell_format))
                     token_text = ''
+
                     if char in '[˹':
-                        self.tokens.append(
-                            BreakStart(text=char, fmt=chunk.cell_format))
+                        anchor = BreakStart(
+                            text=char, xml_id=anchor_id, fmt=chunk.cell_format)
+                        self.tokens.append(anchor)
                     elif char in '˺]':
-                        self.tokens.append(
-                            BreakEnd(text=char, fmt=chunk.cell_format))
+                        anchor = BreakEnd(
+                            text=char, xml_id=anchor_id, fmt=chunk.cell_format)
+                        self.tokens.append(anchor)
                     elif char == 'x':
                         if isinstance(self.tokens[-1], Missing):
                             self.tokens[-1].widen_gap()
@@ -129,28 +150,28 @@ class Lemma:
                     token_text += char
 
         if token_text:
-            self.tokens.append(Token(text=token_text, fmt=chunk.cell_format))
+            self.tokens.append(
+                Token(text=token_text, xml_id=word_id, fmt=chunk.cell_format))
 
     @property
     def xml_id(self):
         return f'w{self.column_name}'
 
-    def score_tei(self, witness):
+    def score_tei(self, witness, prefix):
         '''
         returns the TEI representation
         TODO: Align this with the convention
         '''
         w = ET.Element('rdg', {'wit': witness.xml_id})
-        w = self.tei_body(w)
+        w = self.tei_body(w, prefix)
         return w
 
-    @property
-    def reading_tei(self):
+    def reading_tei(self, prefix):
         w = ET.Element('w')
-        w = self.tei_body(w)
+        w = self.tei_body(w, prefix)
         return w
 
-    def tei_body(self, w):
+    def tei_body(self, w, prefix):
         w.text = ''
         anchor = None
         for token in self.tokens:
@@ -161,5 +182,12 @@ class Lemma:
                     w.text += token.text
             else:
                 anchor = token.tei
+
+                if 'spanTo' in anchor.attrib and not anchor.attrib.get(
+                        'spanTo', ''):
+                    logger.warning('Empty span to attribute for %s in %s',
+                                   token, ET.tostring(anchor))
+
+                anchor.attrib['xml:id'] = f'{prefix}_{token.xml_id}'
                 w.append(anchor)
         return w

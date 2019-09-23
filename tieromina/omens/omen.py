@@ -26,9 +26,9 @@ class Omen:
 
     def __init__(self, sheet):
         self.omen_name: str = sheet
-        self.commentary: Commentary = Commentary()
+        self.commentary: Commentary = Commentary(self.omen_prefix)
         self.score: Score = Score(self.omen_prefix)
-        self.readings: Readings = Readings()
+        self.readings: Readings = Readings(self.omen_prefix)
         self._read(sheet)
 
     @property
