@@ -108,6 +108,7 @@ class Lemma:
 
     def __init__(self, cell, omen_prefix=''):
         self.column_name = cell.column_name
+        self.address = cell.address
         self.tokens = []
         token_text = ''
         self.omen_prefix = omen_prefix
@@ -154,9 +155,12 @@ class Lemma:
             self.tokens.append(
                 Token(text=token_text, xml_id=word_id, fmt=chunk.cell_format))
 
+    def __str__(self):
+        return f'{self.omen_prefix}_{self.address}'
+
     @property
     def xml_id(self):
-        return f'w{self.column_name}'
+        return f'{self.omen_prefix}_w{self.column_name}'
 
     def score_tei(self, witness, prefix):
         '''
@@ -168,7 +172,7 @@ class Lemma:
         return w
 
     def reading_tei(self, prefix):
-        w = ET.Element('w')
+        w = ET.Element('w', {'corresp': self.xml_id})
         w = self.tei_body(w, prefix)
         return w
 

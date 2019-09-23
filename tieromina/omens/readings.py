@@ -8,6 +8,7 @@ from typing import NamedTuple
 from xml.etree import ElementTree as ET
 
 from .lemma import Lemma
+from .line import Line
 
 logger = logging.getLogger(__name__)
 
@@ -20,17 +21,14 @@ class ReadingId(NamedTuple):
     siglum: str = ''
 
 
-class ReadingLine(UserList):
+class ReadingLine(Line):
     '''
     A list of lemmas that make a reading line
     '''
     reading_type: str
-    words: list
 
     def __init__(self, row: list, omen_prefix):
-        super().__init__()
-        self.omen_prefix = omen_prefix
-        self.words = []
+        super().__init__(omen_prefix)
         m = re.match(
             r'^(?P<label>[a-zA-Z\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$',
             row[0].full_text)
@@ -41,7 +39,9 @@ class ReadingLine(UserList):
         self.rdg_type = m.group('rdg_type')
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
-            self.words.append(Lemma(cell, omen_prefix=self.omen_prefix))
+            self.data.append(Lemma(cell, omen_prefix=self.omen_prefix))
+
+        self.connect_damaged_ends()
 
     @property
     def tei(self):
@@ -55,12 +55,12 @@ class ReadingLine(UserList):
             ab.attrib['lang'] = self.rdg_type
 
         if self.rdg_type in ('trl', 'trs'):
-            for word in self.words:
+            for word in self.data:
                 w = word.reading_tei(self.omen_prefix)
                 ab.append(w)
 
         else:  # No W tag in translations - but it contains text, might contain anchor elements for breaks
-            for i, word in enumerate(self.words):
+            for i, word in enumerate(self.data):
                 if i == 0:
                     w = word.reading_tei(self.omen_prefix)
                     w.tag = 'ab'

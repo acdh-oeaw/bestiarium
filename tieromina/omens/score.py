@@ -9,6 +9,7 @@ from xml.etree import ElementTree as ET
 
 from .cell import Cell
 from .lemma import BreakEnd, BreakStart, Lemma
+from .line import Line
 from .namespaces import NS, XML_ID, XML_NS
 from .position import Position
 
@@ -55,14 +56,13 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
         wit.text = witness.siglum
 
 
-class ScoreLine(UserList):
+class ScoreLine(Line):
     '''
     A line from the score of the omen
     '''
 
     def __init__(self, row: List[Cell], omen_prefix):
-        super().__init__()
-        self.omen_prefix = omen_prefix
+        super().__init__(omen_prefix)
         self.witness = Witness(row)
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
@@ -79,23 +79,6 @@ class ScoreLine(UserList):
                 self.data.append(lemma)
 
         self.connect_damaged_ends()
-
-    def connect_damaged_ends(self):
-        '''
-        The lemmas are reviewed once again and
-        damages that span across lemmas
-        are appropriately connected
-        '''
-        damage_stack = []
-        for lemma in self.data:
-            if isinstance(lemma, Lemma):
-                for token in lemma.tokens:
-                    if isinstance(token, BreakStart):
-                        damage_stack.append(token.xml_id)
-                    elif isinstance(token, BreakEnd):
-                        damage_start = damage_stack.pop()
-                        token.corresp = damage_start
-                        print(token)
 
 
 class Score(UserDict):
