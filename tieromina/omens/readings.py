@@ -33,8 +33,8 @@ class ReadingLine(Line):
             r'^(?P<label>[a-zA-Z\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$',
             row[0].full_text)
         if not m: raise ValueError('Unrecognised row header %s', row)
-        self.reading_id = ReadingId(
-            label=m.group('label'), siglum=m.group('siglum'))
+        self.reading_id = ReadingId(label=m.group('label'),
+                                    siglum=m.group('siglum'))
 
         self.rdg_type = m.group('rdg_type')
         for cell in row:
@@ -66,6 +66,10 @@ class ReadingLine(Line):
                     w.tag = 'ab'
                     ab = w
                     ab.attrib['lang'] = self.rdg_type
+                    ab.attrib['type'] = 'translation'
+                    if 'corresp' in ab.attrib:
+                        del ab.attrib['corresp']
+
                 else:
                     ab.text += ' ' + w.text
                     logger.warning(
@@ -83,7 +87,6 @@ class Readings(UserDict):
      - transcription,
      - translation
     '''
-
     def __init__(self, omen_prefix):
         super().__init__()
         self.omen_prefix = omen_prefix
