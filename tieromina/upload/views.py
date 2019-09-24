@@ -1,19 +1,19 @@
 import logging
 import os
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
 from django.shortcuts import render
 from django.views.generic.edit import FormView
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from omens.chapter import Chapter
 
 from .forms import UploadSpreadSheet
 from .models import Spreadsheet
 
 #from xl2tei.workbook import Workbook
-
 
 # Create your views here.
 UPLOAD_LOC = '/'
@@ -44,14 +44,17 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
 
-        # try:
-        #     wb = Workbook(destination.name)
-        #     spreadsheet = Spreadsheet(name=uploaded_file)
-        #     spreadsheet.save()
+        try:
+            spreadsheet = Spreadsheet(name=uploaded_file)
+            spreadsheet.save()
+            chapter = Chapter()
+            chapter.export_to_tei(destination.name)
+            #     spreadsheet = Spreadsheet(name=uploaded_file)
+            #
 
-        #     wb.save_to_db(spreadsheet)
-        # except Exception as e:
-        #     context['error'] = repr(e)
-        #     # raise
+            #     wb.save_to_db(spreadsheet)
+        except Exception as e:
+            context['error'] = repr(e)
+            #     # raise
 
         return render(self.request, self.template_name, context)

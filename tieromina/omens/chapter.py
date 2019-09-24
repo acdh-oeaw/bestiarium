@@ -59,5 +59,5 @@ class Chapter:
             # Add omen div to TEI
             omen_div = omen.tei
             body.append(omen_div)
-
+            tei_str = element2string(root)
         return element2string(root)
