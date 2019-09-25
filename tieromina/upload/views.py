@@ -45,10 +45,14 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
                 destination.write(chunk)
 
         try:
+            # Save upload record
             spreadsheet = Spreadsheet(name=uploaded_file)
             spreadsheet.save()
-            chapter = Chapter()
-            chapter.export_to_tei(destination.name)
+            # Add/create a chapter
+            # chapter = Chapter()
+            # chapter_db = chapter.export_to_tei(destination.name, spreadsheet)
+            # Link upload with the chapter
+            # chapter_db.spreadsheet.add(spreadsheet)
             #     spreadsheet = Spreadsheet(name=uploaded_file)
             #
 

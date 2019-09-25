@@ -36,6 +36,10 @@ class Omen:
         return self.omen_name.lower().replace(' ', '')
 
     @property
+    def chapter_name(self):
+        return self.omen_name.split('.')[0].lstrip('Omen ')
+
+    @property
     def omen_name(self):
         return self.__omen_name
 

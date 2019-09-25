@@ -4,6 +4,8 @@ A chapter containing one of more omens, derived from one of more workbooks
 
 from xml.etree import ElementTree as ET
 
+from omens.models import Chapter as DBChapter
+
 from .namespaces import NS
 from .omen import Omen
 from .util import element2string
@@ -14,7 +16,8 @@ class Chapter:
     def __init__(self):
         self.name = ''
 
-    def _get_tei_outline(self):
+    @staticmethod
+    def _get_tei_outline():
         '''
         adds the TEI skeleton
         '''
@@ -39,25 +42,37 @@ class Chapter:
 
     def export_to_tei(self, wbfile):
         '''
-        Updates the TEI representation of a chapter with the omens in the workbook
+        Updates the TEI representation of a chapter
+        with the omens in the workbook
         '''
         wb = Workbook(wbfile)
 
         # TODO: extract existing representation and update
 
-        root = self._get_tei_outline()  # TEI skeleton
-        body = root.find('./text/body')
-
         for sheet in wb.get_sheets():
             # Read omen
             omen = Omen(sheet)
+            chapter_db, _ = DBChapter.objects.get_or_create(
+                chapter_name=omen.chapter_name)
+            if chapter_db.tei:
+                root = ET.fromstring(chapter_db.tei)
+            else:
+                root = Chapter._get_tei_outline()  # TEI skeleton
+
+            body = root.findall('tei:text/tei:body', NS)
+            if not len(body):
+                ET.dump(root)
+            else:
+                body = body[0]
 
             # Add witnesses from the omen to TEI
             for witness in omen.score.witnesses:
+                # TODO: Check if witness already present
                 pass
-
             # Add omen div to TEI
             omen_div = omen.tei
             body.append(omen_div)
             tei_str = element2string(root)
-        return element2string(root)
+            chapter_db.tei = tei_str
+            chapter_db.save()
+            # chapter_db.spreadsheet.add(spreadsheet_db)
