@@ -32,8 +32,8 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
                 siglum = witness_parts[0].rstrip('+')
                 joins = tuple(witness_parts[1:])
             else:
-                logger.error('First cell from column A missing')
-                raise ValueError('col1 must be column A')
+                logger.error('First cell from column A missing: %s', row)
+                raise ValueError(f'col1 must be column A in row: {row}')
         except IndexError as ie:
             raise ie
 

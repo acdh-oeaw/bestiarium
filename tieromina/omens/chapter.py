@@ -54,7 +54,12 @@ class Chapter:
         body = None
         for sheet in wb.get_sheets():
             # Read omen
-            omen = Omen(sheet)
+            try:
+                omen = Omen(sheet)
+            except Exception as e:
+                logging.error('Error processing omen from sheet %s', sheet)
+                continue
+
             chapter_db, created = DBChapter.objects.get_or_create(
                 chapter_name=omen.chapter_name)
             if body is None:
@@ -79,10 +84,10 @@ class Chapter:
                 pass
 
             # Check and remove if omen already exists in the TEI
-            omen_div_old = body.find(f'.//tei:div[@="{omen.omen_name}"]', NS)
+            omen_div_old = body.find(f'.//tei:div[@n="{omen.omen_name}"]', NS)
             if omen_div_old is not None:
-                logging.warning('Overwriting existing omen div: %s',
-                                ET.tostring(omen_div_old))
+                logger.warning('Overwriting existing omen div: %s',
+                               ET.tostring(omen_div_old))
                 body.remove(omen_div_old)
 
             # Add omen div to TEI
