@@ -9,6 +9,7 @@ from xml.etree import ElementTree as ET
 
 from .cell import Cell
 from .commentary import Commentary
+from .models.Omen import DB
 from .readings import Readings
 from .score import Score
 

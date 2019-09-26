@@ -5,8 +5,7 @@ A chapter containing one of more omens, derived from one of more workbooks
 import logging
 from xml.etree import ElementTree as ET
 
-from omens.models import Chapter as DBChapter
-
+from .models import Chapter as DB
 from .namespaces import NS, TEI_NS, get_attribute
 from .omen import Omen
 from .util import element2string
@@ -60,7 +59,7 @@ class Chapter:
                 logging.error('Error processing omen from sheet %s', sheet)
                 continue
 
-            chapter_db, created = DBChapter.objects.get_or_create(
+            db, created = DB.objects.get_or_create(
                 chapter_name=omen.chapter_name)
             if body is None:
                 if created or not chapter_db.tei:
@@ -95,6 +94,6 @@ class Chapter:
             body.append(omen_div)
 
         tei_str = element2string(root)
-        chapter_db.tei = tei_str
-        chapter_db.save()
+        db.tei = tei_str
+        db.save()
         return chapter_db
