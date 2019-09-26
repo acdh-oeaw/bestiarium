@@ -9,7 +9,6 @@ DEV_VERSION = True
 
 ALLOWED_HOSTS = []
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -17,12 +16,68 @@ DATABASES = {
     }
 }
 
-
 Z_ID = "1****5"
 Z_ID_TYPE = 'groups'  # or 'user'
 Z_COLLECTION = "*****Z"
 Z_API_KEY = "T******************A"
 Z_COLLECTION_URL = "https://www.zotero.org/{}/{}/peter_handke_stage_texts".format(
-    Z_ID, Z_COLLECTION
-)
+    Z_ID, Z_COLLECTION)
 Z_TITLE = "Some Titel of the Zotero Library"
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[%(server_time)s] %(name)-15s %(message)s',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    }
+}
+# LOGGING = {
+#     'version': 1,
+#     'formatters': {
+#         'simple': {
+#             'format': '%(asctime)s %(levelname)-8s %(name)-15s %(message)s',
+#             'style': '{'
+#         }
+#     },
+#     'filters': [],
+#     'handlers': [],
+#     'datefmt': '%Y-%m-%d %H:%M:%S'
+# }
