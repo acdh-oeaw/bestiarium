@@ -2,17 +2,15 @@
 A chapter containing one of more omens, derived from one of more workbooks
 '''
 
+import logging
 from xml.etree import ElementTree as ET
 
 from omens.models import Chapter as DBChapter
 
-from .namespaces import NS
+from .namespaces import NS, TEI_NS, get_attribute
 from .omen import Omen
 from .util import element2string
 from .workbook import Workbook
-from .namespaces import get_attribute, TEI_NS
-
-import logging
 
 logger = logging.getLogger(__name__)
 
