@@ -51,31 +51,40 @@ class Chapter:
         wb = Workbook(wbfile)
 
         # TODO: extract existing representation and update
-
+        body = None
         for sheet in wb.get_sheets():
             # Read omen
             omen = Omen(sheet)
             chapter_db, created = DBChapter.objects.get_or_create(
                 chapter_name=omen.chapter_name)
-            if created or not chapter_db.tei:
-                logger.debug("Creating new chapter: %s", omen.chapter_name)
-                root = Chapter._get_tei_outline()  # TEI skeleton
-
-            else:
-                root = ET.fromstring(chapter_db.tei)
-
-            body = root.find('.//tei:body', NS)
-
             if body is None:
-                body = root.find('.//*body', NS)
+                if created or not chapter_db.tei:
+                    logger.debug("Creating new chapter: %s", omen.chapter_name)
+                    root = Chapter._get_tei_outline()  # TEI skeleton
+
+                else:
+                    root = ET.fromstring(chapter_db.tei)
+
+                body = root.find('.//tei:body', NS)
+
                 if body is None:
-                    ET.dump(root)
-                    raise ValueError('Cannot find BODY')
+                    body = root.find('.//*body', NS)
+                    if body is None:
+                        ET.dump(root)
+                        raise ValueError('Cannot find BODY')
 
             # Add witnesses from the omen to TEI
             for witness in omen.score.witnesses:
                 # TODO: Check if witness already present
                 pass
+
+            # Check and remove if omen already exists in the TEI
+            omen_div_old = body.find(f'.//tei:div[@="{omen.omen_name}"]', NS)
+            if omen_div_old is not None:
+                logging.warning('Overwriting existing omen div: %s',
+                                ET.tostring(omen_div_old))
+                body.remove(omen_div_old)
+
             # Add omen div to TEI
             omen_div = omen.tei
             body.append(omen_div)
@@ -83,6 +92,4 @@ class Chapter:
         tei_str = element2string(root)
         chapter_db.tei = tei_str
         chapter_db.save()
-        print('----------------------------------')
-        # chapter_db.spreadsheet.add(spreadsheet_db)
         return chapter_db
