@@ -57,17 +57,20 @@ class Chapter:
             omen = Omen(sheet)
             chapter_db, created = DBChapter.objects.get_or_create(
                 chapter_name=omen.chapter_name)
-            if created:
+            if created or not chapter_db.tei:
                 logger.debug("Creating new chapter: %s", omen.chapter_name)
                 root = Chapter._get_tei_outline()  # TEI skeleton
 
             else:
                 root = ET.fromstring(chapter_db.tei)
-            body = root.find('tei:text/tei:body', NS)
+
+            body = root.find('.//tei:body', NS)
+
             if body is None:
-                logging.debug('Cannot find body')
-                ET.dump(root)
-                return
+                body = root.find('.//*body', NS)
+                if body is None:
+                    ET.dump(root)
+                    raise ValueError('Cannot find BODY')
 
             # Add witnesses from the omen to TEI
             for witness in omen.score.witnesses:
@@ -76,8 +79,10 @@ class Chapter:
             # Add omen div to TEI
             omen_div = omen.tei
             body.append(omen_div)
-            tei_str = element2string(root)
-            chapter_db.tei = tei_str
-            chapter_db.save()
-            print('----------------------------------')
-            # chapter_db.spreadsheet.add(spreadsheet_db)
+
+        tei_str = element2string(root)
+        chapter_db.tei = tei_str
+        chapter_db.save()
+        print('----------------------------------')
+        # chapter_db.spreadsheet.add(spreadsheet_db)
+        return chapter_db

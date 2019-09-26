@@ -4,8 +4,6 @@ from datetime import datetime
 from django.db import models
 from django.utils.timezone import now
 
-from upload.models import Spreadsheet
-
 
 class Tablet(models.Model):
     '''
@@ -14,7 +12,6 @@ class Tablet(models.Model):
     siglum = models.CharField(max_length=100)
     join = models.CharField(max_length=100, blank=True, null=True)
     ctime = models.DateTimeField(default=now)
-    spreadsheet = models.ManyToManyField(Spreadsheet)
 
     def __str__(self):
         return f'{self.siglum}+{self.join}'
@@ -29,7 +26,6 @@ class Chapter(models.Model):
 
     chapter_name = models.CharField(max_length=100)
     ctime = models.DateTimeField(default=now)
-    spreadsheet = models.ManyToManyField(Spreadsheet, default='')
     tei = models.TextField(default='')
     tablet = models.ManyToManyField(Tablet)
 

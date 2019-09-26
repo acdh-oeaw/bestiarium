@@ -114,6 +114,7 @@ class Lemma:
         self.omen_prefix = omen_prefix
         word_id = ''
         for chunk in cell.chunks:
+            if not chunk.text: continue
             if token_text:
                 self.tokens.append(
                     Token(

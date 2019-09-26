@@ -51,8 +51,9 @@ class Position:
             self.line = LineInfo(witness, ' '.join(parts[1:]),
                                  self.supplement_text)
         else:
-            raise ValueError('Neither line nor column: "%s" from witness "%s',
-                             cell, witness)
+            logging.warning('Neither line nor column: "%s" from witness "%s',
+                            cell, witness)
+            self.line = LineInfo(witness, self.text, self.supplement_text)
 
     def __repr__(self):
         return (

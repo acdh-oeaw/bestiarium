@@ -45,6 +45,8 @@ class Cell:
         '''
         text = ''
         for chunk in self.chunks:
+            if not chunk.text: continue
+
             text = text + chunk.text
 
         return text

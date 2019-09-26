@@ -5,6 +5,7 @@ from .models import Spreadsheet
 
 
 class SpreadsheetAdmin(admin.ModelAdmin):
-    list_display = ('ctime', '__str__')
+    list_display = ('ctime', '__str__', 'chapter')
+
 
 admin.site.register(Spreadsheet, SpreadsheetAdmin)

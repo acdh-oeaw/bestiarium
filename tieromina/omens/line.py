@@ -1,6 +1,9 @@
+import logging
 from collections import UserList
 
 from .lemma import BreakEnd, BreakStart, Lemma
+
+logger = logging.getLogger(__name__)
 
 
 class Line(UserList):
@@ -25,5 +28,10 @@ class Line(UserList):
                     if isinstance(token, BreakStart):
                         damage_stack.append(token.xml_id)
                     elif isinstance(token, BreakEnd):
-                        damage_start = damage_stack.pop()
-                        token.corresp = damage_start
+                        try:
+                            damage_start = damage_stack.pop()
+                            token.corresp = damage_start
+                        except IndexError:
+                            logging.warning(
+                                'Found damage end without beginning @ %s',
+                                lemma)

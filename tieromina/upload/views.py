@@ -45,20 +45,15 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
                 destination.write(chunk)
 
         try:
-            # Save upload record
-            spreadsheet = Spreadsheet(name=uploaded_file)
-            spreadsheet.save()
             # Add/create a chapter
             chapter = Chapter()
             chapter_db = chapter.export_to_tei(destination.name)
-            # Link upload with the chapter
-            # chapter_db.spreadsheet.add(spreadsheet)
-            #     spreadsheet = Spreadsheet(name=uploaded_file)
-            #
+            # Save upload record
+            spreadsheet = Spreadsheet(name=uploaded_file, chapter=chapter_db)
+            spreadsheet.save()
 
-            #     wb.save_to_db(spreadsheet)
         except Exception as e:
             context['error'] = repr(e)
-            #     # raise
+            raise
 
         return render(self.request, self.template_name, context)

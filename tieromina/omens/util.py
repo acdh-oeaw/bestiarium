@@ -12,7 +12,7 @@ def element2string(root):
     why is this necessary? :sigh:
     '''
     dom = minidom.parseString(ET.tostring(root))
-    pretty_root = dom.toprettyxml(indent="  ", newl="\n")
+    pretty_root = dom.toprettyxml(indent="", newl="")
     return pretty_root
 
 
@@ -20,4 +20,6 @@ def pretty_print(root):
     '''
     pretty prints xml elements
     '''
-    print(element2string(root))
+    dom = minidom.parseString(ET.tostring(root))
+    pretty_root = dom.toprettyxml(indent="  ", newl="\n")
+    print(pretty_root)
