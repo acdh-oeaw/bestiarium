@@ -49,8 +49,8 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
             spreadsheet = Spreadsheet(name=uploaded_file)
             spreadsheet.save()
             # Add/create a chapter
-            # chapter = Chapter()
-            # chapter_db = chapter.export_to_tei(destination.name, spreadsheet)
+            chapter = Chapter()
+            chapter_db = chapter.export_to_tei(destination.name)
             # Link upload with the chapter
             # chapter_db.spreadsheet.add(spreadsheet)
             #     spreadsheet = Spreadsheet(name=uploaded_file)

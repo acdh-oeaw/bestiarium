@@ -10,6 +10,11 @@ from .namespaces import NS
 from .omen import Omen
 from .util import element2string
 from .workbook import Workbook
+from .namespaces import get_attribute, TEI_NS
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Chapter:
@@ -34,8 +39,8 @@ class Chapter:
         sourceDesc = ET.SubElement(header, 'sourceDesc')
         ET.SubElement(sourceDesc, 'listWit')
 
-        text = ET.SubElement(root, 'text')
-        body = ET.SubElement(text, 'body')
+        text = ET.SubElement(root, get_attribute('text', TEI_NS))
+        body = ET.SubElement(text, get_attribute('body', TEI_NS))
         ET.SubElement(body, 'head')
 
         return root
@@ -52,18 +57,19 @@ class Chapter:
         for sheet in wb.get_sheets():
             # Read omen
             omen = Omen(sheet)
-            chapter_db, _ = DBChapter.objects.get_or_create(
+            chapter_db, created = DBChapter.objects.get_or_create(
                 chapter_name=omen.chapter_name)
-            if chapter_db.tei:
-                root = ET.fromstring(chapter_db.tei)
-            else:
+            if created:
+                logger.debug("Creating new chapter: %s", omen.chapter_name)
                 root = Chapter._get_tei_outline()  # TEI skeleton
 
-            body = root.findall('tei:text/tei:body', NS)
-            if not len(body):
-                ET.dump(root)
             else:
-                body = body[0]
+                root = ET.fromstring(chapter_db.tei)
+            body = root.find('tei:text/tei:body', NS)
+            if body is None:
+                logging.debug('Cannot find body')
+                ET.dump(root)
+                return
 
             # Add witnesses from the omen to TEI
             for witness in omen.score.witnesses:
@@ -75,4 +81,5 @@ class Chapter:
             tei_str = element2string(root)
             chapter_db.tei = tei_str
             chapter_db.save()
+            print('----------------------------------')
             # chapter_db.spreadsheet.add(spreadsheet_db)

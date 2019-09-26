@@ -14,4 +14,4 @@ class WorkbookTestCase(TestCase):
     def test_chapter(self):
         wb = Chapter()
         tei = wb.export_to_tei(self.test_file)
-        print(tei)
+        # print(tei)
