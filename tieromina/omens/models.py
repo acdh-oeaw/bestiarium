@@ -33,6 +33,17 @@ class Chapter(models.Model):
         return f'Chapter {self.chapter_name}'
 
 
+class Omen(models.Model):
+    '''
+    Individual omen
+    '''
+    omen_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
+    omen_num = models.CharField(max_length=100)
+    ctime = models.DateTimeField(default=now)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
+    tablet = models.ManyToManyField(Tablet)
+
+
 """
 # Create your models here.
 class Tablet(models.Model):
