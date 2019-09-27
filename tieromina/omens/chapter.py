@@ -126,3 +126,4 @@ class Chapter:
         self.tei = element2string(root)
         db.tei = self.tei
         db.save()
+        return db

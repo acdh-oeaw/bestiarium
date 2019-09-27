@@ -23,6 +23,8 @@ class WorkbookTestCase(TestCase):
 
     def test_chapter(self):
         wb = Chapter()
+        with self.assertRaises(Exception) as context:
+            DB.objects.get(chapter_name='23')
         tei = wb.add_workbook(self.test_file)
         db_object = DB.objects.get(chapter_name='23')
         assert str(db_object) == 'Chapter 23'

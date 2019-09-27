@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.views.generic.edit import FormView
 
 from omens.chapter import Chapter
+from omens.models import Chapter as ChapterDB
 
 from .forms import UploadSpreadSheet
 from .models import Spreadsheet
