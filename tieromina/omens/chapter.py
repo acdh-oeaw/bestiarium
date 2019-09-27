@@ -48,8 +48,8 @@ class Chapter:
         with the omens in the workbook
         '''
         wb = Workbook(wbfile)
-
         # TODO: extract existing representation and update
+
         body = None
         for sheet in wb.get_sheets():
             # Read omen
@@ -96,4 +96,4 @@ class Chapter:
         tei_str = element2string(root)
         db.tei = tei_str
         db.save()
-        return chapter_db
+        return db

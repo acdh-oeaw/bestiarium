@@ -23,6 +23,7 @@ class OmenTestCase(TestCase):
     def test_omen_div(self):
         sheet = Sheet(
             sheet_xml=ET.parse('omens/tests/test_data/sheet1.xml').getroot(),
+            name='test',
             style=self.style,
             shared_strings=self.shared_strings_xml)
         omen = Omen(sheet)
