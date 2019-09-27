@@ -9,6 +9,7 @@ from xml.etree import ElementTree as ET
 
 from .cell import Cell
 from .commentary import Commentary
+from .models import Omen as DB
 from .readings import Readings
 from .score import Score
 
@@ -58,8 +59,9 @@ class Omen:
         '''
         row_type = None
         for row_num, row in sheet.get_rows():
-            if sheet.is_empty_row(row) or row_num == 1:
+            if sheet.is_empty_row(row) or row_num == '1':
                 continue
+
             # Find row type
             cells = list(sheet.get_cells(row))
             row_type = Omen.get_row_type(cells[0], row_type)
@@ -71,8 +73,8 @@ class Omen:
             elif row_type == ROWTYPE_COMMENT:
                 self.commentary.add_row(cells)
 
-    @property
-    def tei(self):
+    def export_to_tei(self, chapter):
+        db = DB.objects.get_or_create(omen_id=self.omen_name, chapter=chapter)
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
         score_div = self.score.tei

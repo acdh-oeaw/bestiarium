@@ -19,6 +19,7 @@ class SheetTestCase(TestCase):
         shared_strings_xml = ET.parse(
             'omens/tests/test_data/sharedStrings.xml').getroot()
         self.sheet = Sheet(
+            name='1',
             sheet_xml=sheet_xml,
             style=style,
             shared_strings=shared_strings_xml)

@@ -14,7 +14,8 @@ class Sheet:
     Initialised with shared styles and strings
     '''
 
-    def __init__(self, *, sheet_xml, style, shared_strings):
+    def __init__(self, *, name, sheet_xml, style, shared_strings):
+        self.name = name
         self.sheet = sheet_xml
         self.style = style
         self.shared_strings = shared_strings
@@ -153,3 +154,6 @@ class Sheet:
             bgcolor = None
         return CellFormat(
             bold=boldface, italics=italics, color=color, bgcolor=bgcolor)
+
+    def __repr__(self):
+        return self.name

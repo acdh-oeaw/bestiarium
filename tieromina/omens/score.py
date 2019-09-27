@@ -32,8 +32,8 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
                 siglum = witness_parts[0].rstrip('+')
                 joins = tuple(witness_parts[1:])
             else:
-                logger.error('First cell from column A missing')
-                raise ValueError('col1 must be column A')
+                logger.error('First cell from column A missing: %s', row)
+                raise ValueError(f'col1 must be column A in row: {row}')
         except IndexError as ie:
             raise ie
 
@@ -47,8 +47,8 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
 
     @property
     def xml_id(self):
-        return ("wit_" + re.sub("[^A-Za-z0-9\-_\.]+", "_", self.siglum) +
-                re.sub("[^A-Za-z0-9\-_\.]+", "_", self.reference))
+        return ("wit_" + re.sub("[^A-Za-z0-9\-_\.]+", "_", self.siglum) + '_' +
+                '_'.join(self.joins))
 
     @property
     def tei(self):

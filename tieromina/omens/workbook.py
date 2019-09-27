@@ -13,6 +13,7 @@ class Workbook:
     '''
     Represents a workbook of Omens
     '''
+
     def __init__(self, wbfile):
         self.wbfile = wbfile
         self.z = ZipFile(wbfile)
@@ -29,17 +30,21 @@ class Workbook:
         sheets = wb_xml.find('spreadsheetml:sheets', NS)
 
         for sheet_num, elem in enumerate(sheets):
+            sheet_name = elem.attrib.get('name')
             sheet_xml = ET.XML(
                 self.z.read(f'xl/worksheets/sheet{sheet_num+1}.xml'))
-            yield Sheet(sheet_xml=sheet_xml,
-                        style=self.style,
-                        shared_strings=self.shared_strings)
+            yield Sheet(
+                name=sheet_name,
+                sheet_xml=sheet_xml,
+                style=self.style,
+                shared_strings=self.shared_strings)
 
 
 class Style:
     '''
     Formatting information of a workbook
     '''
+
     def __init__(self, styles: bytes):
         styles_xml = ET.XML(styles)
         self.xfs = styles_xml.findall('spreadsheetml:cellXfs/spreadsheetml:xf',

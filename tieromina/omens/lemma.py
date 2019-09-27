@@ -6,6 +6,8 @@ from .namespaces import XML_ID
 
 logger = logging.getLogger(__name__)
 
+APODOSIS_COLOR = 'FF00B0F0'
+
 
 class Token:
     '''
@@ -113,8 +115,11 @@ class Lemma:
         token_text = ''
         self.omen_prefix = omen_prefix
         word_id = ''
+        self.apodosis = False
         for chunk in cell.chunks:
             if not chunk.text: continue
+            if chunk.cell_format.bgcolor == APODOSIS_COLOR:
+                self.apodosis = True
             if token_text:
                 self.tokens.append(
                     Token(
@@ -169,8 +174,10 @@ class Lemma:
         TODO: Align this with the convention
         '''
         w = ET.Element('rdg', {'wit': witness.xml_id})
-        w = self.tei_body(w, prefix)
-        return w
+        if witness.reference:
+            w.attrib['reference'] = witness.reference
+
+        return self.tei_body(w, prefix)
 
     def reading_tei(self, prefix):
         w = ET.Element('w', {'corresp': self.xml_id})

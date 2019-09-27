@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from xml.etree import ElementTree as ET
 
 from django.test import TestCase
@@ -22,9 +23,14 @@ class OmenTestCase(TestCase):
 
     def test_omen_div(self):
         sheet = Sheet(
+            name='test',
             sheet_xml=ET.parse('omens/tests/test_data/sheet1.xml').getroot(),
             style=self.style,
             shared_strings=self.shared_strings_xml)
         omen = Omen(sheet)
-        score = omen.tei.find('div[@type="score"]', NS)
+        with patch('omens.models.Omen.objects') as MockDB:
+            # Cannot create a DB record without chapter
+            score = omen.export_to_tei(chapter='WHATEVER').find(
+                'div[@type="score"]', NS)
+
         pretty_print(score)
