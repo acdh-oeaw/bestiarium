@@ -58,7 +58,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
 
     @property
     def all_joins(self):
-        return '_'.join(self.joins)
+        return ''.join(['+.' + j for j in self.joins])
 
 
 class ScoreLine(Line):

@@ -81,11 +81,11 @@ class Chapter:
 
             # Extract body from the database TEI or generate TEI
             if body is None:
-                if created or not chapter_db.tei:
+                if created or not db.tei:
                     logger.debug("Creating new chapter: %s", omen.chapter_name)
                     root = Chapter._get_tei_outline()  # TEI skeleton
                 else:
-                    root = ET.fromstring(chapter_db.tei)
+                    root = ET.fromstring(db.tei)
 
                 body = root.find('.//tei:body', NS)
 

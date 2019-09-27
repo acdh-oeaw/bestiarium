@@ -4,17 +4,12 @@ from django.contrib import admin
 from .models import Chapter, Omen, Witness
 
 
-def all_spreadsheets(obj):
-    return (', '.join(
-        [str(s[1].strip('.xls')) for s in obj.spreadsheet.values_list()]))
-
-
 def all_witnesses(obj):
     return (', '.join([s for s in obj.witness.values_list()]))
 
 
 class WitnessAdmin(admin.ModelAdmin):
-    list_display = ('siglum', 'joins', 'ctime', all_spreadsheets)
+    list_display = ('siglum', 'joins', 'ctime')
 
 
 class ChapterAdmin(admin.ModelAdmin):

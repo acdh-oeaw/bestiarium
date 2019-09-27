@@ -15,7 +15,7 @@ class Witness(models.Model):
     ctime = models.DateTimeField(default=now)
 
     def __str__(self):
-        return f'{self.siglum}+{self.join}'
+        return f'{self.siglum}+{self.joins}'
 
 
 class Chapter(models.Model):
