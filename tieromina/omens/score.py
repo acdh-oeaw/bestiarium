@@ -99,8 +99,7 @@ class Score(UserDict):
         scoreline = ScoreLine(row, self.omen_prefix)
         self.data[scoreline.witness] = scoreline
 
-    @property
-    def tei(self):
+    def export_to_tei(self, omen):
         '''
         returns the TEI representation
         '''
