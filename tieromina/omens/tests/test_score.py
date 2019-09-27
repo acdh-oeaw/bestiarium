@@ -29,6 +29,7 @@ class OmenTestCase(TestCase):
             shared_strings=self.shared_strings_xml)
         omen = Omen(sheet)
         with patch('omens.models.Omen.objects') as MockDB:
+            # Cannot create a DB record without chapter
             score = omen.export_to_tei(chapter='WHATEVER').find(
                 'div[@type="score"]', NS)
 
