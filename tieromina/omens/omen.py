@@ -59,8 +59,9 @@ class Omen:
         '''
         row_type = None
         for row_num, row in sheet.get_rows():
-            if sheet.is_empty_row(row) or row_num == 1:
+            if sheet.is_empty_row(row) or row_num == '1':
                 continue
+
             # Find row type
             cells = list(sheet.get_cells(row))
             row_type = Omen.get_row_type(cells[0], row_type)
@@ -96,8 +97,9 @@ class Omen:
                 or 'comment' in cell.full_text.lower()):
             return ROWTYPE_COMMENT
 
-        if any(rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
-               if rdg in cell.full_text.lower()):
+        if any(
+                rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
+                if rdg in cell.full_text.lower()):
             return ROWTYPE_READING
 
         return ROWTYPE_SCORE
