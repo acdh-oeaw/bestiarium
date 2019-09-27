@@ -4,6 +4,7 @@ from xml.etree import ElementTree as ET
 from django.test import TestCase
 
 from ..chapter import Chapter
+from ..models import Chapter as DB
 from ..namespaces import get_attribute
 from ..util import pretty_print
 
@@ -22,10 +23,14 @@ class WorkbookTestCase(TestCase):
 
     def test_chapter(self):
         wb = Chapter()
-        tei = wb.export_to_tei(self.test_file)
+        tei = wb.add_workbook(self.test_file)
+        db_object = DB.objects.get(chapter_name='23')
+        assert str(db_object) == 'Chapter 23'
 
     def test_witnesses(self):
-        tei = ET.fromstring(Chapter().export_to_tei(self.test_file).tei)
+        ch = Chapter()
+        ch.add_workbook(self.test_file)
+        tei = ET.fromstring(ch.tei)
         listwit = tei.find('.//ns:listWit', NS)
         assert (listwit is not None)
         witness_list = []
@@ -34,4 +39,4 @@ class WorkbookTestCase(TestCase):
             assert wit_id not in witness_list
             witness_list.append(wit_id)
 
-        pretty_print(tei)
+        # pretty_print(tei)

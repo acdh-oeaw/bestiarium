@@ -44,7 +44,13 @@ class Chapter:
 
         return root
 
-    def export_to_tei(self, wbfile):
+    def add_workbook(self, wbfile):
+        '''
+        Updates the TEI using the workbok information
+        '''
+        self._export_to_tei(wbfile)
+
+    def _export_to_tei(self, wbfile):
         '''
         Updates the TEI representation of a chapter
         with the omens in the workbook
@@ -53,26 +59,37 @@ class Chapter:
         # TODO: extract existing representation and update
 
         body = None
+        db, created = None, None
         for sheet in wb.get_sheets():
-            # Read omen
             try:
-                omen = Omen(sheet)
+                omen = Omen(sheet)  # Read omen
             except Exception as e:
-                logging.error('Error processing omen from sheet %s', sheet)
+                logging.error('Error "%s" processing omen from sheet %s',
+                              repr(e), sheet)
                 continue
 
-            db, created = DB.objects.get_or_create(
-                chapter_name=omen.chapter_name)
+            if self.name and self.name != omen.chapter_name:
+                logging.error(
+                    'Expecting omens from chapter %s. Found chapter %s',
+                    self.name, omen.chapter_name)
+                continue
+
+            # Create a chapter record if it doesn't already exist
+            if db is None:
+                db, created = DB.objects.get_or_create(
+                    chapter_name=omen.chapter_name)
+
+            # Extract body from the database TEI or generate TEI
             if body is None:
                 if created or not chapter_db.tei:
                     logger.debug("Creating new chapter: %s", omen.chapter_name)
                     root = Chapter._get_tei_outline()  # TEI skeleton
-
                 else:
                     root = ET.fromstring(chapter_db.tei)
 
                 body = root.find('.//tei:body', NS)
 
+                # HACK  - when body is unsearchable within the "tei" namespace
                 if body is None:
                     body = root.find('.//*body', NS)
                     if body is None:
@@ -106,7 +123,6 @@ class Chapter:
             omen_div = omen.tei
             body.append(omen_div)
 
-        tei_str = element2string(root)
-        db.tei = tei_str
+        self.tei = element2string(root)
+        db.tei = self.tei
         db.save()
-        return db
