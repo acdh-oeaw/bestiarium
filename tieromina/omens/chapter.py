@@ -6,12 +6,15 @@ import logging
 from xml.etree import ElementTree as ET
 
 from .models import Chapter as DB
-from .namespaces import NS, TEI_NS, get_attribute
+from .namespaces import NS, TEI_NS, XML_NS, get_attribute
 from .omen import Omen
 from .util import element2string
 from .workbook import Workbook
 
 logger = logging.getLogger(__name__)
+
+for ns, uri in NS.items():
+    ET.register_namespace(ns, uri)
 
 
 class Chapter:
@@ -34,8 +37,7 @@ class Chapter:
         p = ET.SubElement(publicationStmt, 'p')
         p.text = 'Working copy, for internal use only'
         sourceDesc = ET.SubElement(header, 'sourceDesc')
-        ET.SubElement(sourceDesc, 'listWit')
-
+        ET.SubElement(sourceDesc, get_attribute('listWit', TEI_NS))
         text = ET.SubElement(root, get_attribute('text', TEI_NS))
         body = ET.SubElement(text, get_attribute('body', TEI_NS))
         ET.SubElement(body, 'head')
@@ -79,8 +81,19 @@ class Chapter:
 
             # Add witnesses from the omen to TEI
             for witness in omen.score.witnesses:
-                # TODO: Check if witness already present
-                pass
+                logger.debug('Witness %s in Omen %s', witness.xml_id,
+                             omen.omen_name)
+                witness_elem = root.find(
+                    # f'.//witness[@{get_attribute("id",XML_NS)}="{witness.xml_id}"]',
+                    f'.//tei:witness[@xml:id="{witness.xml_id}"]',
+                    NS)
+                if witness_elem is None:
+                    listwit = root.find('.//tei:listWit', NS)
+                    listwit.append(
+                        ET.Element(
+                            get_attribute('witness', TEI_NS), {
+                                get_attribute('id', XML_NS): witness.xml_id
+                            }))
 
             # Check and remove if omen already exists in the TEI
             omen_div_old = body.find(f'.//tei:div[@n="{omen.omen_name}"]', NS)
