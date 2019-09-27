@@ -48,9 +48,9 @@ class Chapter:
         '''
         Updates the TEI using the workbok information
         '''
-        self._export_to_tei(wbfile)
+        self.export_to_tei(wbfile)
 
-    def _export_to_tei(self, wbfile):
+    def export_to_tei(self, wbfile):
         '''
         Updates the TEI representation of a chapter
         with the omens in the workbook
@@ -120,7 +120,7 @@ class Chapter:
                 body.remove(omen_div_old)
 
             # Add omen div to TEI
-            omen_div = omen.tei
+            omen_div = omen.export_to_tei(db)
             body.append(omen_div)
 
         self.tei = element2string(root)

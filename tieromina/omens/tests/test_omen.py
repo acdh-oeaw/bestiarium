@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from xml.etree import ElementTree as ET
 
 from django.test import TestCase
@@ -27,4 +28,6 @@ class OmenTestCase(TestCase):
             style=self.style,
             shared_strings=self.shared_strings_xml)
         omen = Omen(sheet)
-        pretty_print(omen.tei)
+        print(omen.omen_name)
+        with patch('omens.models.Omen.objects') as MockDB:
+            tei = omen.export_to_tei(chapter='Whatever')
