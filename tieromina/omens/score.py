@@ -10,6 +10,7 @@ from xml.etree import ElementTree as ET
 from .cell import Cell
 from .lemma import BreakEnd, BreakStart, Lemma
 from .line import Line
+from .models import Witness as DB
 from .namespaces import NS, XML_ID, XML_NS
 from .position import Position
 
@@ -55,6 +56,10 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
         wit = ET.Element('witness', {XML_ID: self.xml_id})
         wit.text = witness.siglum
 
+    @property
+    def all_joins(self):
+        return '_'.join(self.joins)
+
 
 class ScoreLine(Line):
     '''
@@ -64,6 +69,10 @@ class ScoreLine(Line):
     def __init__(self, row: List[Cell], omen_prefix):
         super().__init__(omen_prefix)
         self.witness = Witness(row)
+        DB.objects.get_or_create(
+            witness_id=self.witness.xml_id,
+            siglum=self.witness.siglum,
+            joins=self.witness.all_joins)
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
 
@@ -107,6 +116,7 @@ class Score(UserDict):
         score = ET.Element('div', {'type': 'score'})
         ab = ET.SubElement(score, 'ab')
         for witness, scoreline in self.data.items():
+
             for item in scoreline:
                 if isinstance(item, Lemma):
                     # construct word identifier
