@@ -69,10 +69,7 @@ class ScoreLine(Line):
     def __init__(self, row: List[Cell], omen_prefix):
         super().__init__(omen_prefix)
         self.witness = Witness(row)
-        DB.objects.get_or_create(
-            witness_id=self.witness.xml_id,
-            siglum=self.witness.siglum,
-            joins=self.witness.all_joins)
+
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
 
@@ -116,7 +113,11 @@ class Score(UserDict):
         score = ET.Element('div', {'type': 'score'})
         ab = ET.SubElement(score, 'ab')
         for witness, scoreline in self.data.items():
-
+            wit_db = DB.objects.get_or_create(
+                witness_id=witness.xml_id,
+                siglum=witness.siglum,
+                joins=witness.all_joins)
+            # omen.witness.add(wit_db)
             for item in scoreline:
                 if isinstance(item, Lemma):
                     # construct word identifier
