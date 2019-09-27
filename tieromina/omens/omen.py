@@ -74,10 +74,11 @@ class Omen:
                 self.commentary.add_row(cells)
 
     def export_to_tei(self, chapter):
-        db = DB.objects.get_or_create(omen_id=self.omen_name, chapter=chapter)
+        db, created = DB.objects.get_or_create(
+            omen_id=self.omen_name, chapter=chapter)
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
-        score_div = self.score.tei
+        score_div = self.score.export_to_tei(db)
         omen_div.append(score_div)  #
         for reading_group in self.readings.tei:
             omen_div.append(reading_group)  #

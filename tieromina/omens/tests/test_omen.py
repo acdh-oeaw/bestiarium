@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from xml.etree import ElementTree as ET
 
 from django.test import TestCase
@@ -29,5 +29,10 @@ class OmenTestCase(TestCase):
             shared_strings=self.shared_strings_xml)
         omen = Omen(sheet)
         print(omen.omen_name)
-        with patch('omens.models.Omen.objects') as MockDB:
-            tei = omen.export_to_tei(chapter='Whatever')
+        with patch(
+                'omens.models.Witness.objects.get_or_create',
+                MagicMock(return_value=(None, False))):
+            with patch(
+                    'omens.models.Omen.objects.get_or_create',
+                    MagicMock(return_value=(None, False))):
+                tei = omen.export_to_tei(chapter='Whatever')

@@ -10,6 +10,7 @@ from xml.etree import ElementTree as ET
 from .cell import Cell
 from .lemma import BreakEnd, BreakStart, Lemma
 from .line import Line
+from .models import Witness as DB
 from .namespaces import NS, XML_ID, XML_NS
 from .position import Position
 
@@ -55,6 +56,10 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
         wit = ET.Element('witness', {XML_ID: self.xml_id})
         wit.text = witness.siglum
 
+    @property
+    def all_joins(self):
+        return ''.join(['+.' + j for j in self.joins])
+
 
 class ScoreLine(Line):
     '''
@@ -64,6 +69,7 @@ class ScoreLine(Line):
     def __init__(self, row: List[Cell], omen_prefix):
         super().__init__(omen_prefix)
         self.witness = Witness(row)
+
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
 
@@ -99,8 +105,7 @@ class Score(UserDict):
         scoreline = ScoreLine(row, self.omen_prefix)
         self.data[scoreline.witness] = scoreline
 
-    @property
-    def tei(self):
+    def export_to_tei(self, omen):
         '''
         returns the TEI representation
         '''
@@ -108,6 +113,11 @@ class Score(UserDict):
         score = ET.Element('div', {'type': 'score'})
         ab = ET.SubElement(score, 'ab')
         for witness, scoreline in self.data.items():
+            wit_db = DB.objects.get_or_create(
+                witness_id=witness.xml_id,
+                siglum=witness.siglum,
+                joins=witness.all_joins)
+            # omen.witness.add(wit_db)
             for item in scoreline:
                 if isinstance(item, Lemma):
                     # construct word identifier

@@ -5,16 +5,17 @@ from django.db import models
 from django.utils.timezone import now
 
 
-class Tablet(models.Model):
+class Witness(models.Model):
     '''
     Stores the physical tablet information - siglum
     '''
+    witness_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
     siglum = models.CharField(max_length=100)
-    join = models.CharField(max_length=100, blank=True, null=True)
+    joins = models.CharField(max_length=100, blank=True, null=True)
     ctime = models.DateTimeField(default=now)
 
     def __str__(self):
-        return f'{self.siglum}+{self.join}'
+        return f'{self.siglum}+{self.joins}'
 
 
 class Chapter(models.Model):
@@ -23,11 +24,10 @@ class Chapter(models.Model):
     links to all the omens
     that are a part of this chapter
     '''
-
     chapter_name = models.CharField(max_length=100)
     ctime = models.DateTimeField(default=now)
     tei = models.TextField(default='')
-    tablet = models.ManyToManyField(Tablet)
+    witness = models.ManyToManyField(Witness)
 
     def __str__(self):
         return f'Chapter {self.chapter_name}'
@@ -41,7 +41,7 @@ class Omen(models.Model):
     omen_num = models.CharField(max_length=100)
     ctime = models.DateTimeField(default=now)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
-    tablet = models.ManyToManyField(Tablet)
+    witness = models.ManyToManyField(Witness)
 
 
 """

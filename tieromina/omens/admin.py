@@ -1,20 +1,15 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Chapter, Omen, Tablet
+from .models import Chapter, Omen, Witness
 
 
-def all_spreadsheets(obj):
-    return (', '.join(
-        [str(s[1].strip('.xls')) for s in obj.spreadsheet.values_list()]))
+def all_witnesses(obj):
+    return (', '.join([s for s in obj.witness.values_list()]))
 
 
-def all_tablets(obj):
-    return (', '.join([s for s in obj.tablet.values_list()]))
-
-
-class TabletAdmin(admin.ModelAdmin):
-    list_display = ('siglum', 'join', 'ctime', all_spreadsheets)
+class WitnessAdmin(admin.ModelAdmin):
+    list_display = ('siglum', 'joins', 'ctime')
 
 
 class ChapterAdmin(admin.ModelAdmin):
@@ -22,9 +17,9 @@ class ChapterAdmin(admin.ModelAdmin):
 
 
 class OmenAdmin(admin.ModelAdmin):
-    list_display = ('omen_id', 'omen_num', 'chapter', all_tablets)
+    list_display = ('omen_id', 'omen_num', 'chapter', all_witnesses)
 
 
 admin.site.register(Omen, OmenAdmin)
-admin.site.register(Tablet, TabletAdmin)
+admin.site.register(Witness, WitnessAdmin)
 admin.site.register(Chapter, ChapterAdmin)
