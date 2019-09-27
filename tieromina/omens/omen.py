@@ -9,7 +9,7 @@ from xml.etree import ElementTree as ET
 
 from .cell import Cell
 from .commentary import Commentary
-from .models.Omen import DB
+from .models import Omen as DB
 from .readings import Readings
 from .score import Score
 
@@ -96,9 +96,8 @@ class Omen:
                 or 'comment' in cell.full_text.lower()):
             return ROWTYPE_COMMENT
 
-        if any(
-                rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
-                if rdg in cell.full_text.lower()):
+        if any(rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
+               if rdg in cell.full_text.lower()):
             return ROWTYPE_READING
 
         return ROWTYPE_SCORE

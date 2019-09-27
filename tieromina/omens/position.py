@@ -3,6 +3,7 @@ Classes to decode the position information in a cell
 '''
 
 LINENUM_COLOR = 'FFFF0000'
+
 import logging
 from xml.etree import ElementTree as ET
 
@@ -14,7 +15,6 @@ class Position:
     Line and column position information in a score
     TODO: Omen 23.4 has a line number like ii 21 (23.5*)
     '''
-
     @staticmethod
     def is_position_cell(cell):
         for chunk in cell.chunks:
@@ -65,7 +65,6 @@ class LineInfo:
     '''
     Line number information in the tablet
     '''
-
     def __init__(self, witness, text, supplement_text=''):
         self.witness = witness
         self.broken = "'" in text
@@ -93,7 +92,6 @@ class ColumnInfo:
     '''
     Column number information in the tablet
     '''
-
     def __init__(self, witness, text):
         self.witness = witness
         self.text = text
