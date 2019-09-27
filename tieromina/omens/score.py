@@ -47,8 +47,8 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
 
     @property
     def xml_id(self):
-        return ("wit_" + re.sub("[^A-Za-z0-9\-_\.]+", "_", self.siglum) +
-                re.sub("[^A-Za-z0-9\-_\.]+", "_", self.reference))
+        return ("wit_" + re.sub("[^A-Za-z0-9\-_\.]+", "_", self.siglum) + '_' +
+                '_'.join(self.joins))
 
     @property
     def tei(self):

@@ -5,6 +5,7 @@ from django.test import TestCase
 
 from ..chapter import Chapter
 from ..namespaces import get_attribute
+from ..util import pretty_print
 
 NS = {
     'ns': 'http://www.tei-c.org/ns/1.0',
@@ -29,7 +30,8 @@ class WorkbookTestCase(TestCase):
         assert (listwit is not None)
         witness_list = []
         for elem in listwit:
-            print(witness_list)
             wit_id = elem.get(get_attribute('id', NS['xml']))
             assert wit_id not in witness_list
             witness_list.append(wit_id)
+
+        pretty_print(tei)
