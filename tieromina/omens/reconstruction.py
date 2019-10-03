@@ -63,12 +63,8 @@ class ReconstructionLine(Line):
                 if i == 0:
                     w = word.reconstruction_tei(self.omen_prefix)
                     w.tag = 'ab'
+                    w.attrib = ab.attrib
                     ab = w
-                    ab.attrib['lang'] = self.rdg_type
-                    ab.attrib['type'] = 'translation'
-                    if 'corresp' in ab.attrib:
-                        del ab.attrib['corresp']
-
                 else:
                     ab.text += ' ' + w.text
                     logger.warning(
