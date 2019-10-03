@@ -2,6 +2,7 @@
 Bunch of utility functions shared across the module
 '''
 
+import re
 from xml.dom import minidom
 from xml.etree import ElementTree as ET
 
@@ -23,3 +24,7 @@ def pretty_print(root):
     dom = minidom.parseString(ET.tostring(root))
     pretty_root = dom.toprettyxml(indent="  ", newl="\n")
     print(pretty_root)
+
+
+def clean_id(dirty_id):
+    return re.sub("[^A-Za-z0-9\-_\.]+", "_", dirty_id)

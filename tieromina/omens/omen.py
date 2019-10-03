@@ -10,12 +10,12 @@ from xml.etree import ElementTree as ET
 from .cell import Cell
 from .commentary import Commentary
 from .models import Omen as DB
-from .readings import Readings
+from .reconstruction import Reconstruction
 from .score import Score
 
 ROWTYPE_BLANK = 'BLANK'
 ROWTYPE_SCORE = 'SCORE'
-ROWTYPE_READING = 'READING'
+ROWTYPE_RECONSTRUCTION = 'RECONSTRUCTION'
 ROWTYPE_COMMENT = 'COMMENT'
 
 
@@ -29,7 +29,7 @@ class Omen:
         self.omen_name: str = sheet
         self.commentary: Commentary = Commentary(self.omen_prefix)
         self.score: Score = Score(self.omen_prefix)
-        self.readings: Readings = Readings(self.omen_prefix)
+        self.reconstruction: Reconstruction = Reconstruction(self.omen_prefix)
         self._read(sheet)
 
     @property
@@ -68,20 +68,20 @@ class Omen:
             # logging.debug('ROW: %s - %s ', row_num, row_type)
             if row_type == ROWTYPE_SCORE:
                 self.score.add_row(cells)
-            elif row_type == ROWTYPE_READING:
-                self.readings.add_to_readings(cells)
+            elif row_type == ROWTYPE_RECONSTRUCTION:
+                self.reconstruction.add_to_reconstruction(cells)
             elif row_type == ROWTYPE_COMMENT:
                 self.commentary.add_row(cells)
 
-    def export_to_tei(self, chapter):
+    def export_to_tei(self, chapter_db):
         db, created = DB.objects.get_or_create(
-            omen_id=self.omen_name, chapter=chapter)
+            omen_id=self.omen_name, chapter=chapter_db)
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
         score_div = self.score.export_to_tei(db)
         omen_div.append(score_div)  #
-        for reading_group in self.readings.tei:
-            omen_div.append(reading_group)  #
+        for reconstruction_group in self.reconstruction.export_to_tei(db):
+            omen_div.append(reconstruction_group)  #
         comments_div = self.commentary.tei
         omen_div.append(comments_div)
         return omen_div
@@ -101,6 +101,6 @@ class Omen:
         if any(
                 rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
                 if rdg in cell.full_text.lower()):
-            return ROWTYPE_READING
+            return ROWTYPE_RECONSTRUCTION
 
         return ROWTYPE_SCORE

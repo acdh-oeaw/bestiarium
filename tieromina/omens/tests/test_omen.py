@@ -21,7 +21,12 @@ class OmenTestCase(TestCase):
         self.shared_strings_xml = ET.parse(
             'omens/tests/test_data/sharedStrings.xml').getroot()
 
-    def test_omen_div(self):
+    @patch('omens.models.Reconstruction.save', return_value=None)
+    @patch('omens.models.Chapter', autospec=True)
+    @patch(
+        'omens.models.Omen.objects.get_or_create', return_value=(None, False))
+    @patch('omens.models.Witness.objects.get_or_create', autospec=True)
+    def test_omen_div(self, MockWit, MockOmen, MockChap, MockRecon):
         sheet = Sheet(
             sheet_xml=ET.parse('omens/tests/test_data/sheet1.xml').getroot(),
             name='test',
@@ -29,10 +34,5 @@ class OmenTestCase(TestCase):
             shared_strings=self.shared_strings_xml)
         omen = Omen(sheet)
         print(omen.omen_name)
-        with patch(
-                'omens.models.Witness.objects.get_or_create',
-                MagicMock(return_value=(None, False))):
-            with patch(
-                    'omens.models.Omen.objects.get_or_create',
-                    MagicMock(return_value=(None, False))):
-                tei = omen.export_to_tei(chapter='Whatever')
+        tei = omen.export_to_tei(chapter_db=None)
+        pretty_print(tei)

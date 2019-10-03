@@ -179,7 +179,7 @@ class Lemma:
 
         return self.tei_body(w, prefix)
 
-    def reading_tei(self, prefix):
+    def reconstruction_tei(self, prefix):
         w = ET.Element('w', {'corresp': self.xml_id})
         w = self.tei_body(w, prefix)
         return w
