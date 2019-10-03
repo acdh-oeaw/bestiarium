@@ -58,7 +58,7 @@ class Chapter:
         wb = Workbook(wbfile)
         # TODO: extract existing representation and update
 
-        body = None
+        body, root = None, None
         db, created = None, None
         for sheet in wb.get_sheets():
             try:

@@ -44,6 +44,27 @@ class Omen(models.Model):
     witness = models.ManyToManyField(Witness)
 
 
+class Reconstruction(models.Model):
+    '''
+    A reconstruction of the omen, which contains one or more of the following:
+    - translation
+    - transcription
+    - transliteration
+    '''
+    reconstruction_id = models.CharField(
+        max_length=100, primary_key=True)  # TEI ID
+    omen = models.ForeignKey(Omen, on_delete=models.CASCADE, default='')
+
+
+class Translation(models.Model):
+    '''
+    Translation of the omen, corresponding to a particular reconstruction
+    '''
+    trs_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
+    reconstruction = models.ForeignKey(
+        Reconstruction, on_delete=models.CASCADE, default='')
+
+
 """
 # Create your models here.
 class Tablet(models.Model):
