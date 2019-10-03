@@ -9,6 +9,8 @@ from xml.etree import ElementTree as ET
 
 from .lemma import Lemma
 from .line import Line
+from .namespaces import XML_ID
+from .util import clean_id
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +21,11 @@ class ReconstructionId(NamedTuple):
     '''
     label: str
     siglum: str = ''
+
+    @property
+    def xml_id(self):
+        return clean_id(self.label) + ('.' + clean_id(self.siglum)
+                                       if self.siglum else '')
 
 
 class ReconstructionLine(Line):
@@ -34,9 +41,10 @@ class ReconstructionLine(Line):
             row[0].full_text)
         if not m: raise ValueError('Unrecognised row header %s', row)
         self.reconstruction_id = ReconstructionId(
-            label=m.group('label'), siglum=m.group('siglum'))
+            label=m.group('label'), siglum=m.group('siglum')[1:-1])
 
         self.rdg_type = m.group('rdg_type')
+        self.reference = row[1].full_text if row[1].column_name == 'B' else ''
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
             self.data.append(Lemma(cell, omen_prefix=self.omen_prefix))
@@ -44,7 +52,11 @@ class ReconstructionLine(Line):
         self.connect_damaged_ends()
 
     def export_to_tei(self, reconstruction_db):
-        ab = ET.Element('ab')
+        ab = ET.Element(
+            'ab', {
+                XML_ID:
+                f'{self.omen_prefix}.{self.rdg_type}.{self.reconstruction_id.xml_id}{"_"+clean_id(self.reference) if self.reference else ""}'
+            })
         if self.rdg_type == 'trl':
             ab.attrib['type'] = 'transliteration'
         elif self.rdg_type == 'trs':
@@ -76,7 +88,7 @@ class ReconstructionLine(Line):
 
 class Reconstruction(UserDict):
     '''
-    Keys are ReconstructionId
+    Keys are ReconstructionIdb
     Comprises of reconstructions which could be one or more of the following:
      - transliteration,
      - transcription,

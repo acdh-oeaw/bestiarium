@@ -2,17 +2,17 @@
 Omen score - gathered from different witnesses
 '''
 import logging
-import re
-from collections import UserDict, UserList, namedtuple
+from collections import UserDict, namedtuple
 from typing import List
 from xml.etree import ElementTree as ET
 
 from .cell import Cell
-from .lemma import BreakEnd, BreakStart, Lemma
+from .lemma import Lemma
 from .line import Line
 from .models import Witness as DB
-from .namespaces import NS, XML_ID, XML_NS
+from .namespaces import NS, XML_ID
 from .position import Position
+from .util import clean_id
 
 logger = logging.getLogger(__name__)
 
@@ -48,8 +48,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
 
     @property
     def xml_id(self):
-        return ("wit_" + re.sub("[^A-Za-z0-9\-_\.]+", "_", self.siglum) + '_' +
-                '_'.join(self.joins))
+        return ("wit_" + clean_id(self.siglum) + '_' + '_'.join(self.joins))
 
     @property
     def tei(self):
