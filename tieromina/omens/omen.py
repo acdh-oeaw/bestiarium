@@ -73,14 +73,14 @@ class Omen:
             elif row_type == ROWTYPE_COMMENT:
                 self.commentary.add_row(cells)
 
-    def export_to_tei(self, chapter):
+    def export_to_tei(self, chapter_db):
         db, created = DB.objects.get_or_create(
-            omen_id=self.omen_name, chapter=chapter)
+            omen_id=self.omen_name, chapter=chapter_db)
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
         score_div = self.score.export_to_tei(db)
         omen_div.append(score_div)  #
-        for reconstruction_group in self.reconstruction.tei:
+        for reconstruction_group in self.reconstruction.export_to_tei(db):
             omen_div.append(reconstruction_group)  #
         comments_div = self.commentary.tei
         omen_div.append(comments_div)

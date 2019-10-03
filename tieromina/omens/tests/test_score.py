@@ -36,7 +36,7 @@ class OmenTestCase(TestCase):
             with patch(
                     'omens.models.Omen.objects.get_or_create',
                     MagicMock(return_value=(None, False))):
-                score = omen.export_to_tei(chapter='Whatever').find(
+                score = omen.export_to_tei(chapter_db='Whatever').find(
                     'div[@type="score"]', NS)
 
         pretty_print(score)
