@@ -9,6 +9,7 @@ from xml.etree import ElementTree as ET
 
 from .lemma import Lemma
 from .line import Line
+from .models import Reconstruction as ReconstructionDB
 from .namespaces import XML_ID
 from .util import clean_id
 
@@ -19,13 +20,14 @@ class ReconstructionId(NamedTuple):
     '''
     Hashable identifier for a readling line
     '''
+    omen_prefix: str
     label: str
     siglum: str = ''
 
     @property
     def xml_id(self):
-        return clean_id(self.label) + ('.' + clean_id(self.siglum)
-                                       if self.siglum else '')
+        return (self.omen_prefix + '.' + clean_id(self.label) +
+                ('.' + clean_id(self.siglum) if self.siglum else ''))
 
 
 class ReconstructionLine(Line):
@@ -41,7 +43,9 @@ class ReconstructionLine(Line):
             row[0].full_text)
         if not m: raise ValueError('Unrecognised row header %s', row)
         self.reconstruction_id = ReconstructionId(
-            label=m.group('label'), siglum=m.group('siglum')[1:-1])
+            omen_prefix=omen_prefix,
+            label=m.group('label'),
+            siglum=m.group('siglum')[1:-1])
 
         self.rdg_type = m.group('rdg_type')
         self.reference = row[1].full_text if row[1].column_name == 'B' else ''
@@ -51,12 +55,12 @@ class ReconstructionLine(Line):
 
         self.connect_damaged_ends()
 
+    @property
+    def xml_id(self):
+        return f'{self.rdg_type}.{self.reconstruction_id.xml_id}{"_"+clean_id(self.reference) if self.reference else ""}'
+
     def export_to_tei(self, reconstruction_db):
-        ab = ET.Element(
-            'ab', {
-                XML_ID:
-                f'{self.omen_prefix}.{self.rdg_type}.{self.reconstruction_id.xml_id}{"_"+clean_id(self.reference) if self.reference else ""}'
-            })
+        ab = ET.Element('ab', {XML_ID: self.xml_id})
         if self.rdg_type == 'trl':
             ab.attrib['type'] = 'transliteration'
         elif self.rdg_type == 'trs':
@@ -110,7 +114,14 @@ class Reconstruction(UserDict):
 
     def export_to_tei(self, omen_db):
         for rdg_grp, lines in self.data.items():
-            elem = ET.Element('div', {'n': rdg_grp.label})
+            elem = ET.Element('div', {
+                'n': rdg_grp.label,
+                XML_ID: clean_id(rdg_grp.xml_id)
+            })
+            # Create a database record for this reconstruction
+            recon_db = ReconstructionDB(
+                reconstruction_id=clean_id(rdg_grp.xml_id), omen=omen_db)
+            recon_db.save()
             for line in lines:
-                elem.append(line.export_to_tei(omen_db))
+                elem.append(line.export_to_tei(recon_db))
             yield elem

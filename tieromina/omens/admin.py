@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Chapter, Omen, Witness
+from .models import Chapter, Omen, Reconstruction, Witness
 
 
 def all_witnesses(obj):
@@ -20,6 +20,11 @@ class OmenAdmin(admin.ModelAdmin):
     list_display = ('omen_id', 'omen_num', 'chapter', all_witnesses)
 
 
+class ReconstructionAdmin(admin.ModelAdmin):
+    list_display = ('reconstruction_id', 'omen_id')
+
+
 admin.site.register(Omen, OmenAdmin)
 admin.site.register(Witness, WitnessAdmin)
 admin.site.register(Chapter, ChapterAdmin)
+admin.site.register(Reconstruction, ReconstructionAdmin)
