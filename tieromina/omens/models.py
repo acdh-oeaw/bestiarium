@@ -44,6 +44,18 @@ class Omen(models.Model):
     witness = models.ManyToManyField(Witness)
 
 
+class Segment(models.Model):
+    '''
+    A segment in the omen, either PROTASIS or APODOSIS
+    '''
+    segment_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
+    omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
+    segment_type = models.CharField(
+        max_length=9,
+        choices=(('PROTASIS', 'Protasis'), ('APODOSIS', 'Apodosis')),
+        default='PROTASIS')
+
+
 class Lemma(models.Model):
     '''
     A lemma in the omen, represented using w element inside the score in the TEI
@@ -51,10 +63,7 @@ class Lemma(models.Model):
     lemma_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
     lemma_idx = models.IntegerField  # index of the lemma in the in the omen (position of the w element, implicit in the TEI)
     omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
-    segment = models.CharField(
-        max_length=9,
-        choices=(('PROTASIS', 'Protasis'), ('APODOSIS', 'Apodosis')),
-        default='PROTASIS')
+    segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
 
 
 class Reconstruction(models.Model):
@@ -77,8 +86,12 @@ class Translation(models.Model):
         max_length=100, primary_key=True)  # TEI ID
     reconstruction = models.ForeignKey(
         Reconstruction, on_delete=models.CASCADE, default='')
-    protasis = models.TextField
-    apodosis = models.TextField
+    lang = models.CharField(
+        max_length=2,
+        choices=(('en', 'ENGLISH'), ('de', 'GERMAN')),
+        default='en')
+    text = models.TextField
+    segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
 
 
 class Transliteration(models.Model):
