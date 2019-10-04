@@ -11,11 +11,9 @@ from ..workbook import Style
 NS = {'tei': 'http://www.tei-c.org/ns/1.0'}
 
 
-class OmenTestCase(TestCase):
+class ScoreTestCase(TestCase):
     def setUp(self):
-        pass
 
-    def test_omen_div(self):
         with open('omens/tests/test_data/styles.xml', 'r') as f:
             style_xml = f.read()
 
@@ -23,20 +21,19 @@ class OmenTestCase(TestCase):
         self.shared_strings_xml = ET.parse(
             'omens/tests/test_data/sharedStrings.xml').getroot()
 
+    @patch('omens.models.Reconstruction.save', return_value=None)
+    @patch('omens.models.Chapter', autospec=True)
+    @patch('omens.models.Omen.objects.get_or_create',
+           return_value=(None, False))
+    @patch('omens.models.Witness.objects.get_or_create', autospec=True)
+    def test_score_div(self, MockWit, MockOmen, MockChap, MockRecon):
         sheet = Sheet(
-            name='test',
             sheet_xml=ET.parse('omens/tests/test_data/sheet1.xml').getroot(),
+            name='test',
             style=self.style,
             shared_strings=self.shared_strings_xml)
         omen = Omen(sheet)
-
-        with patch(
-                'omens.models.Witness.objects.get_or_create',
-                MagicMock(return_value=(None, False))):
-            with patch(
-                    'omens.models.Omen.objects.get_or_create',
-                    MagicMock(return_value=(None, False))):
-                score = omen.export_to_tei(chapter_db='Whatever').find(
-                    'div[@type="score"]', NS)
-
+        print(omen.omen_name)
+        score = omen.export_to_tei(chapter_db=None).find(
+            'div[@type="score"]', NS)
         pretty_print(score)
