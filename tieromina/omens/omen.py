@@ -9,7 +9,7 @@ from xml.etree import ElementTree as ET
 
 from .cell import Cell
 from .commentary import Commentary
-from .models import Omen as DB
+from .models import Omen as OmenDB
 from .reconstruction import Reconstruction
 from .score import Score
 
@@ -74,13 +74,14 @@ class Omen:
                 self.commentary.add_row(cells)
 
     def export_to_tei(self, chapter_db):
-        db, created = DB.objects.get_or_create(
+        omen_db, created = OmenDB.objects.get_or_create(
             omen_id=self.omen_name, chapter=chapter_db)
+
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
-        score_div = self.score.export_to_tei(db)
+        score_div = self.score.export_to_tei(omen_db)
         omen_div.append(score_div)  #
-        for reconstruction_group in self.reconstruction.export_to_tei(db):
+        for reconstruction_group in self.reconstruction.export_to_tei(omen_db):
             omen_div.append(reconstruction_group)  #
         comments_div = self.commentary.tei
         omen_div.append(comments_div)
