@@ -17,7 +17,7 @@ from .util import clean_id
 logger = logging.getLogger(__name__)
 
 
-class Witness(namedtuple('Witness', 'siglum, joins, reference')):
+class Witness(namedtuple('Witness', 'idno, siglum, joins, reference')):
     '''
     A witness - siglum, joins and if applicable, reference
     '''
@@ -44,7 +44,11 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
             reference = ''
 
         return super().__new__(
-            cls, siglum=siglum, joins=joins, reference=reference)
+            cls,
+            idno=row[0].full_text,
+            siglum=siglum,
+            joins=joins,
+            reference=reference)
 
     @property
     def xml_id(self):
@@ -57,7 +61,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
                 XML_ID: self.xml_id
             })
         idno = ET.SubElement(wit, get_attribute('idno', TEI_NS))
-        idno.text = self.siglum
+        idno.text = self.idno
         return wit
 
     @property
