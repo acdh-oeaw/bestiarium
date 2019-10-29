@@ -7,13 +7,17 @@ SECRET_KEY = '^mm-24*i-6iecm7c@z9l+7%^ns^4g^z!8=dgffg4ulggr-4=1%'
 DEBUG = True
 DEV_VERSION = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.tieromina.acdh-dev.oeaw.ac.at', '.tieromina.hephaistos.arz.oeaw.ac.at', '127.0.0.1']
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'tieromina',
+        'USER': 'tieromina',
+        'PASSWORD': 'WwxPNtMh5SjS',
+        'HOST': 'helios.arz.oeaw.ac.at',
+        'PORT': '5432',
+     }
 }
 
 Z_ID = "1****5"

@@ -1,3 +1,4 @@
+psycopg2
 certifi==2019.3.9
 chardet==3.0.4
 Django==2.2.1
