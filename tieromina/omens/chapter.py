@@ -106,11 +106,7 @@ class Chapter:
                     NS)
                 if witness_elem is None:
                     listwit = root.find('.//tei:listWit', NS)
-                    listwit.append(
-                        ET.Element(
-                            get_attribute('witness', TEI_NS), {
-                                get_attribute('id', XML_NS): witness.xml_id
-                            }))
+                    listwit.append(witness.tei)
 
             # Check and remove if omen already exists in the TEI
             omen_div_old = body.find(f'.//tei:div[@n="{omen.omen_name}"]', NS)

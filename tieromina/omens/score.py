@@ -10,7 +10,7 @@ from .cell import Cell
 from .lemma import Lemma
 from .line import Line
 from .models import Witness as DB
-from .namespaces import NS, XML_ID
+from .namespaces import NS, TEI_NS, XML_ID, get_attribute
 from .position import Position
 from .util import clean_id
 
@@ -30,7 +30,7 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
         try:
             if row[0].column_name == 'A':
                 witness_parts = row[0].full_text.split('+.')
-                siglum = witness_parts[0].rstrip('+')
+                siglum = witness_parts[0]
                 joins = tuple(witness_parts[1:])
             else:
                 logger.error('First cell from column A missing: %s', row)
@@ -52,8 +52,13 @@ class Witness(namedtuple('Witness', 'siglum, joins, reference')):
 
     @property
     def tei(self):
-        wit = ET.Element('witness', {XML_ID: self.xml_id})
-        wit.text = witness.siglum
+        wit = ET.Element(
+            get_attribute('witness', TEI_NS), {
+                XML_ID: self.xml_id
+            })
+        idno = ET.SubElement(wit, get_attribute('idno', TEI_NS))
+        idno.text = self.siglum
+        return wit
 
     @property
     def all_joins(self):
