@@ -13,11 +13,26 @@ REDMINE_ID = 10459
 # Application definition
 
 INSTALLED_APPS = [
-    'dal', 'django.contrib.admin', 'dal_select2', 'django.contrib.auth',
-    'django.contrib.contenttypes', 'django.contrib.sessions',
-    'django.contrib.messages', 'django.contrib.staticfiles', 'reversion',
-    'crispy_forms', 'django_filters', 'django_tables2', 'rest_framework',
-    'leaflet', 'idprovider', 'webpage', 'browsing', 'infos',  'omens', 'upload'
+    'dal',
+    'django.contrib.admin',
+    'dal_select2',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'reversion',
+    'crispy_forms',
+    'django_filters',
+    'django_tables2',
+    'rest_framework',
+    'leaflet',
+    'idprovider',
+    'webpage',
+    'browsing',
+    'infos',
+    'omens',
+    'upload',
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
