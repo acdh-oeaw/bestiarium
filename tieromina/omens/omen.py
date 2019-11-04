@@ -10,6 +10,7 @@ from xml.etree import ElementTree as ET
 from .cell import Cell
 from .commentary import Commentary
 from .models import Omen as OmenDB
+from .models import Segment as SegmentDB
 from .reconstruction import Reconstruction
 from .score import Score
 
@@ -74,8 +75,17 @@ class Omen:
                 self.commentary.add_row(cells)
 
     def export_to_tei(self, chapter_db):
-        omen_db, created = OmenDB.objects.get_or_create(
-            omen_id=self.omen_name, chapter=chapter_db)
+        omen_db, created = OmenDB.objects.get_or_create(omen_id=self.omen_name,
+                                                        chapter=chapter_db)
+
+        if created:
+            protasis = SegmentDB(segment_id=self.omen_name + '_P',
+                                 omen=omen_db)
+            protasis.save()
+            apodosis = SegmentDB(segment_id=self.omen_name + '_A',
+                                 omen=omen_db,
+                                 segment_type='APODOSIS')
+            apodosis.save()
 
         omen_div = ET.Element('div', {'n': self.omen_name})
         omen_head = ET.SubElement(omen_div, 'head')
@@ -99,9 +109,8 @@ class Omen:
                 or 'comment' in cell.full_text.lower()):
             return ROWTYPE_COMMENT
 
-        if any(
-                rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
-                if rdg in cell.full_text.lower()):
+        if any(rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
+               if rdg in cell.full_text.lower()):
             return ROWTYPE_RECONSTRUCTION
 
         return ROWTYPE_SCORE
