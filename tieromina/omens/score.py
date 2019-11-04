@@ -9,7 +9,9 @@ from xml.etree import ElementTree as ET
 from .cell import Cell
 from .lemma import Lemma
 from .line import Line
-from .models import Witness as DB
+from .models import Lemma as LemmaDB
+from .models import Segment as SegmentDB
+from .models import Witness as WitnessDB
 from .namespaces import NS, TEI_NS, XML_ID, get_attribute
 from .position import Position
 from .util import clean_id
@@ -21,7 +23,6 @@ class Witness(namedtuple('Witness', 'idno, siglum, joins, reference')):
     '''
     A witness - siglum, joins and if applicable, reference
     '''
-
     def __new__(cls, row):
         '''
         Converts the first two column values for a score line into an immutable namedtuple,
@@ -43,12 +44,11 @@ class Witness(namedtuple('Witness', 'idno, siglum, joins, reference')):
         except IndexError as ie:
             reference = ''
 
-        return super().__new__(
-            cls,
-            idno=row[0].full_text,
-            siglum=siglum,
-            joins=joins,
-            reference=reference)
+        return super().__new__(cls,
+                               idno=row[0].full_text,
+                               siglum=siglum,
+                               joins=joins,
+                               reference=reference)
 
     @property
     def xml_id(self):
@@ -56,10 +56,8 @@ class Witness(namedtuple('Witness', 'idno, siglum, joins, reference')):
 
     @property
     def tei(self):
-        wit = ET.Element(
-            get_attribute('witness', TEI_NS), {
-                XML_ID: self.xml_id
-            })
+        wit = ET.Element(get_attribute('witness', TEI_NS),
+                         {XML_ID: self.xml_id})
         idno = ET.SubElement(wit, get_attribute('idno', TEI_NS))
         idno.text = self.idno
         return wit
@@ -73,7 +71,6 @@ class ScoreLine(Line):
     '''
     A line from the score of the omen
     '''
-
     def __init__(self, row: List[Cell], omen_prefix):
         super().__init__(omen_prefix)
         self.witness = Witness(row)
@@ -99,7 +96,6 @@ class Score(UserDict):
     '''
     A dict of score lines, identified by witness
     '''
-
     def __init__(self, omen_prefix):
         super().__init__()
         self.omen_prefix = omen_prefix
@@ -113,19 +109,20 @@ class Score(UserDict):
         scoreline = ScoreLine(row, self.omen_prefix)
         self.data[scoreline.witness] = scoreline
 
-    def export_to_tei(self, omen):
+    def export_to_tei(self, omen_db):
         '''
         returns the TEI representation
         '''
-
         score = ET.Element('div', {'type': 'score'})
         ab = ET.SubElement(score, 'ab')
+        segment_db = SegmentDB.objects.filter(omen=omen_db,
+                                              segment_type='PROTASIS')[0]
         for witness, scoreline in self.data.items():
-            wit_db = DB.objects.get_or_create(
-                witness_id=witness.xml_id,
-                siglum=witness.siglum,
-                joins=witness.all_joins)
+            wit_db = WitnessDB.objects.get_or_create(witness_id=witness.xml_id,
+                                                     siglum=witness.siglum,
+                                                     joins=witness.all_joins)
             # omen.witness.add(wit_db)
+            word_idx = 0
             for item in scoreline:
                 if isinstance(item, Lemma):
                     # construct word identifier
@@ -138,7 +135,13 @@ class Score(UserDict):
                     if word_node is None:
                         # add new /find corresponding word node
                         word_parent = ET.Element('w', {XML_ID: item.xml_id})
+                        lemma_db = LemmaDB.objects.get_or_create(
+                            lemma_id=item.xml_id,
+                            lemma_idx=word_idx,
+                            omen=omen_db,
+                            segment=segment_db)
                         ab.append(word_parent)
+                        word_idx += 1
                         word_node = ET.SubElement(word_parent, 'app')
 
                     # Add lemma to the word node

@@ -2,6 +2,7 @@ import logging
 from xml.etree import ElementTree as ET
 
 from .cell import Cell, Chunk
+from .models import Lemma as LemmaDB
 from .namespaces import XML_ID
 
 logger = logging.getLogger(__name__)

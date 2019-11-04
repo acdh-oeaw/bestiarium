@@ -9,7 +9,9 @@ from xml.etree import ElementTree as ET
 
 from .lemma import Lemma
 from .line import Line
+from .models import Lemma as LemmaDB
 from .models import Reconstruction as ReconstructionDB
+from .models import Translation as TranslationDB
 from .namespaces import XML_ID
 from .util import clean_id
 
@@ -33,6 +35,7 @@ class ReconstructionId(NamedTuple):
 class ReconstructionLine(Line):
     '''
     A list of lemmas that make a reconstruction line
+    The information about Apodosis is obtained in one of these lines - and updated
     '''
     reconstruction_type: str
 
@@ -71,6 +74,15 @@ class ReconstructionLine(Line):
 
         if self.rdg_type in ('trl', 'trs'):
             for word in self.data:
+                if word.apodosis:
+                    print('Reconstruction; found apodosis @ ', word.xml_id)
+                    try:
+                        lemma_db = LemmaDB.objects.get(lemma_id=word.xml_id)
+                        lemma_db.set_segment_type_to_apodosis()
+                    except Exception as e:
+                        print('------------>Could not change ', word.xml_id,
+                              'to APODOSIS')
+
                 w = word.reconstruction_tei(self.omen_prefix)
                 ab.append(w)
 
@@ -98,7 +110,6 @@ class Reconstruction(UserDict):
      - transcription,
      - translation
     '''
-
     def __init__(self, omen_prefix):
         super().__init__()
         self.omen_prefix = omen_prefix
@@ -119,8 +130,9 @@ class Reconstruction(UserDict):
                 XML_ID: clean_id(rdg_grp.xml_id)
             })
             # Create a database record for this reconstruction
-            recon_db = ReconstructionDB(
-                reconstruction_id=clean_id(rdg_grp.xml_id), omen=omen_db)
+            recon_db = ReconstructionDB(reconstruction_id=clean_id(
+                rdg_grp.xml_id),
+                                        omen=omen_db)
             recon_db.save()
             for line in lines:
                 elem.append(line.export_to_tei(recon_db))

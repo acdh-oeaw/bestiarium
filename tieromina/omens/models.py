@@ -74,9 +74,18 @@ class Lemma(models.Model):
     A lemma in the omen, represented using w element inside the score in the TEI
     '''
     lemma_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
-    lemma_idx = models.IntegerField  # index of the lemma in the in the omen (position of the w element, implicit in the TEI)
+    lemma_idx = models.IntegerField(
+        default=0
+    )  # index of the lemma in the in the omen (position of the w element, implicit in the TEI)
     omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
     segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
+
+    def set_segment_type_to_apodosis(self):
+        print('Changing to Apodosis', self.lemma_id)
+        apodosis_segment = Segment.objects.filter(omen=self.omen,
+                                                  segment_type='APODOSIS')[0]
+        self.segment = apodosis_segment
+        self.save()
 
 
 class Reconstruction(models.Model):
