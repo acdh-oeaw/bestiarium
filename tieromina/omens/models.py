@@ -1,8 +1,15 @@
 from datetime import datetime
+from xml.etree import ElementTree as ET
 
 # Create your models here.
 from django.db import models
 from django.utils.timezone import now
+
+from .namespaces import NS
+from .util import element2string
+
+for ns, uri in NS.items():
+    ET.register_namespace(ns, uri)
 
 
 class Witness(models.Model):
@@ -43,6 +50,12 @@ class Omen(models.Model):
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default='')
     witness = models.ManyToManyField(Witness)
 
+    @property
+    def tei(self):
+        chapter_tei = ET.XML(self.chapter.tei)
+        omen_tei = chapter_tei.find(f'.//*[@n="{self.omen_id}"]')
+        return element2string(omen_tei)
+
 
 class Segment(models.Model):
     '''
@@ -50,10 +63,10 @@ class Segment(models.Model):
     '''
     segment_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
     omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
-    segment_type = models.CharField(
-        max_length=9,
-        choices=(('PROTASIS', 'Protasis'), ('APODOSIS', 'Apodosis')),
-        default='PROTASIS')
+    segment_type = models.CharField(max_length=9,
+                                    choices=(('PROTASIS', 'Protasis'),
+                                             ('APODOSIS', 'Apodosis')),
+                                    default='PROTASIS')
 
 
 class Lemma(models.Model):
@@ -73,8 +86,8 @@ class Reconstruction(models.Model):
     - transcription
     - transliteration
     '''
-    reconstruction_id = models.CharField(
-        max_length=100, primary_key=True)  # TEI ID
+    reconstruction_id = models.CharField(max_length=100,
+                                         primary_key=True)  # TEI ID
     omen = models.ForeignKey(Omen, on_delete=models.CASCADE, default='')
 
 
@@ -82,14 +95,14 @@ class Translation(models.Model):
     '''
     Translation of the omen, corresponding to a particular reconstruction
     '''
-    translation_id = models.CharField(
-        max_length=100, primary_key=True)  # TEI ID
-    reconstruction = models.ForeignKey(
-        Reconstruction, on_delete=models.CASCADE, default='')
-    lang = models.CharField(
-        max_length=2,
-        choices=(('en', 'ENGLISH'), ('de', 'GERMAN')),
-        default='en')
+    translation_id = models.CharField(max_length=100,
+                                      primary_key=True)  # TEI ID
+    reconstruction = models.ForeignKey(Reconstruction,
+                                       on_delete=models.CASCADE,
+                                       default='')
+    lang = models.CharField(max_length=2,
+                            choices=(('en', 'ENGLISH'), ('de', 'GERMAN')),
+                            default='en')
     text = models.TextField
     segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
 
@@ -99,8 +112,9 @@ class Transliteration(models.Model):
     A row represents a lemma in a transliteration reconstruction of the omen
     '''
     trl_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
-    reconstruction = models.ForeignKey(
-        Reconstruction, on_delete=models.CASCADE, default='')
+    reconstruction = models.ForeignKey(Reconstruction,
+                                       on_delete=models.CASCADE,
+                                       default='')
     lemma = models.ForeignKey(Lemma, on_delete=models.CASCADE, default='')
 
 
@@ -109,6 +123,7 @@ class Transcription(models.Model):
     A row represents a lemma in a transcription of the omen
     '''
     trs_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
-    reconstruction = models.ForeignKey(
-        Reconstruction, on_delete=models.CASCADE, default='')
+    reconstruction = models.ForeignKey(Reconstruction,
+                                       on_delete=models.CASCADE,
+                                       default='')
     lemma = models.ForeignKey(Lemma, on_delete=models.CASCADE, default='')

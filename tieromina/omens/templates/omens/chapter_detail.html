@@ -1,0 +1,20 @@
+{% extends "webpage/base.html" %}
+{% block Titel %} Chapter {{chapter.chapter_name}} {% endblock %}
+{% block content %}
+<div class="container">
+    <div class="jumbotron">
+        <h3 style="text-align: center;">Chapter {{chapter.chapter_name}}</h3>
+    </div>
+    <!--
+    <iframe src='data:text/xml,{{ chapter.tei }}' width="100%">
+        <div class="alert alert-warning m-3" role="alert">
+	          Your browser doesn't support iframes!
+        <pre lang="xml">{{ chapter.tei }}</pre>
+    </iframe>
+    -->
+    <ul class="list-group">{% for omen in omens %}
+        <li class="list-group-item">{{omen.omen_id }} | <a href="/omens/{{omen.omen_id }}/tei.xml" target="_blank"> TEI </a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock content %}

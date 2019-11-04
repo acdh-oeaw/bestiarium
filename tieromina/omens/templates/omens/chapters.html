@@ -1,0 +1,15 @@
+{% extends "webpage/base.html" %}
+{% block Titel %} Chapters {% endblock %}
+{% block content %}
+<div class="container">
+    <div class="jumbotron">
+        <h3 style="text-align: center;">Chapters</h3>
+    </div>
+    
+    <ul class ="list-group">
+        {% for chapter in chapters %}
+        <li class="list-group-item"> Chapter {{ chapter.chapter_name }} | <a href="{{ request.path }}/{{ chapter.chapter_name }}"> Omens </a> | <a href="{{ request.path }}/{{ chapter.chapter_name }}/tei.xml" target="_blank">TEI</a> </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock content %}
