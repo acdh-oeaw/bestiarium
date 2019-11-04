@@ -11,17 +11,23 @@ ALLOWED_HOSTS = [
     '.tieromina.acdh-dev.oeaw.ac.at', '.tieromina.hephaistos.arz.oeaw.ac.at',
     '127.0.0.1'
 ]
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'tieromina',
-        'USER': 'tieromina',
-        'PASSWORD': 'WwxPNtMh5SjS',
-        'HOST': 'helios.arz.oeaw.ac.at',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+#         'NAME': 'tieromina',
+#         'USER': 'tieromina',
+#         'PASSWORD': 'WwxPNtMh5SjS',
+#         'HOST': 'helios.arz.oeaw.ac.at',
+#         'PORT': '5432',
+#     }
+# }
 
 Z_ID = "1****5"
 Z_ID_TYPE = 'groups'  # or 'user'

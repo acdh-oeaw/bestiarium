@@ -56,7 +56,6 @@ class Chapter:
         with the omens in the workbook
         '''
         wb = Workbook(wbfile)
-        # TODO: extract existing representation and update
 
         body, root = None, None
         db, created = None, None
