@@ -59,8 +59,8 @@ def omen_detail(request, omen_id):
                 segment_type = 'APODOSIS'
 
             translations[reading.reconstruction_id][segment_type] = []
-
-            postags = nltk.pos_tag(record.translation_txt)
+            postags = nltk.pos_tag(record.translation_txt.split())
+            print(postags)
             for text, postag in postags:
                 sense_info = {'word': text, 'sense_id': '', 'sense_lemmas': []}
                 if postag.startswith('N') or postag.startswith('V'):
