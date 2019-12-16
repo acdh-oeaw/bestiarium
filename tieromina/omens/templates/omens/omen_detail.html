@@ -1,8 +1,30 @@
 {% extends "webpage/base.html" %}
 {% block content %}
+<div class="jumbotron">
+    <h3 style="text-align: center;">Omen {{data.omen.chapter.chapter_name}}.{{data.omen.omen_num}}</h3>
+</div>
+
 <div class="container">
-    <div class="jumbotron">
-        <h3 style="text-align: center;">Omen {{data.omen.chapter.chapter_name}}.{{data.omen.omen_num}}</h3>
-    </div>
+
+    <ul class="">
+        {% for reading, val in data.translations.items %}
+        <li class="list-group-item">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{reading }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="">
+                        {{val.PROTASIS}}
+                    </div>
+                    <div class="">
+                        {{val.APODOSIS}}
+                    </div>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
 </div>
 {% endblock content %}

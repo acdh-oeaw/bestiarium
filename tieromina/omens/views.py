@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .models import Chapter, Omen
+from .models import Chapter, Omen, Reconstruction, Translation
 
 
 def chapters(request):
@@ -29,7 +29,30 @@ def chapter_tei(request, chapter_name):
 def omen_detail(request, omen_id):
     template_name = 'omens/omen_detail.html'
     omen = Omen.objects.filter(omen_id=omen_id)[0]
-    context = {'data': {'omen': omen}}
+    '''
+    available = Product.objects.filter(packaging__available=True)
+subcategories = SubCategory.objects.filter(category_id=<id_of_male>)
+products = available.filter(subcategory_id__in=subcategories)
+
+lookup = {'packaging_available': True, 'subcategory__category_id__in': ['ids of males']}
+product_objs = Product.objects.filter(**lookup)
+
+    '''
+    translations = {}
+    for reading in Reconstruction.objects.filter(omen__omen_id=omen.omen_id):
+        print(reading)
+        translations[reading.reconstruction_id] = {}
+        records = Translation.objects.filter(
+            reconstruction__reconstruction_id=reading.reconstruction_id)
+        for record in records:
+            if record.segment.segment_id.endswith('P'):
+                translations[reading.reconstruction_id][
+                    'PROTASIS'] = record.translation_txt
+            if record.segment.segment_id.endswith('A'):
+                translations[reading.reconstruction_id][
+                    'APODOSIS'] = record.translation_txt
+
+    context = {'data': {'omen': omen, 'translations': translations}}
     return render(request, template_name, context, content_type='text/html')
 
 
