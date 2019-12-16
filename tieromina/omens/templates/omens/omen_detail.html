@@ -14,11 +14,14 @@
                     <h3 class="card-title">{{reading }}</h3>
                 </div>
                 <div class="card-body">
+                    {{  val.PROTASIS}}
                     <div class="">
-                        {{val.PROTASIS}}
+                        {% for word, senses in val.PROTASIS.items %}
+                        {{word}}
+                        {% endfor %}
                     </div>
                     <div class="">
-                        {{val.APODOSIS}}
+
                     </div>
                 </div>
             </div>

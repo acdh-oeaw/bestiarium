@@ -58,22 +58,21 @@ def omen_detail(request, omen_id):
             else:
                 segment_type = 'APODOSIS'
 
-            translations[reading.reconstruction_id][
-                segment_type] = defaultdict(list)
-            for word in record.translation_txt.split():
-                translations[reading.reconstruction_id][segment_type][
-                    word] = []
+            translations[reading.reconstruction_id][segment_type] = []
 
-        postags = nltk.pos_tag(record.translation_txt)
-        for text, postag in postags:
-            if postag.startswith('N') or postag.startswith('V'):
-                for sim in wordnet.synsets(text):
-                    print(text, sim.name(), sim.lemma_names())
-                    translations[reading.reconstruction_id][segment_type][
-                        text].append({
-                            sim.name(): sim.lemma_names()
-                        })
+            postags = nltk.pos_tag(record.translation_txt)
+            for text, postag in postags:
+                sense_info = {'word': text, 'sense_id': '', 'sense_lemmas': []}
+                if postag.startswith('N') or postag.startswith('V'):
+                    for sim in wordnet.synsets(text):
+                        print(text, sim.name(), sim.lemma_names())
+                        sense_info['sense_id'] = sim.name()
+                        sense_info['sense_lemmas'] = sim.lemma_names()
 
+                translations[reading.reconstruction_id][segment_type].append(
+                    sense_info)
+
+    print(translations)
     context = {'data': {'omen': omen, 'translations': translations}}
     return render(request, template_name, context, content_type='text/html')
 
