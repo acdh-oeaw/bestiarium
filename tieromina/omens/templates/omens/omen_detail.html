@@ -40,7 +40,31 @@
 
                             {% endfor %}
                         </li>
+                        <li class="list-group-item">
+                            {% for wordnet in val.APODOSIS %}
+                            {% if  wordnet.sense %}
+                            <button type="button" aria-expanded="false"
+                                    aria-controls="collapse_{{reading}}_{{forloop.counter0}}_A"
+                                    class="btn btn-info"
+                                    data-toggle="collapse"
+                                    data-target="#collapse_{{reading}}_{{forloop.counter0}}_A">
+                                {{ wordnet.word }}
+                            </button>
+                            <div id="collapse_{{reading}}_{{forloop.counter0}}_A" class="collapse">
+                                {% for s in wordnet.sense %}
+                                <button type="button" class="btn btn-primary" title="{{s.name}}">
+                                    {{s.lemma}}
+                                </button>
 
+                                {% endfor %}
+                            </div>
+
+                            {%else%}
+                            {{ wordnet.word }}
+                            {% endif %}
+
+                            {% endfor %}
+                        </li>
                     </ul>
                     <div class="">
 
