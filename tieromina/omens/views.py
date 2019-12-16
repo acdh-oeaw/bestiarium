@@ -1,7 +1,21 @@
+from collections import defaultdict
+
+import nltk
+import numpy as np
+import pandas as pd
+from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize, wordpunct_tokenize
+
+import spacy
 from django.shortcuts import render
 
 # Create your views here.
 from .models import Chapter, Omen, Reconstruction, Translation
+
+wordnet_lemmatizer = WordNetLemmatizer()
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 
 
 def chapters(request):
@@ -29,28 +43,36 @@ def chapter_tei(request, chapter_name):
 def omen_detail(request, omen_id):
     template_name = 'omens/omen_detail.html'
     omen = Omen.objects.filter(omen_id=omen_id)[0]
-    '''
-    available = Product.objects.filter(packaging__available=True)
-subcategories = SubCategory.objects.filter(category_id=<id_of_male>)
-products = available.filter(subcategory_id__in=subcategories)
-
-lookup = {'packaging_available': True, 'subcategory__category_id__in': ['ids of males']}
-product_objs = Product.objects.filter(**lookup)
-
-    '''
     translations = {}
+    senses = {}
     for reading in Reconstruction.objects.filter(omen__omen_id=omen.omen_id):
         print(reading)
         translations[reading.reconstruction_id] = {}
+        senses[reading.reconstruction_id] = {}
+
         records = Translation.objects.filter(
             reconstruction__reconstruction_id=reading.reconstruction_id)
         for record in records:
             if record.segment.segment_id.endswith('P'):
-                translations[reading.reconstruction_id][
-                    'PROTASIS'] = record.translation_txt
-            if record.segment.segment_id.endswith('A'):
-                translations[reading.reconstruction_id][
-                    'APODOSIS'] = record.translation_txt
+                segment_type = 'PROTASIS'
+            else:
+                segment_type = 'APODOSIS'
+
+            translations[reading.reconstruction_id][
+                segment_type] = defaultdict(list)
+            for word in record.translation_txt.split():
+                translations[reading.reconstruction_id][segment_type][
+                    word] = []
+
+        postags = nltk.pos_tag(record.translation_txt)
+        for text, postag in postags:
+            if postag.startswith('N') or postag.startswith('V'):
+                for sim in wordnet.synsets(text):
+                    print(text, sim.name(), sim.lemma_names())
+                    translations[reading.reconstruction_id][segment_type][
+                        text].append({
+                            sim.name(): sim.lemma_names()
+                        })
 
     context = {'data': {'omen': omen, 'translations': translations}}
     return render(request, template_name, context, content_type='text/html')
