@@ -3,12 +3,11 @@ from collections import defaultdict
 import nltk
 import numpy as np
 import pandas as pd
+import spacy
+from django.shortcuts import render
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize, wordpunct_tokenize
-
-import spacy
-from django.shortcuts import render
 
 # Create your views here.
 from .models import Chapter, Omen, Reconstruction, Translation
@@ -62,12 +61,14 @@ def omen_detail(request, omen_id):
             postags = nltk.pos_tag(record.translation_txt.split())
             print(postags)
             for text, postag in postags:
-                sense_info = {'word': text, 'sense_id': '', 'sense_lemmas': []}
+                sense_info = {'word': text, 'sense': []}
                 if postag.startswith('N') or postag.startswith('V'):
                     for sim in wordnet.synsets(text):
                         print(text, sim.name(), sim.lemma_names())
-                        sense_info['sense_id'] = sim.name()
-                        sense_info['sense_lemmas'] = sim.lemma_names()
+                        sense_info['sense'].append({
+                            'name': sim.name(),
+                            'lemma': sim.lemma_names()
+                        })
 
                 translations[reading.reconstruction_id][segment_type].append(
                     sense_info)

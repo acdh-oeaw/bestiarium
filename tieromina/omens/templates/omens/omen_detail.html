@@ -14,32 +14,33 @@
                     <h3 class="card-title">{{reading }}</h3>
                 </div>
                 <div class="card-body">
-                    <ul class="list-inline  flex-wrap d-flex">
-                        {% for info in val.PROTASIS %}
+                    <ul class="list-group">
                         <li class="list-group-item">
-                            {% if info.sense_id %}
+                            {% for wordnet in val.PROTASIS %}
+                            {% if  wordnet.sense %}
                             <button type="button" aria-expanded="false"
-                                    aria-controls="collapse_{{info.sense_id}}"
+                                    aria-controls="collapse_{{reading}}_{{forloop.counter0}}"
                                     class="btn btn-info"
                                     data-toggle="collapse"
-                                    data-target="#collapse_{{info.sense_id}}">                                {{ info.word }}</button>
+                                    data-target="#collapse_{{reading}}_{{forloop.counter0}}">
+                                {{ wordnet.word }}
+                            </button>
+                            <div id="collapse_{{reading}}_{{forloop.counter0}}" class="collapse">
+                                {% for s in wordnet.sense %}
+                                <button type="button" class="btn btn-primary" title="{{s.name}}">
+                                    {{s.lemma}}
+                                </button>
 
-                            <div id="collapse_{{info.sense_id}}" class="collapse">
-                                <div class="small"> {{info.sense_id}}</div>
-                                <ul class="list-inline  flex-wrap d-flex">
-                                    {% for lemma in info.sense_lemmas %}
-                                    <li class="list-group-item">
-                                        <button type="button" class="btn btn-primary">{{lemma}}</button>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
+                                {% endfor %}
                             </div>
+
                             {%else%}
-                            {{ info.word }}
+                            {{ wordnet.word }}
                             {% endif %}
 
+                            {% endfor %}
                         </li>
-                        {% endfor %}
+
                     </ul>
                     <div class="">
 
