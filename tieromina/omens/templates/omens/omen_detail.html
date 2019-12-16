@@ -25,8 +25,14 @@
                                     data-target="#collapse_{{info.sense_id}}">                                {{ info.word }}</button>
 
                             <div id="collapse_{{info.sense_id}}" class="collapse">
-                                {{info.sense_id}}
-                                {{info.sense_lemmas}}
+                                <div class="small"> {{info.sense_id}}</div>
+                                <ul class="list-inline  flex-wrap d-flex">
+                                    {% for lemma in info.sense_lemmas %}
+                                    <li class="list-group-item">
+                                        <button type="button" class="btn btn-primary">{{lemma}}</button>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
                             </div>
                             {%else%}
                             {{ info.word }}
