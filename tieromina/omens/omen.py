@@ -84,7 +84,9 @@ class Omen:
 
         if created:
             protasis = SegmentDB(
-                segment_id=self.omen_name + '_P', omen=omen_db)
+                segment_id=self.omen_name + '_P',
+                omen=omen_db,
+                segment_type='PROTASIS')
             protasis.save()
             apodosis = SegmentDB(
                 segment_id=self.omen_name + '_A',
