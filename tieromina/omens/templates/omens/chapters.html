@@ -5,10 +5,22 @@
     <div class="jumbotron">
         <h3 style="text-align: center;">Chapters</h3>
     </div>
-    
-    <ul class ="list-group">
+
+    <ul class="list-inline  flex-wrap d-flex">
         {% for chapter in chapters %}
-        <li class="list-group-item"> Chapter {{ chapter.chapter_name }} | <a href="{{ request.path }}/{{ chapter.chapter_name }}"> Omens </a> | <a href="{{ request.path }}/{{ chapter.chapter_name }}/tei.xml" target="_blank">TEI</a> </li>
+        <li class="list-group-item">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Chapter {{ chapter.chapter_name }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="">
+                        <a class="btn btn-primary" href="{{ request.path }}/{{ chapter.chapter_name }}"> Omens </a>
+                        <a class="btn btn-primary" href="{{ request.path }}/{{ chapter.chapter_name }}/tei.xml" target="_blank">TEI</a>
+                    </div>
+                </div>
+            </div>
+        </li>
         {% endfor %}
     </ul>
 </div>

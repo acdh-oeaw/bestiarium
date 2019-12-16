@@ -39,11 +39,15 @@ class Omen:
 
     @property
     def chapter_name(self):
-        return self.omen_name.split('.')[0].lstrip('Omen ')
+        return self.__omen_name.split('.')[0].lstrip('Omen ')
 
     @property
     def omen_name(self):
         return self.__omen_name
+
+    @property
+    def omen_num(self):
+        return self.__omen_name.split('.')[-1]
 
     @omen_name.setter
     def omen_name(self, sheet):
@@ -75,16 +79,17 @@ class Omen:
                 self.commentary.add_row(cells)
 
     def export_to_tei(self, chapter_db):
-        omen_db, created = OmenDB.objects.get_or_create(omen_id=self.omen_name,
-                                                        chapter=chapter_db)
+        omen_db, created = OmenDB.objects.get_or_create(
+            omen_id=self.omen_name, omen_num=self.omen_num, chapter=chapter_db)
 
         if created:
-            protasis = SegmentDB(segment_id=self.omen_name + '_P',
-                                 omen=omen_db)
+            protasis = SegmentDB(
+                segment_id=self.omen_name + '_P', omen=omen_db)
             protasis.save()
-            apodosis = SegmentDB(segment_id=self.omen_name + '_A',
-                                 omen=omen_db,
-                                 segment_type='APODOSIS')
+            apodosis = SegmentDB(
+                segment_id=self.omen_name + '_A',
+                omen=omen_db,
+                segment_type='APODOSIS')
             apodosis.save()
 
         omen_div = ET.Element('div', {'n': self.omen_name})
@@ -109,8 +114,9 @@ class Omen:
                 or 'comment' in cell.full_text.lower()):
             return ROWTYPE_COMMENT
 
-        if any(rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
-               if rdg in cell.full_text.lower()):
+        if any(
+                rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
+                if rdg in cell.full_text.lower()):
             return ROWTYPE_RECONSTRUCTION
 
         return ROWTYPE_SCORE

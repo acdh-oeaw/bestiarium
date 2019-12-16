@@ -5,18 +5,19 @@
 <div class="jumbotron">
     <h3 style="text-align: center;">Chapter {{chapter.chapter_name}}</h3>
 </div>
-<div class="container" style="text-align: center;">
-    <ul class="list-inline justify-content-center  flex-wrap d-flex">
+<div class="container" >
+    <ul class="list-inline   flex-wrap d-flex">
         {% for omen in omens %}
-        <li class="flex-fill" style="text-align: center;">
+        <li class="list-group-item">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{omen.omen_id}}</h3>
+                    <h3 class="card-title">{{omen.omen_num}}</h3>
                 </div>
-                <div class="card-body">
-
-                    <div class="btn-group">
+                <div class="card-body justify-center">
+                    <div class="">
                         <a href="/omens/{{omen.omen_id }}" target="_blank" class="btn btn-primary"> Readings </a>
+                        <a href="#" target="_blank" class="btn btn-primary"> Score </a>
+
                         <a href="/omens/{{omen.omen_id }}/tei.xml" target="_blank" class="btn btn-primary"> TEI </a>
                     </div>
                     <footer class="small">
