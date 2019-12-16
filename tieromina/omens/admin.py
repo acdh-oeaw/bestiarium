@@ -38,7 +38,7 @@ class TranscriptionAdmin(admin.ModelAdmin):
 
 
 class TranslationAdmin(admin.ModelAdmin):
-    list_display = ('translation_id', 'reconstruction', 'segment', 'text')
+    list_display = ('translation_id', 'segment', 'translation_txt')
 
 
 class SegmentAdmin(admin.ModelAdmin):

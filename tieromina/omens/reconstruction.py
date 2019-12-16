@@ -11,7 +11,10 @@ from .lemma import Lemma
 from .line import Line
 from .models import Lemma as LemmaDB
 from .models import Reconstruction as ReconstructionDB
+from .models import Segment as SegmentDB
+from .models import Transcription as TranscriptionDB
 from .models import Translation as TranslationDB
+from .models import Transliteration as TranslitDB
 from .namespaces import XML_ID
 from .util import clean_id
 
@@ -79,6 +82,7 @@ class ReconstructionLine(Line):
                     try:
                         lemma_db = LemmaDB.objects.get(lemma_id=word.xml_id)
                         lemma_db.set_segment_type_to_apodosis()
+
                     except Exception as e:
                         print('------------>Could not change ', word.xml_id,
                               'to APODOSIS')
@@ -87,17 +91,55 @@ class ReconstructionLine(Line):
                 ab.append(w)
 
         else:  # No W tag in translations - but it contains text, might contain anchor elements for breaks
+            full_translation = ''
             for i, word in enumerate(self.data):
-                if i == 0:
-                    w = word.reconstruction_tei(self.omen_prefix)
-                    w.tag = 'ab'
-                    w.attrib = ab.attrib
-                    ab = w
-                else:
-                    ab.text += ' ' + w.text
+                full_translation += ' ' + word.plain_text
+                if i > 0:
                     logger.warning(
                         'Unexpected values in translation row; expecting only one cell, \n%s',
                         word)
+
+            if '–' in full_translation:
+                translation_parts = full_translation.split('–')
+                print('PARTS: ', translation_parts)
+
+                protasis_element = ET.Element('div', {
+                    XML_ID: self.xml_id + '_protasis'
+                })
+                protasis_element.text = translation_parts[0]
+                ab.append(protasis_element)
+
+                protasis_translation_db = TranslationDB(
+                    translation_id=self.xml_id + '_protasis',
+                    reconstruction=reconstruction_db,
+                    segment=SegmentDB.protasis(reconstruction_db.omen),
+                    translation_txt=translation_parts[0].replace('[',
+                                                                 '').replace(
+                                                                     ']', ''))
+                # print("TRANSLATON DB", protasis_translation_db.segment)
+                protasis_translation_db.save()
+
+                if len(translation_parts) == 2:
+                    apodosis_element = ET.Element(
+                        'div', {
+                            XML_ID: self.xml_id + '_apodosis'
+                        })
+                    apodosis_element.text = translation_parts[1]
+                    ab.append(apodosis_element)
+
+                    apodosis_translation_db = TranslationDB(
+                        translation_id=self.xml_id + '_apodosis',
+                        reconstruction=reconstruction_db,
+                        segment=SegmentDB.apodosis(reconstruction_db.omen),
+                        translation_txt=translation_parts[1].replace(
+                            '[', '').replace(']', ''))
+
+                    apodosis_translation_db.save()
+
+            # w = word.reconstruction_tei(self.omen_prefix)
+            # w.tag = 'ab'
+            # w.attrib = ab.attrib
+            # ab = w
 
         return ab
 
@@ -110,6 +152,7 @@ class Reconstruction(UserDict):
      - transcription,
      - translation
     '''
+
     def __init__(self, omen_prefix):
         super().__init__()
         self.omen_prefix = omen_prefix
@@ -130,10 +173,9 @@ class Reconstruction(UserDict):
                 XML_ID: clean_id(rdg_grp.xml_id)
             })
             # Create a database record for this reconstruction
-            recon_db = ReconstructionDB(reconstruction_id=clean_id(
-                rdg_grp.xml_id),
-                                        omen=omen_db)
+            recon_db = ReconstructionDB(
+                reconstruction_id=clean_id(rdg_grp.xml_id), omen=omen_db)
             recon_db.save()
             for line in lines:
                 elem.append(line.export_to_tei(recon_db))
-            yield elem
+                yield elem
