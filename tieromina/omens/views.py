@@ -27,7 +27,10 @@ def chapter_tei(request, chapter_name):
 
 
 def omen_detail(request, omen_id):
-    pass
+    template_name = 'omens/omen_detail.html'
+    omen = Omen.objects.filter(omen_id=omen_id)[0]
+    context = {'data': {'omen': omen}}
+    return render(request, template_name, context, content_type='text/html')
 
 
 def omen_tei(request, omen_id):

@@ -1,19 +1,31 @@
 {% extends "webpage/base.html" %}
 {% block Titel %} Chapter {{chapter.chapter_name}} {% endblock %}
 {% block content %}
-<div class="container">
-    <div class="jumbotron">
-        <h3 style="text-align: center;">Chapter {{chapter.chapter_name}}</h3>
-    </div>
-    <!--
-    <iframe src='data:text/xml,{{ chapter.tei }}' width="100%">
-        <div class="alert alert-warning m-3" role="alert">
-	          Your browser doesn't support iframes!
-        <pre lang="xml">{{ chapter.tei }}</pre>
-    </iframe>
-    -->
-    <ul class="list-group">{% for omen in omens %}
-        <li class="list-group-item">{{omen.omen_id }} | <a href="/omens/{{omen.omen_id }}/tei.xml" target="_blank"> TEI </a></li>
+
+<div class="jumbotron">
+    <h3 style="text-align: center;">Chapter {{chapter.chapter_name}}</h3>
+</div>
+<div class="container" style="text-align: center;">
+    <ul class="list-inline justify-content-center  flex-wrap d-flex">
+        {% for omen in omens %}
+        <li class="flex-fill" style="text-align: center;">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{omen.omen_id}}</h3>
+                </div>
+                <div class="card-body">
+
+                    <div class="btn-group">
+                        <a href="/omens/{{omen.omen_id }}" target="_blank" class="btn btn-primary"> Readings </a>
+                        <a href="/omens/{{omen.omen_id }}/tei.xml" target="_blank" class="btn btn-primary"> TEI </a>
+                    </div>
+                    <footer class="small">
+                        <div>If a snake bites a man who is litigating</div>
+                        <div> ditto (his adversary will supplicate him).</div>
+                    </footer>
+                </div>
+            </div>
+        </li>
         {% endfor %}
     </ul>
 </div>
