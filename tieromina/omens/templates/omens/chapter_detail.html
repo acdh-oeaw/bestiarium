@@ -1,14 +1,14 @@
 {% extends "webpage/base.html" %}
 {% block Titel %} Chapter {{chapter.chapter_name}} {% endblock %}
 {% block content %}
-
 <div class="jumbotron">
     <h3 style="text-align: center;">Chapter {{chapter.chapter_name}}</h3>
 </div>
+
 <div class="container" >
-    <ul class="list-inline   flex-wrap d-flex">
+    <ul class="list-inline   flex-wrap d-flex justify-content-around mt-3">
         {% for omen in omens %}
-        <li class="list-group-item">
+        <li class="list-group-item  mb-3">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">{{omen.omen_num}}</h3>
