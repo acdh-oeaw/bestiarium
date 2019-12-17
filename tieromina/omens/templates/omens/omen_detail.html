@@ -18,47 +18,48 @@
                         <li class="list-group-item">
                             {% for wordnet in val.PROTASIS %}
                             {% if  wordnet.sense %}
-                            <button type="button" aria-expanded="false"
-                                    aria-controls="collapse_{{reading}}_{{forloop.counter0}}"
-                                    class="btn btn-info"
-                                    data-toggle="collapse"
-                                    data-target="#collapse_{{reading}}_{{forloop.counter0}}">
+                            <a aria-expanded="false"  href="#"
+                               aria-controls="collapse_{{reading}}_{{forloop.counter0}}"
+                               class="text-decoration-none font-weight-bold active"
+                               data-toggle="collapse"
+                               title="{{ wordnet.word }}"
+                               data-target="#collapse_{{reading}}_{{forloop.counter0}}">
                                 {{ wordnet.word }}
-                            </button>
-                            <div id="collapse_{{reading}}_{{forloop.counter0}}" class="collapse">
+                            </a>
+                            <div id="collapse_{{reading}}_{{forloop.counter0}}" class="collapse" >
                                 {% for s in wordnet.sense %}
-                                <button type="button" class="btn btn-primary" title="{{s.name}}">
-                                    {{s.lemma}}
+                                <button type="button" class="btn btn-primary"
+                                        data-toggle="tooltip"  title="{{s.lemmas}}{%if s.examples%} - {%endif%}{%for eg in  s.examples %}{{eg}}{%endfor%}">                                    {{s.name}}
                                 </button>
 
                                 {% endfor %}
-                            </div>
 
+                            </div>
                             {%else%}
                             {{ wordnet.word }}
                             {% endif %}
-
                             {% endfor %}
+
                         </li>
                         <li class="list-group-item">
                             {% for wordnet in val.APODOSIS %}
                             {% if  wordnet.sense %}
-                            <button type="button" aria-expanded="false"
-                                    aria-controls="collapse_{{reading}}_{{forloop.counter0}}_A"
-                                    class="btn btn-info"
-                                    data-toggle="collapse"
-                                    data-target="#collapse_{{reading}}_{{forloop.counter0}}_A">
+                            <a aria-expanded="false"  href="#"
+                               aria-controls="collapse_{{reading}}_{{forloop.counter0}}_A"
+                               class="text-decoration-none font-weight-bold active"
+                               data-toggle="collapse"
+                               title="{{ wordnet.word }}"
+                               data-target="#collapse_{{reading}}_{{forloop.counter0}}_A">
                                 {{ wordnet.word }}
+                            </a>
                             </button>
-                            <div id="collapse_{{reading}}_{{forloop.counter0}}_A" class="collapse">
+                            <div id="collapse_{{reading}}_{{forloop.counter0}}_A" class="collapse" data-parent="#accordion">
                                 {% for s in wordnet.sense %}
-                                <button type="button" class="btn btn-primary" title="{{s.name}}">
-                                    {{s.lemma}}
+                                <button type="button" class="btn btn-primary" title="{{s.name}}{%if s.examples%} - {{s.examples}}{%endif%}">
+                                    {{s.lemmas}}
                                 </button>
-
                                 {% endfor %}
                             </div>
-
                             {%else%}
                             {{ wordnet.word }}
                             {% endif %}

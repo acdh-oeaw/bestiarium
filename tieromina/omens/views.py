@@ -11,6 +11,7 @@ from nltk.tokenize import word_tokenize, wordpunct_tokenize
 
 # Create your views here.
 from .models import Chapter, Omen, Reconstruction, Translation
+from .omenview import all_chapters
 
 wordnet_lemmatizer = WordNetLemmatizer()
 nltk.download('wordnet')
@@ -19,8 +20,7 @@ nltk.download('averaged_perceptron_tagger')
 
 def chapters(request):
     template_name = 'omens/chapters.html'
-    all_chapters = Chapter.objects.all()
-    context = {'chapters': all_chapters}
+    context = all_chapters()
     return render(request, template_name, context)
 
 
@@ -58,17 +58,17 @@ def omen_detail(request, omen_id):
                 segment_type = 'APODOSIS'
 
             translations[reading.reconstruction_id][segment_type] = []
-            postags = nltk.pos_tag(record.translation_txt.split())
+            postags = nltk.pos_tag(wordpunct_tokenize(record.translation_txt))
             print(postags)
             for text, postag in postags:
                 sense_info = {'word': text, 'sense': []}
-                if postag.startswith('N') or postag.startswith('V'):
-                    for sim in wordnet.synsets(text):
-                        print(text, sim.name(), sim.lemma_names())
-                        sense_info['sense'].append({
-                            'name': sim.name(),
-                            'lemma': sim.lemma_names()
-                        })
+                for sim in wordnet.synsets(text):
+                    print(text, sim.name(), sim.lemma_names())
+                    sense_info['sense'].append({
+                        'name': sim.hypernyms(),
+                        'lemmas': sim.lemma_names(),
+                        'examples': sim.examples()
+                    })
 
                 translations[reading.reconstruction_id][segment_type].append(
                     sense_info)
