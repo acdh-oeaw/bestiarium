@@ -11,7 +11,7 @@ from nltk.tokenize import word_tokenize, wordpunct_tokenize
 
 # Create your views here.
 from .models import Chapter, Omen, Reconstruction, Translation
-from .omenview import all_chapters
+from .omenview import all_chapters, omens_in_chapter
 
 wordnet_lemmatizer = WordNetLemmatizer()
 nltk.download('wordnet')
@@ -26,9 +26,7 @@ def chapters(request):
 
 def chapter_detail(request, chapter_name):
     template_name = 'omens/chapter_detail.html'
-    chapter_detail = Chapter.objects.filter(chapter_name=chapter_name)[0]
-    omens = Omen.objects.order_by('omen_num').filter(chapter=chapter_detail)
-    context = {'chapter': chapter_detail, 'omens': omens}
+    context = omens_in_chapter(chapter_name)
     return render(request, template_name, context)
 
 
