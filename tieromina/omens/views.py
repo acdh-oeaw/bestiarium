@@ -1,9 +1,8 @@
-
 from django.shortcuts import render
 
 # Create your views here.
 from .models import Omen
-from .omenview import (all_chapters, get_chapter, omen_hypernyms,
+from .omenview import (all_chapters, get_chapter, get_omen, omen_hypernyms,
                        omens_in_chapter)
 
 
@@ -34,6 +33,6 @@ def omen_detail(request, omen_id):
 
 def omen_tei(request, omen_id):
     template_name = 'omens/tei.xml'
-    omen = Omen.objects.filter(omen_id=omen_id)[0]
+    omen = get_omen(omen_id)
     context = {'tei': omen.tei}
     return render(request, template_name, context, content_type='text/xml')

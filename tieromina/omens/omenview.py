@@ -42,8 +42,16 @@ def get_chapter(chapter_name: str) -> Chapter:
         return None
 
 
+def get_omen(omen_id: str) -> Omen:
+    try:
+        return Omen.objects.filter(omen_id=omen_id)[0]
+    except IndexError:
+        logging.error('Could not find omen "%s"', omen_id)
+        return None
+
+
 def omen_hypernyms(omen_id: str) -> dict:
-    omen = Omen.objects.filter(omen_id=omen_id)[0]
+    omen = get_omen(omen_id)
     translations = {}
     senses = {}
     for reading in Reconstruction.objects.filter(omen__omen_id=omen.omen_id):
