@@ -29,7 +29,8 @@
                             <div id="collapse_{{reading}}_{{forloop.counter0}}" class="collapse" >
                                 {% for s in wordnet.sense %}
                                 <button type="button" class="btn btn-primary"
-                                        data-toggle="tooltip"  title="{{s.lemmas}}{%if s.examples%} - {%endif%}{%for eg in  s.examples %}{{eg}}{%endfor%}">                                    {{s.name}}
+                                        data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
+                                    {{s.name}}
                                 </button>
 
                                 {% endfor %}

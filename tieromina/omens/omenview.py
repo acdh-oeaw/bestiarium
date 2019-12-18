@@ -54,6 +54,8 @@ def omen_hypernyms(omen_id: str) -> dict:
     omen = get_omen(omen_id)
     translations = {}
     senses = {}
+    hyp = lambda s: s.hypernyms()
+
     for reading in Reconstruction.objects.filter(omen__omen_id=omen.omen_id):
         translations[reading.reconstruction_id] = {}
         senses[reading.reconstruction_id] = {}
@@ -73,10 +75,12 @@ def omen_hypernyms(omen_id: str) -> dict:
                 sense_info = {'word': text, 'sense': []}
                 for sim in wordnet.synsets(text):
                     print(text, sim.name(), sim.lemma_names())
+
                     sense_info['sense'].append({
-                        'name': sim.hypernyms(),
+                        'name': sim.name(),
                         'lemmas': sim.lemma_names(),
-                        'examples': sim.examples()
+                        'examples': sim.examples(),
+                        'tree': sim.tree(hyp)
                     })
 
                 translations[reading.reconstruction_id][segment_type].append(
