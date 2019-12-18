@@ -1,12 +1,20 @@
 {% extends "webpage/base.html" %}
 {% block Titel %} Chapter {{chapter.chapter_name}} {% endblock %}
 {% block content %}
+
 <div class="jumbotron">
+    {% if not error %}
     <h3 style="text-align: center;">Chapter {{chapter.chapter_name}}</h3>
+    {% endif%}
 </div>
 
-<div class="container" >
-    <ul class="list-inline   flex-wrap d-flex justify-content-around mt-3">
+<div class="container  mt-3" >
+    {% if error %}
+    <div class="alert alert-warning" role="alert">
+        {{error}}
+    </div>
+    {% else %}
+    <ul class="list-inline   flex-wrap d-flex justify-content-around">
         {% for omen in omens %}
         <li class="list-group-item  mb-3">
             <div class="card">
@@ -28,5 +36,7 @@
         </li>
         {% endfor %}
     </ul>
+    {% endif%}
 </div>
+
 {% endblock content %}
