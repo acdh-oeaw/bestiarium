@@ -27,65 +27,58 @@
                                 {{ wordnet.word }}
                             </a>
                             <div id="collapse_{{reading}}_{{forloop.counter0}}" class="collapse" >
-                                <table class="table table-hover">
-                                    <tbody>
+                                <ul class="list-group">
                                     {% for s in wordnet.sense %}
-                                        <tr>
-                                            <td>
-                                            <button type="button" class="btn btn-primary"
+                                    <li class="list-group-item small">
+                                        <button type="button" class="btn btn-primary"
                                                 data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
-                                                {{s.name}}
-                                            </button>
-                                            </td>
-                                            <td>
-                                                {{s.examples}}
-                                            </td>
-                                        </tr>
+                                            {{s.name}}
+                                        </button>
+                                        <li class="list-group-item small">
+                                            <pre>{{s.tree | linebreaks}}</pre>
+                                        </li>
+                                        {% endfor %}
+                                </ul>
+                            </div>
+                            {%else%}
+                            {{ wordnet.word }}
+                            {% endif %}
+                            {% endfor %}
+
                                     </li>
+                                    <li class="list-group-item">
+                                        {% for wordnet in val.APODOSIS %}
+                                        {% if  wordnet.sense %}
+                                        <a aria-expanded="false"  href="#"
+                                           aria-controls="collapse_{{reading}}_{{forloop.counter0}}_A"
+                                           class="text-decoration-none font-weight-bold active"
+                                           data-toggle="collapse"
+                                           title="{{ wordnet.word }}"
+                                           data-target="#collapse_{{reading}}_{{forloop.counter0}}_A">
+                                            {{ wordnet.word }}
+                                        </a>
+                                        </button>
+                                        <div id="collapse_{{reading}}_{{forloop.counter0}}_A" class="collapse" data-parent="#accordion">
+                                            {% for s in wordnet.sense %}
+                                            <button type="button" class="btn btn-primary" title="{{s.name}}{%if s.examples%} - {{s.examples}}{%endif%}">
+                                                {{s.lemmas}}
+                                            </button>
+                                            {% endfor %}
+                                        </div>
+                                        {%else%}
+                                        {{ wordnet.word }}
+                                        {% endif %}
 
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            {%else%}
-                            {{ wordnet.word }}
-                            {% endif %}
-                            {% endfor %}
-
-                        </li>
-                        <li class="list-group-item">
-                            {% for wordnet in val.APODOSIS %}
-                            {% if  wordnet.sense %}
-                            <a aria-expanded="false"  href="#"
-                               aria-controls="collapse_{{reading}}_{{forloop.counter0}}_A"
-                               class="text-decoration-none font-weight-bold active"
-                               data-toggle="collapse"
-                               title="{{ wordnet.word }}"
-                               data-target="#collapse_{{reading}}_{{forloop.counter0}}_A">
-                                {{ wordnet.word }}
-                            </a>
-                            </button>
-                            <div id="collapse_{{reading}}_{{forloop.counter0}}_A" class="collapse" data-parent="#accordion">
-                                {% for s in wordnet.sense %}
-                                <button type="button" class="btn btn-primary" title="{{s.name}}{%if s.examples%} - {{s.examples}}{%endif%}">
-                                    {{s.lemmas}}
-                                </button>
-                                {% endfor %}
-                            </div>
-                            {%else%}
-                            {{ wordnet.word }}
-                            {% endif %}
-
-                            {% endfor %}
-                        </li>
+                                        {% endfor %}
+                                    </li>
                     </ul>
                     <div class="">
 
                     </div>
                 </div>
             </div>
-        </li>
-        {% endfor %}
+                        </li>
+                        {% endfor %}
     </ul>
 
 </div>

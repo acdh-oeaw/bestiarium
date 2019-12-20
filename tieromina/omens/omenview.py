@@ -2,6 +2,7 @@
 This acts as an interface between views.py and the model
 '''
 import logging
+from collections import Counter, defaultdict
 
 import nltk
 from nltk.corpus import wordnet
@@ -77,12 +78,36 @@ def omen_hypernyms(omen_id: str) -> dict:
                     print(text, sim.name(), sim.lemma_names())
 
                     sense_info['sense'].append({
-                        'name': sim.name(),
-                        'lemmas': sim.lemma_names(),
-                        'examples': sim.examples(),
-                        'tree': sim.tree(hyp)
+                        'name':
+                        sim.name(),
+                        'lemmas':
+                        sim.lemma_names(),
+                        'examples':
+                        sim.examples(),
+                        'tree':
+                        text_viz_hypernyms(sim.tree(hyp))
                     })
 
                 translations[reading.reconstruction_id][segment_type].append(
                     sense_info)
     return {'data': {'omen': omen, 'translations': translations}}
+
+
+def text_viz_hypernyms(hypernym_tree):
+    text = str(hypernym_tree)
+    text = text.replace('Synset(', '').replace(')', '').replace("'", '')
+
+    viz_text = ''
+    line_pos_len = defaultdict(list)
+    line_num = 0
+    for word in text.split(','):
+        counts = Counter(word)
+        word = word.strip().replace('[', '').replace(']', '')
+        viz_text += ' > ' + word if viz_text else word
+        line_pos_len[line_num].append(len(word))
+        if counts[']']:
+            viz_text += "\n" + " " * (sum(line_pos_len[line_num][:len(
+                line_pos_len[line_num]) - counts[']']]) +
+                                      (counts[']'] - 1) * 3)
+            line_num += 1
+    return viz_text
