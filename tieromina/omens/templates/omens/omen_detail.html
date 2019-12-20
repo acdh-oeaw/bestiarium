@@ -27,14 +27,25 @@
                                 {{ wordnet.word }}
                             </a>
                             <div id="collapse_{{reading}}_{{forloop.counter0}}" class="collapse" >
-                                {% for s in wordnet.sense %}
-                                <button type="button" class="btn btn-primary"
-                                        data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
-                                    {{s.name}}
-                                </button>
+                                <table class="table table-hover">
+                                    <tbody>
+                                    {% for s in wordnet.sense %}
+                                        <tr>
+                                            <td>
+                                            <button type="button" class="btn btn-primary"
+                                                data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
+                                                {{s.name}}
+                                            </button>
+                                            </td>
+                                            <td>
+                                                {{s.examples}}
+                                            </td>
+                                        </tr>
+                                    </li>
 
-                                {% endfor %}
-
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                             {%else%}
                             {{ wordnet.word }}
