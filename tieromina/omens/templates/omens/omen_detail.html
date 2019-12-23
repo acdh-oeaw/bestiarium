@@ -84,62 +84,7 @@
                             {% endif %}
                             {% endfor %}
                         </li>
-                        <li class="list-group-item">
-                            {% if request.user.is_authenticated %}
-                            <a data-toggle="collapse"
-                               data-target="#collapse_{{reading}}_apodosis"
-                               aria-expanded="false"
-                               aria-controls="collapse_{{reading}}_apodosis" href="#"
-                               class="text-decoration-none active">
-                                <span class="">&#x270e;</span>
-                            </a>
-
-                            <div id ="collapse_{{reading}}_apodosis" class="collapse">
-                                <a href="/omens/{{ data.omen.omen_id }}/edit/{{val.translation_id_a}}" class="btn btn-success">
-                                    Save
-                                </a>
-                                <a href="#" class="btn btn-danger" data-toggle="collapse"
-                                   data-target="#collapse_{{reading}}_apodosis">
-                                    Cancel
-                                </a>
-                                <input class="form-control form-control-lg" type="text" placeholder="" value="{{val.fulltext_apodosis}}">
-
-                            </div>
-                            {%endif%}
-                            {% for wordnet in val.APODOSIS %}
-                            {% if  wordnet.sense %}
-                            <a aria-expanded="false"  href="#"
-                               aria-controls="collapse_{{reading}}_{{forloop.counter0}}_A"
-                               class="text-decoration-none font-weight-bold active"
-                               data-toggle="collapse"
-                               title="{{ wordnet.word }}"
-                               data-target="#collapse_{{reading}}_{{forloop.counter0}}_A">
-                                {{ wordnet.word }}
-                            </a>
-
-                            <div id="collapse_{{reading}}_{{forloop.counter0}}_A" class="collapse" data-parent="#accordion">
-                                <ul class="list-group">
-                                    {% for s in wordnet.sense %}
-                                    <button type="button" class="btn btn-primary"
-                                            data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
-                                        {{s.name}}
-                                    </button>
-                                    <li class="list-group-item small">
-                                        <pre>{{s.tree | linebreaks}}</pre>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            {%else%}
-                            {{ wordnet.word }}
-                            {% endif %}
-
-                            {% endfor %}
-                        </li>
                     </ul>
-                    <div class="">
-
-                    </div>
                 </div>
             </div>
         </li>
