@@ -2,6 +2,7 @@
 This acts as an interface between views.py and the model
 '''
 import logging
+import pprint
 from collections import Counter, defaultdict
 
 import nltk
@@ -53,31 +54,29 @@ def get_omen(omen_id: str) -> Omen:
 
 def omen_hypernyms(omen_id: str) -> dict:
     omen = get_omen(omen_id)
-    translations = {}
-    senses = {}
+    readings = {}
+
     hyp = lambda s: s.hypernyms()
 
     for reading in Reconstruction.objects.filter(omen__omen_id=omen.omen_id):
-        translations[reading.reconstruction_id] = {}
-        senses[reading.reconstruction_id] = {}
-
+        readings[reading.reconstruction_id] = {}
         records = Translation.objects.filter(
             reconstruction__reconstruction_id=reading.reconstruction_id)
+
         for record in records:
-            if record.segment.segment_id.endswith('P'):
-                segment_type = 'PROTASIS'
-            else:
-                segment_type = 'APODOSIS'
-
-            translations[reading.reconstruction_id][segment_type] = []
+            readings[reading.reconstruction_id][record.translation_id] = {
+                'safe_id':
+                record.translation_id.replace('_', '-').replace('.', '-'),
+                'fulltext':
+                record.translation_txt,
+                'words': []
+            }
+            # collect wordnet senses
             postags = nltk.pos_tag(wordpunct_tokenize(record.translation_txt))
-            print(postags)
             for text, postag in postags:
-                sense_info = {'word': text, 'sense': []}
+                sense_info = {'word': text, 'senses': []}
                 for sim in wordnet.synsets(text):
-                    print(text, sim.name(), sim.lemma_names())
-
-                    sense_info['sense'].append({
+                    sense_info['senses'].append({
                         'name':
                         sim.name(),
                         'lemmas':
@@ -88,15 +87,17 @@ def omen_hypernyms(omen_id: str) -> dict:
                         text_viz_hypernyms(sim.tree(hyp))
                     })
 
-                translations[reading.reconstruction_id][segment_type].append(
-                    sense_info)
-    return {'data': {'omen': omen, 'translations': translations}}
+                readings[reading.reconstruction_id][record.translation_id][
+                    'words'].append(sense_info)
+
+    return {'data': {'omen': omen, 'readings': readings}}
 
 
 def text_viz_hypernyms(hypernym_tree):
     text = str(hypernym_tree)
-    text = text.replace('Synset(', '').replace(')', '').replace("'", '')
 
+    text = text.replace('Synset(', '').replace(')', '').replace("'", '')
+    # print(text, hypernym_tree)
     viz_text = ''
     line_pos_len = defaultdict(list)
     line_num = 0
@@ -106,8 +107,21 @@ def text_viz_hypernyms(hypernym_tree):
         viz_text += ' > ' + word if viz_text else word
         line_pos_len[line_num].append(len(word))
         if counts[']']:
-            viz_text += "\n" + " " * (sum(line_pos_len[line_num][:len(
-                line_pos_len[line_num]) - counts[']']]) +
-                                      (counts[']'] - 1) * 3)
+            # viz_text += "\n" + " " * (sum(line_pos_len[line_num][:len(
+            #     line_pos_len[line_num]) - counts[']']]) +
+            #                           (counts[']'] - 1) * 3)
+            words_to_the_left = len(line_pos_len[line_num]) - counts[']']
+            viz_text += "\n" + " " * (
+                sum(line_pos_len[0][:words_to_the_left]) +
+                (words_to_the_left - 1) * 3)
+
             line_num += 1
-    return viz_text
+    return pprint.pformat(text).replace("'", "")
+
+
+def update_translation(translation_id, updated_text):
+    db_handle = Translation.objects.get(translation_id=translation_id)
+    db_handle.translation_txt = updated_text
+    db_handle.save()
+    print(db_handle.translation_id, db_handle.translation_txt)
+    return
