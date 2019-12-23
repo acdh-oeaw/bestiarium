@@ -32,7 +32,7 @@ urlpatterns = [
         name='omen_tei',
     ),
     path(
-        '<omen_id>/edit/<reading_id>/<segment>',
+        '<omen_id>/edit/<translation_id>',
         views.edit_translation,
         name='edit_translation',
     ),

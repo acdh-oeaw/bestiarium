@@ -22,7 +22,7 @@ def chapter_detail(request, chapter_name):
 
 def chapter_tei(request, chapter_name):
     template_name = 'omens/tei.xml'
-    chaptenr = get_chapter(chapter_name=chapter_name)
+    chapter = get_chapter(chapter_name=chapter_name)
     context = {'tei': chapter.tei}
     return render(request, template_name, context, content_type='text/xml')
 
@@ -41,9 +41,18 @@ def omen_tei(request, omen_id):
 
 
 @login_required
-def edit_translation(request, omen_id, reading_id, segment):
-    messages.add_message(request, messages.SUCCESS,
-                         'Your changes have been saved!')
+def edit_translation(request, omen_id, translation_id):
+    try:
+        messages.add_message(request, messages.SUCCESS,
+                             'Your changes have been saved!')
+    except:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            'Something went wrong!',
+            extra_tags='danger',
+        )
+
     template_name = 'omens/omen_detail.html'
     context = omen_hypernyms(omen_id)
     return render(request, template_name, context, content_type='text/html')

@@ -64,6 +64,8 @@ def omen_hypernyms(omen_id: str) -> dict:
         records = Translation.objects.filter(
             reconstruction__reconstruction_id=reading.reconstruction_id)
         for record in records:
+            translations[reading.reconstruction_id][
+                'translation_id'] = record.translation_id
             if record.segment.segment_id.endswith('P'):
                 segment_type = 'PROTASIS'
                 translations[reading.reconstruction_id][

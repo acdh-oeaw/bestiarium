@@ -7,12 +7,12 @@
 <div class="container">
     <ul class="">
         {% if messages %}
-        <li class="list-group-item alert" >
-            <ul class="messages list-group">
-                {% for message in messages %}
-                <li class="list-group-item alert alert-{{ message.tags }} m-3" role="alert">{{ message }}</li>
-                {% endfor %}
-            </ul>
+        <li class="list-group-item" >
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
         </li>
         {% endif %}
         {% for reading, val in data.translations.items %}
@@ -33,7 +33,7 @@
                                 <span class="">&#x270e;</span>
                             </a>
                             <div id ="collapse_{{reading}}_protasis" class="collapse">
-                                <a href="/omens/{{ data.omen.omen_id }}/edit/{{reading}}/Protasis" class="btn btn-success">
+                                <a href="/omens/{{ data.omen.omen_id }}/edit/{{val.translation_id}}" class="btn btn-success">
                                     Save
                                 </a>
                                 <a href="#" class="btn btn-danger" data-toggle="collapse"
@@ -93,7 +93,7 @@
                             </a>
 
                             <div id ="collapse_{{reading}}_apodosis" class="collapse">
-                                <a href="/omens/{{ data.omen.omen_id }}/edit/{{reading}}/Apodosis" class="btn btn-success">
+                                <a href="/omens/{{ data.omen.omen_id }}/edit/{{val.translation_id}}" class="btn btn-success">
                                     Save
                                 </a>
                                 <a href="#" class="btn btn-danger" data-toggle="collapse"
