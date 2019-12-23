@@ -2,6 +2,7 @@
 This acts as an interface between views.py and the model
 '''
 import logging
+import pprint
 from collections import Counter, defaultdict
 
 import nltk
@@ -115,7 +116,7 @@ def text_viz_hypernyms(hypernym_tree):
                 (words_to_the_left - 1) * 3)
 
             line_num += 1
-    return viz_text
+    return pprint.pformat(text).replace("'", "")
 
 
 def update_translation(translation_id, updated_text):

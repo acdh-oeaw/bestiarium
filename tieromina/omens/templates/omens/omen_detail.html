@@ -71,10 +71,19 @@
                                          class="tab-pane fade"
                                          role="tabpanel" aria-labelledby="tab-{{translation_id}}{{forloop.counter0}}">
                                         {% for s in word.senses %}
-                                        <button type="button" class="btn btn-primary"
-                                                data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
-                                            {{s.name}}
-                                        </button>
+                                        <div class="card">
+                                            <div class="card-body m-0 p-1">
+                                                <div>
+                                                    <button type="button" class="btn btn-info">
+                                                        {{s.name}}
+                                                    </button>
+                                                    {% for lemma in s.lemmas %}<span class="small mr-1"> {{lemma}};</span>{%endfor%}
+                                                </div>
+                                            <div class="small m-0 p-0">
+                                                <pre>{{s.tree}}</pre>
+                                            </div>
+                                            </div>
+                                        </div>
                                         {% endfor %}
                                     </div>
                                     {%endif%}
