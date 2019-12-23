@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 # Create your views here.
 from .models import Omen
 from .omenview import (all_chapters, get_chapter, get_omen, omen_hypernyms,
-                       omens_in_chapter)
+                       omens_in_chapter, update_translation)
 
 
 def chapters(request):
@@ -43,18 +43,20 @@ def omen_tei(request, omen_id):
 @login_required
 def edit_translation(request, omen_id, translation_id):
     try:
+        update_translation(translation_id, 'dummy')
         messages.add_message(request, messages.SUCCESS,
                              'Your changes have been saved!')
-    except:
+    except Exception as e:
+        print(repr(e))
         messages.add_message(
             request,
             messages.ERROR,
             'Something went wrong!',
             extra_tags='danger',
         )
+    return omen_detail(request, omen_id)
+    # template_name = 'omens/omen_detail.html'
+    # context = omen_hypernyms(omen_id)
+    # return render(request, template_name, context, content_type='text/html')
 
-    template_name = 'omens/omen_detail.html'
-    context = omen_hypernyms(omen_id)
-    return render(request, template_name, context, content_type='text/html')
-
-    # return redirect(request.META['HTTP_REFERER'])
+    # return redirect(omen_detail(request, omen_id))

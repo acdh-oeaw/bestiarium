@@ -100,7 +100,7 @@ def text_viz_hypernyms(hypernym_tree):
     text = str(hypernym_tree)
 
     text = text.replace('Synset(', '').replace(')', '').replace("'", '')
-    print(text, hypernym_tree)
+    # print(text, hypernym_tree)
     viz_text = ''
     line_pos_len = defaultdict(list)
     line_num = 0
@@ -120,3 +120,8 @@ def text_viz_hypernyms(hypernym_tree):
 
             line_num += 1
     return viz_text
+
+
+def update_translation(translation_id, updated_text):
+    db_handle = Translation.objects.get(translation_id=translation_id)
+    return
