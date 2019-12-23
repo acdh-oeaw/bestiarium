@@ -45,7 +45,8 @@ def edit_translation(request, omen_id, translation_id):
     try:
         updated_data = request.GET.dict()
         print(translation_id, updated_data)
-        update_translation(translation_id, 'dummy')
+        update_translation(translation_id,
+                           updated_data.get(f'input_{translation_id}'))
         messages.add_message(request, messages.SUCCESS,
                              'Your changes have been saved!')
     except Exception as e:

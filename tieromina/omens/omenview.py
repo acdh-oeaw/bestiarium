@@ -127,5 +127,7 @@ def text_viz_hypernyms(hypernym_tree):
 
 def update_translation(translation_id, updated_text):
     db_handle = Translation.objects.get(translation_id=translation_id)
+    db_handle.translation_txt = updated_text
+    db_handle.save()
     print(db_handle.translation_id, db_handle.translation_txt)
     return
