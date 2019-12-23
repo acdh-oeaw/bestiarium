@@ -53,32 +53,21 @@ def get_omen(omen_id: str) -> Omen:
 
 def omen_hypernyms(omen_id: str) -> dict:
     omen = get_omen(omen_id)
-    translations = {}
-    senses = {}
+    readings = {}
+
     hyp = lambda s: s.hypernyms()
 
     for reading in Reconstruction.objects.filter(omen__omen_id=omen.omen_id):
-        translations[reading.reconstruction_id] = {}
-        senses[reading.reconstruction_id] = {}
-
+        readings[reading.reconstruction_id] = {}
         records = Translation.objects.filter(
             reconstruction__reconstruction_id=reading.reconstruction_id)
+
         for record in records:
-
-            if record.segment.segment_id.endswith('P'):
-                segment_type = 'PROTASIS'
-                translations[reading.reconstruction_id][
-                    'fulltext_protasis'] = record.translation_txt
-                translations[reading.reconstruction_id][
-                    'translation_id_p'] = record.translation_id
-            else:
-                segment_type = 'APODOSIS'
-                translations[reading.reconstruction_id][
-                    'fulltext_apodosis'] = record.translation_txt
-                translations[reading.reconstruction_id][
-                    'translation_id_a'] = record.translation_id
-
-            translations[reading.reconstruction_id][segment_type] = []
+            readings[reading.reconstruction_id][record.translation_id] = {
+                'fulltext': record.translation_txt,
+                'senses': []
+            }
+            # collect wordnet senses
             postags = nltk.pos_tag(wordpunct_tokenize(record.translation_txt))
             for text, postag in postags:
                 sense_info = {'word': text, 'sense': []}
@@ -94,9 +83,10 @@ def omen_hypernyms(omen_id: str) -> dict:
                         text_viz_hypernyms(sim.tree(hyp))
                     })
 
-                translations[reading.reconstruction_id][segment_type].append(
-                    sense_info)
-    return {'data': {'omen': omen, 'translations': translations}}
+                    readings[reading.reconstruction_id][record.translation_id][
+                        'senses'].append(sense_info)
+
+    return {'data': {'omen': omen, 'readings': readings}}
 
 
 def text_viz_hypernyms(hypernym_tree):
