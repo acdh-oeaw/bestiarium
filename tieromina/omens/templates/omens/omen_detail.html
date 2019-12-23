@@ -26,28 +26,17 @@
                     <ul class="list-group">
                         {% for translation_id, translation in reading.items %}
                         <li class="list-group-item">
-                            <div class="panel-group" id="{{translation_id}}">
+                            {% if request.user.is_authenticated %}
+                            <a data-toggle="collapse"
+                               data-target="#collapse_{{translation_id}}"
+                               aria-expanded="false"
+                               aria-controls="collapse_{{translation_id}}" href="#"
+                               class="text-decoration-none active mr-3">
+                                <span class="">&#x270e;</span>
+                            </a>
+                            {% endif %}
+                            <div id="{{translation_id}}">
                                 <!-- parse word by word in the segment translation -->
-                                <ul class="nav nav-pills"  role="tablist">
-                                    {% for word in translation.words %}
-                                    <li class="nav-item mr-1">
-                                        <a {% if word.senses %} href="#" {%endif%} class="nav-link  p-0"  >
-                                            {{word.word}}
-                                        </a>
-                                    </li>
-                                    {% endfor %}
-                                    <li class="ml-2">
-                                        {% if request.user.is_authenticated %}
-                                        <a data-toggle="collapse"
-                                           data-target="#collapse_{{translation_id}}"
-                                           aria-expanded="false"
-                                           aria-controls="collapse_{{translation_id}}" href="#"
-                                           class="text-decoration-none active mr-3">
-                                            <span class="">&#x270e;</span>
-                                        </a>
-                                        {% endif %}
-                                    </li>
-                                </ul>
                                 <div id ="collapse_{{translation_id}}" class="collapse">
                                     <form action="/omens/{{ data.omen.omen_id }}/edit/{{translation_id}}">
                                         <input class="btn btn-success" type="submit" />
@@ -60,59 +49,42 @@
                                     </form>
 
                                 </div>
-
-
-                                {% for word in translation.words %}
-                                <div id="collapse_{{translation_id}}_{{forloop.counter0}}" class="panel-collapse collapse" data-parent="#{{translation_id}}">
-                                    {% for s in word.senses %}
-                                    <button type="button" class="btn btn-primary"
-                                            data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
-                                        {{s.name}}
-                                    </button>
+                                <ul class="nav nav-pills mb-1" id="pills-tab" role="tablist">
+                                    {% for word in translation.words %}
+                                    <li class="nav-item mr-1">
+                                        <a {% if word.senses %} href="#{{translation.safe_id}}{{forloop.counter0}}"
+                                           aria-controls="{{translation.safe_id}}{{forloop.counter0}}"{%endif%}
+                                           class="nav-link  p-0"
+                                           id="tab-{{translation_id}}{{forloop.counter0}}"
+                                           data-toggle="pill"
+                                           role="tab"
+                                           aria-selected="false">
+                                            {{word.word}}
+                                        </a>
+                                    </li>
                                     {% endfor %}
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </li>
-                        <!-- <li class="list-group-item">
+                                </ul>
+                                <div class="tab-content">
+                                    {% for word in translation.words %}
+                                    {% if word.senses %}
+                                    <div id="{{translation.safe_id}}{{forloop.counter0}}"
+                                         class="tab-pane fade"
+                                         role="tabpanel" aria-labelledby="tab-{{translation_id}}{{forloop.counter0}}">
+                                        {% for s in word.senses %}
+                                        <button type="button" class="btn btn-primary"
+                                                data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
+                                            {{s.name}}
+                                        </button>
+                                        {% endfor %}
+                                    </div>
+                                    {%endif%}
+                                    {% endfor %}
 
-                             {% for wordnet in val.PROTASIS %}
-                             {% if  wordnet.sense %}
-                             <a aria-expanded="false"  href="#"
-                             aria-controls="collapse_{{reading}}_{{forloop.counter0}}"
-                             class="text-decoration-none font-weight-bold active"
-                             data-toggle="collapse"
-                             title="{{ wordnet.word }}"
-                             data-target="#collapse_{{reading}}_{{forloop.counter0}}">
-                             {{ wordnet.word }}
-                             </a>
-                             <div id="collapse_{{reading}}_{{forloop.counter0}}" class="collapse" >
-                             <ul class="list-group">
-                             {% for s in wordnet.sense %}
-                             <li class="list-group-item small">
-                             <button type="button" class="btn btn-primary"
-                             data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
-                             {{s.name}}
-                             </button>
-                             {% if s.examples %}
-                             <ul class="list-inline">
-                             {% for example in s.examples %}
-                             <li class="list-group-item"> "{{example}}"</li>
-                             {% endfor %}
-                             </ul>
-                             {% endif %}
-                             <li class="list-group-item small">
-                             <pre>{{s.tree | linebreaks}}</pre>
-                             </li>
-                             </li>
-                             {% endfor %}
-                             </ul>
-                             </div>
-                             {%else%}
-                             {{ wordnet.word }}
-                             {% endif %}
-                             {% endfor %}
-                             </li> -->
+                                </div>
+                            </div>
+                            <!-- - tab contents -->
+
+                        </li>
                         {% endfor %}
                     </ul>
                 </div>
