@@ -66,17 +66,18 @@ def omen_hypernyms(omen_id: str) -> dict:
         for record in records:
             if record.segment.segment_id.endswith('P'):
                 segment_type = 'PROTASIS'
+                translations[reading.reconstruction_id][
+                    'fulltext_protasis'] = record.translation_txt
             else:
                 segment_type = 'APODOSIS'
+                translations[reading.reconstruction_id][
+                    'fulltext_apodosis'] = record.translation_txt
 
             translations[reading.reconstruction_id][segment_type] = []
             postags = nltk.pos_tag(wordpunct_tokenize(record.translation_txt))
-            print(postags)
             for text, postag in postags:
                 sense_info = {'word': text, 'sense': []}
                 for sim in wordnet.synsets(text):
-                    print(text, sim.name(), sim.lemma_names())
-
                     sense_info['sense'].append({
                         'name':
                         sim.name(),
@@ -95,8 +96,9 @@ def omen_hypernyms(omen_id: str) -> dict:
 
 def text_viz_hypernyms(hypernym_tree):
     text = str(hypernym_tree)
-    text = text.replace('Synset(', '').replace(')', '').replace("'", '')
 
+    text = text.replace('Synset(', '').replace(')', '').replace("'", '')
+    print(text, hypernym_tree)
     viz_text = ''
     line_pos_len = defaultdict(list)
     line_num = 0
@@ -106,8 +108,13 @@ def text_viz_hypernyms(hypernym_tree):
         viz_text += ' > ' + word if viz_text else word
         line_pos_len[line_num].append(len(word))
         if counts[']']:
-            viz_text += "\n" + " " * (sum(line_pos_len[line_num][:len(
-                line_pos_len[line_num]) - counts[']']]) +
-                                      (counts[']'] - 1) * 3)
+            # viz_text += "\n" + " " * (sum(line_pos_len[line_num][:len(
+            #     line_pos_len[line_num]) - counts[']']]) +
+            #                           (counts[']'] - 1) * 3)
+            words_to_the_left = len(line_pos_len[line_num]) - counts[']']
+            viz_text += "\n" + " " * (
+                sum(line_pos_len[0][:words_to_the_left]) +
+                (words_to_the_left - 1) * 3)
+
             line_num += 1
     return viz_text

@@ -42,7 +42,8 @@ def omen_tei(request, omen_id):
 
 @login_required
 def edit_translation(request, omen_id, reading_id, segment):
-    messages.add_message(request, messages.INFO, 'Hello world.')
+    messages.add_message(request, messages.SUCCESS,
+                         'Your changes have been saved!')
     template_name = 'omens/omen_detail.html'
     context = omen_hypernyms(omen_id)
     return render(request, template_name, context, content_type='text/html')

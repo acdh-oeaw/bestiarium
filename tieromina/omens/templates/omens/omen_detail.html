@@ -5,15 +5,16 @@
 </div>
 
 <div class="container">
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-
     <ul class="">
+        {% if messages %}
+        <li class="list-group-item alert" >
+            <ul class="messages list-group">
+                {% for message in messages %}
+                <li class="list-group-item alert alert-{{ message.tags }} m-3" role="alert">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endif %}
         {% for reading, val in data.translations.items %}
         <li class="list-group-item">
             <div class="card">
@@ -23,9 +24,27 @@
                 <div class="card-body">
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <a href="/omens/{{ data.omen.omen_id }}/edit/{{reading}}/Protasis">
+                            {% if request.user.is_authenticated %}
+                            <a data-toggle="collapse"
+                               data-target="#collapse_{{reading}}_protasis"
+                               aria-expanded="false"
+                               aria-controls="collapse_{{reading}}_protasis" href="#"
+                               class="text-decoration-none active">
                                 <span class="">&#x270e;</span>
                             </a>
+                            <div id ="collapse_{{reading}}_protasis" class="collapse">
+                                <a href="/omens/{{ data.omen.omen_id }}/edit/{{reading}}/Protasis" class="btn btn-success">
+                                    Save
+                                </a>
+                                <a href="#" class="btn btn-danger" data-toggle="collapse"
+                                   data-target="#collapse_{{reading}}_protasis">
+                                    Cancel
+                                </a>
+                                <input class="form-control form-control-lg" type="text" placeholder="" value="{{val.fulltext_protasis}}">
+
+                            </div>
+                            {% endif %}
+
                             {% for wordnet in val.PROTASIS %}
                             {% if  wordnet.sense %}
                             <a aria-expanded="false"  href="#"
@@ -44,6 +63,13 @@
                                                 data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
                                             {{s.name}}
                                         </button>
+                                        {% if s.examples %}
+                                        <ul class="list-inline">
+                                            {% for example in s.examples %}
+                                            <li class="list-group-item"> "{{example}}"</li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% endif %}
                                         <li class="list-group-item small">
                                             <pre>{{s.tree | linebreaks}}</pre>
                                         </li>
@@ -57,9 +83,27 @@
                             {% endfor %}
                         </li>
                         <li class="list-group-item">
-                            <a href="/omens/{{ data.omen.omen_id }}/edit/{{reading}}/Apodosis">
+                            {% if request.user.is_authenticated %}
+                            <a data-toggle="collapse"
+                               data-target="#collapse_{{reading}}_apodosis"
+                               aria-expanded="false"
+                               aria-controls="collapse_{{reading}}_apodosis" href="#"
+                               class="text-decoration-none active">
                                 <span class="">&#x270e;</span>
                             </a>
+
+                            <div id ="collapse_{{reading}}_apodosis" class="collapse">
+                                <a href="/omens/{{ data.omen.omen_id }}/edit/{{reading}}/Apodosis" class="btn btn-success">
+                                    Save
+                                </a>
+                                <a href="#" class="btn btn-danger" data-toggle="collapse"
+                                   data-target="#collapse_{{reading}}_apodosis">
+                                    Cancel
+                                </a>
+                                <input class="form-control form-control-lg" type="text" placeholder="" value="{{val.fulltext_apodosis}}">
+
+                            </div>
+                            {%endif%}
                             {% for wordnet in val.APODOSIS %}
                             {% if  wordnet.sense %}
                             <a aria-expanded="false"  href="#"
@@ -72,11 +116,17 @@
                             </a>
 
                             <div id="collapse_{{reading}}_{{forloop.counter0}}_A" class="collapse" data-parent="#accordion">
-                                {% for s in wordnet.sense %}
-                                <button type="button" class="btn btn-primary" title="{{s.name}}{%if s.examples%} - {{s.examples}}{%endif%}">
-                                    {{s.lemmas}}
-                                </button>
-                                {% endfor %}
+                                <ul class="list-group">
+                                    {% for s in wordnet.sense %}
+                                    <button type="button" class="btn btn-primary"
+                                            data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
+                                        {{s.name}}
+                                    </button>
+                                    <li class="list-group-item small">
+                                        <pre>{{s.tree | linebreaks}}</pre>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
                             </div>
                             {%else%}
                             {{ wordnet.word }}
