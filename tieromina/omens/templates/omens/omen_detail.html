@@ -46,6 +46,29 @@
 
                             </div>
                             {% endif %}
+                            <!-- parse word by word in the segment translation -->
+                            {% for word in translation.words %}
+                            {% if  word.senses %}
+                            <a aria-expanded="false"  href="#"
+                               aria-controls="collapse_{{translation_id}}_{{forloop.counter0}}"
+                               class="text-decoration-none font-weight-bold active"
+                               data-toggle="collapse"
+                               title="{{ word.word }}"
+                               data-target="#collapse_{{translation_id}}_{{forloop.counter0}}">
+                                {{word.word}}
+                            </a>
+                            <div id="collapse_{{translation_id}}_{{forloop.counter0}}" class="collapse" >
+                                {% for s in word.senses %}
+                                <button type="button" class="btn btn-primary"
+                                        data-toggle="tooltip"  title="{{s.lemmas}}} - {{s.tree}}">
+                                    {{s.name}}
+                                </button>
+                                {% endfor %}
+                            </div>
+                            {%else%}
+                            {{word.word}}
+                            {% endif %}
+                            {% endfor %}
                         </li>
                         <!-- <li class="list-group-item">
 

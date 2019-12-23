@@ -65,14 +65,14 @@ def omen_hypernyms(omen_id: str) -> dict:
         for record in records:
             readings[reading.reconstruction_id][record.translation_id] = {
                 'fulltext': record.translation_txt,
-                'senses': []
+                'words': []
             }
             # collect wordnet senses
             postags = nltk.pos_tag(wordpunct_tokenize(record.translation_txt))
             for text, postag in postags:
-                sense_info = {'word': text, 'sense': []}
+                sense_info = {'word': text, 'senses': []}
                 for sim in wordnet.synsets(text):
-                    sense_info['sense'].append({
+                    sense_info['senses'].append({
                         'name':
                         sim.name(),
                         'lemmas':
@@ -83,8 +83,8 @@ def omen_hypernyms(omen_id: str) -> dict:
                         text_viz_hypernyms(sim.tree(hyp))
                     })
 
-                    readings[reading.reconstruction_id][record.translation_id][
-                        'senses'].append(sense_info)
+                readings[reading.reconstruction_id][record.translation_id][
+                    'words'].append(sense_info)
 
     return {'data': {'omen': omen, 'readings': readings}}
 
