@@ -31,4 +31,9 @@ urlpatterns = [
         views.omen_tei,
         name='omen_tei',
     ),
+    path(
+        '<omen_id>/edit/<reading_id>/<segment>',
+        views.edit_translation,
+        name='edit_translation',
+    ),
 ]

@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
 
 # Create your views here.
 from .models import Omen
@@ -36,3 +38,13 @@ def omen_tei(request, omen_id):
     omen = get_omen(omen_id)
     context = {'tei': omen.tei}
     return render(request, template_name, context, content_type='text/xml')
+
+
+@login_required
+def edit_translation(request, omen_id, reading_id, segment):
+    messages.add_message(request, messages.INFO, 'Hello world.')
+    template_name = 'omens/omen_detail.html'
+    context = omen_hypernyms(omen_id)
+    return render(request, template_name, context, content_type='text/html')
+
+    # return redirect(request.META['HTTP_REFERER'])
