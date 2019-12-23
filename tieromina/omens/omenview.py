@@ -74,7 +74,7 @@ def omen_hypernyms(omen_id: str) -> dict:
             postags = nltk.pos_tag(wordpunct_tokenize(record.translation_txt))
             for text, postag in postags:
                 sense_info = {'word': text, 'senses': []}
-                for sim in wordnet.synsets(text)[:2]:
+                for sim in wordnet.synsets(text):
                     sense_info['senses'].append({
                         'name':
                         sim.name(),
