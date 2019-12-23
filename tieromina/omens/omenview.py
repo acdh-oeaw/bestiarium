@@ -64,16 +64,19 @@ def omen_hypernyms(omen_id: str) -> dict:
         records = Translation.objects.filter(
             reconstruction__reconstruction_id=reading.reconstruction_id)
         for record in records:
-            translations[reading.reconstruction_id][
-                'translation_id'] = record.translation_id
+
             if record.segment.segment_id.endswith('P'):
                 segment_type = 'PROTASIS'
                 translations[reading.reconstruction_id][
                     'fulltext_protasis'] = record.translation_txt
+                translations[reading.reconstruction_id][
+                    'translation_id_p'] = record.translation_id
             else:
                 segment_type = 'APODOSIS'
                 translations[reading.reconstruction_id][
                     'fulltext_apodosis'] = record.translation_txt
+                translations[reading.reconstruction_id][
+                    'translation_id_a'] = record.translation_id
 
             translations[reading.reconstruction_id][segment_type] = []
             postags = nltk.pos_tag(wordpunct_tokenize(record.translation_txt))
@@ -124,4 +127,5 @@ def text_viz_hypernyms(hypernym_tree):
 
 def update_translation(translation_id, updated_text):
     db_handle = Translation.objects.get(translation_id=translation_id)
+    print(db_handle.translation_id, db_handle.translation_txt)
     return
