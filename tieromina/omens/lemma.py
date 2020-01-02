@@ -165,6 +165,9 @@ class Lemma:
     def __str__(self):
         return f'{self.omen_prefix}_{self.address}'
 
+    def __repr__(self):
+        return f'{self.omen_prefix}_{self.address}'
+
     @property
     def xml_id(self):
         return f'{self.omen_prefix}_w{self.column_name}'

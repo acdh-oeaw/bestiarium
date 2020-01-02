@@ -10,7 +10,7 @@ def all_witnesses(obj):
 
 
 class WitnessAdmin(admin.ModelAdmin):
-    list_display = ('siglum', 'joins', 'ctime')
+    list_display = ('witness_id', 'siglum', 'joins', 'ctime')
 
 
 class ChapterAdmin(admin.ModelAdmin):
