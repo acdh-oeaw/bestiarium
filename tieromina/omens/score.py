@@ -23,6 +23,7 @@ class Witness(namedtuple('Witness', 'idno, siglum, joins, reference')):
     '''
     A witness - siglum, joins and if applicable, reference
     '''
+
     def __new__(cls, row):
         '''
         Converts the first two column values for a score line into an immutable namedtuple,
@@ -44,20 +45,29 @@ class Witness(namedtuple('Witness', 'idno, siglum, joins, reference')):
         except IndexError as ie:
             reference = ''
 
-        return super().__new__(cls,
-                               idno=row[0].full_text,
-                               siglum=siglum,
-                               joins=joins,
-                               reference=reference)
+        return super().__new__(
+            cls,
+            idno=row[0].full_text,
+            siglum=siglum,
+            joins=joins,
+            reference=reference)
 
     @property
     def xml_id(self):
-        return ("wit_" + clean_id(self.siglum) + '_' + '_'.join(self.joins))
+        return (f"wit_{clean_id(self.siglum)}_{'_'.join(self.joins)}")
+
+    @property
+    def unique_id(self):
+        return (
+            f"wit_{clean_id(self.siglum)}_{'_'.join(self.joins)}_{self.reference}"
+        )
 
     @property
     def tei(self):
-        wit = ET.Element(get_attribute('witness', TEI_NS),
-                         {XML_ID: self.xml_id})
+        wit = ET.Element(
+            get_attribute('witness', TEI_NS), {
+                XML_ID: self.xml_id
+            })
         idno = ET.SubElement(wit, get_attribute('idno', TEI_NS))
         idno.text = self.idno
         return wit
@@ -71,6 +81,7 @@ class ScoreLine(Line):
     '''
     A line from the score of the omen
     '''
+
     def __init__(self, row: List[Cell], omen_prefix):
         super().__init__(omen_prefix)
         self.witness = Witness(row)
@@ -96,6 +107,7 @@ class Score(UserDict):
     '''
     A dict of score lines, identified by witness
     '''
+
     def __init__(self, omen_prefix):
         super().__init__()
         self.omen_prefix = omen_prefix
