@@ -7,11 +7,12 @@ from ..workbook import Style
 
 class SheetTestCase(TestCase):
     def setUp(self):
-        sheet_xml = ET.parse('test_data/sheet1.xml').getroot()
-        style_xml = ET.parse('test_data/styles.xml')
+        sheet_xml = ET.parse('xlsx2tei/test_data/sheet1.xml').getroot()
+        style_xml = ET.parse('xlsx2tei/test_data/styles.xml')
 
         style = Style(style_xml)
-        shared_strings_xml = ET.parse('test_data/sharedStrings.xml').getroot()
+        shared_strings_xml = ET.parse(
+            'xlsx2tei/test_data/sharedStrings.xml').getroot()
         self.sheet = Sheet(
             sheet_name='1',
             xml=sheet_xml,

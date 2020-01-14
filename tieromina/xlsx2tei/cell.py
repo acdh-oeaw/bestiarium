@@ -118,6 +118,10 @@ class Cell:
                     cell_format=fmt)
 
     @property
+    def column_name(self):
+        return ''.join([l for l in self.address if l.isalpha()])
+
+    @property
     def style(self):
         return self.sheet.style
 

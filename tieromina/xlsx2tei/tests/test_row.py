@@ -5,14 +5,17 @@ from xml.etree import ElementTree as ET
 from ..namespaces import NS
 from ..row import Row
 
-ss_xml = ET.parse('test_data/sharedStrings.xml')
+ss_xml = ET.parse('xlsx2tei/test_data/sharedStrings.xml')
 shared_strings = ss_xml.findall('spreadsheetml:si', NS)
+style_xml = ET.parse('xlsx2tei/test_data/styles.xml')
+style = Style(style_xml)
 
 
 class RowTestCase(TestCase):
+    @patch('xlsx2tei.cell.Cell.style', style)
     @patch('xlsx2tei.sheet.Sheet')
     def setUp(self, MockSheet):
-        sheet_xml = ET.parse('test_data/sheet1.xml').getroot()
+        sheet_xml = ET.parse('xlsx2tei/test_data/sheet1.xml').getroot()
         row_xml = sheet_xml.find(
             'spreadsheetml:sheetData/spreadsheetml:row[@r="1"]', NS)
 

@@ -19,6 +19,7 @@ class Omen(Sheet):
     readings (translations, transcriptions and transliterations)
     and the philological commentary
     '''
+
     @property
     def omen_name(self):
         '''
@@ -26,6 +27,16 @@ class Omen(Sheet):
         '''
         print('C3', self.cell_at('D3').plain_text)
         return self.cell_at('A1').plain_text
+
+    def read(self):
+        '''
+        Read an omen
+        '''
+        score = self.score
+        for reading in self.readings(score.last_row):
+            pass
+
+        comment = self.comments(reading.last_row)
 
     @property
     def score(self):
@@ -35,11 +46,10 @@ class Omen(Sheet):
         score = Score()
         for row in list(self.rows)[2:]:
             if row.is_empty:  # Stop when a blank line is introduced
-                return Score
+                return score
+            else:
+                score.append(row)
 
-            score.append(row)
-
-    @property
     def readings(self, start_rownum):
         '''
         A reading is a group of lines following the blank line after score
@@ -62,10 +72,13 @@ class Omen(Sheet):
             elif Comment.is_comment(row):
                 # return if commentary section begins
                 if reading.is_not_empty: yield reading
+                return
             else:
                 reading.append(row)
 
-    @property
+        if reading.is_not_empty:
+            yield reading
+
     def comments(self, start_rownum):
         '''
         Everything that follows the row
@@ -73,7 +86,10 @@ class Omen(Sheet):
         belong to the comments section of the omen
         '''
         comment = Comment()
+        comment_started = False
         for row in list(self.rows)[start_rownum:]:
-            comment.append(row)
+            if row.is_empty: continue
+            if Comment.is_comment(row): comment_started = True
+            if comment_started: comment.append(row)
 
         return comment

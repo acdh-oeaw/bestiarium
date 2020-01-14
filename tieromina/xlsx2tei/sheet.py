@@ -7,6 +7,7 @@ class Sheet:
     '''
     A single sheet from a workbook
     '''
+
     def __init__(self, *, sheet_name, xml, style, shared_strings):
         self.sheet_name = sheet_name
         self.xml = xml
@@ -14,7 +15,7 @@ class Sheet:
         self.shared_strings = shared_strings
 
     def __str__(self):
-        return f'{self.sheet.sheet_name}'
+        return f'Sheet {self.sheet_name}'
 
     def cell_at(self, address: str) -> Cell:
         '''

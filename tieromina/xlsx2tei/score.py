@@ -12,8 +12,19 @@ class Score(UserList):
     '''
     Represents the Score - a list of "ScoreRow"s
     '''
+
     def append(self, row):
         super().append(ScoreRow(sheet=row.sheet, xml=row.xml))
+
+    def is_not_empty(self):
+        return len(self.data) > 0
+
+    @property
+    def last_row(self):
+        '''
+        Returns the address of the last row of the score
+        '''
+        return self.data[-1].name
 
 
 class ScoreRow(Row):
@@ -25,6 +36,7 @@ class ScoreRow(Row):
     A line begins with line number information in red,
     italiced text
     '''
+
     @property
     def witness(self):
         return self.cell_at_column('A')

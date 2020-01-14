@@ -6,8 +6,8 @@ from ..line import Line, LineInfo
 from ..namespaces import NS
 from ..workbook import Style
 
-ss_xml = ET.parse('test_data/sharedStrings.xml')
-style = Style(ET.parse('test_data/styles.xml'))
+ss_xml = ET.parse('xlsx2tei/test_data/sharedStrings.xml')
+style = Style(ET.parse('xlsx2tei/test_data/styles.xml'))
 shared_strings = ss_xml.findall('spreadsheetml:si', NS)
 
 
@@ -15,8 +15,8 @@ class LineInfoTestCase(TestCase):
     @patch('xlsx2tei.cell.Cell.style', style)
     @patch('xlsx2tei.sheet.Sheet')
     def setUp(self, MockSheet):
-        sheet_xml = ET.parse('test_data/sheet1.xml').getroot()
-        sheet4_xml = ET.parse('test_data/sheet4.xml').getroot()
+        sheet_xml = ET.parse('xlsx2tei/test_data/sheet1.xml').getroot()
+        sheet4_xml = ET.parse('xlsx2tei/test_data/sheet4.xml').getroot()
         self.not_new_line = LineInfo(MockSheet(),
                                      sheet_xml.find('.//*[@r="A1"]', NS))
 

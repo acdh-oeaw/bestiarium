@@ -6,7 +6,7 @@ from ..workbook import Workbook
 
 class WorkbookTestCase(TestCase):
 
-    test_file = 'test_data/Snakes 23.1-11.xlsx'
+    test_file = 'xlsx2tei/test_data/Snakes 23.1-11.xlsx'
 
     @patch('xlsx2tei.workbook.Style')
     @patch('xml.etree.ElementTree.XML')

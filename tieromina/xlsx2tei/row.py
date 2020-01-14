@@ -6,6 +6,7 @@ class Row:
     '''
     A row/line in a sheet
     '''
+
     def __init__(self, *, sheet, xml):
         self.sheet = sheet
         self.xml = xml
@@ -35,6 +36,12 @@ class Row:
         '''
         Returns the cell at the given column in the row
         '''
-        return Cell(
-            self.sheet,
-            self.xml.find(f'spreadsheetml:c[@r="{column}{self.name}"]', NS))
+        return Cell(self.sheet,
+                    self.xml.find(f'spreadsheetml:c[@r="{column}{self.name}"]',
+                                  NS))
+
+    def __str__(self):
+        return f'{self.sheet}, row: {self.name}'
+
+    def __repr__(self):
+        return f'{self.sheet}, row: {self.name}'

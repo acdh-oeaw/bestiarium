@@ -6,7 +6,7 @@ from ..chapter import Chapter
 from ..namespaces import NS
 from ..workbook import Workbook
 
-ss_xml = ET.parse('test_data/sharedStrings.xml')
+ss_xml = ET.parse('xlsx2tei/test_data/sharedStrings.xml')
 shared_strings = ss_xml.findall('spreadsheetml:si', NS)
 
 
@@ -15,5 +15,5 @@ class ChapterTestCase(TestCase):
         self.chapter = Chapter()
 
     def test_add_from_workbook(self):
-        test_file = 'test_data/Snakes 23.1-11.xlsx'
+        test_file = 'xlsx2tei/test_data/Snakes 23.1-11.xlsx'
         self.chapter.add_from_workbook(Workbook(test_file))
