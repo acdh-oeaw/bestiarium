@@ -20,10 +20,10 @@ DATABASES = {
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 NOSE_ARGS = [
-    '--with-coverage',          # generate coverage
-    '--cover-package=tieromina,vocabs,webpage',
-    '--cover-html',             # generate a html cover report
-    '--nocapture',              # needed to show print output in console
-    '--nologcapture',           # needed to show print output in console
-    '--cover-erase',            # without cover erase test coverage artifacts could remain
+    '--with-coverage',  # generate coverage
+    # '--cover-package',
+    #    '--cover-html',  # generate a html cover report
+    # '--nocapture',  # needed to show print output in console
+    # '--nologcapture',  # needed to show print output in console
+    # '--cover-erase',  # without cover erase test coverage artifacts could remain
 ]
