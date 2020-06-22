@@ -6,12 +6,11 @@ import pprint
 from collections import Counter, defaultdict
 
 import nltk
+from django.db.models import DecimalField, IntegerField
+from django.db.models.functions import Cast
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import wordpunct_tokenize
-
-from django.db.models import DecimalField, IntegerField
-from django.db.models.functions import Cast
 
 from .models import Chapter, Omen, Reconstruction, Translation
 
@@ -25,7 +24,7 @@ def all_chapters() -> dict:
     Returns all the chapters in the database
     TODO: Which order?
     '''
-    return {'chapters': Chapter.objects.all()}
+    return {'chapters': Chapter.objects.all().order_by('chapter_name')}
 
 
 def omens_in_chapter(chapter_name: str) -> dict:
