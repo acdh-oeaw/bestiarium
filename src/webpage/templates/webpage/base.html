@@ -102,10 +102,21 @@
             Upload
         </a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'omens:chapters' %}">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" role="button"  aria-expanded="false">
             Browse
         </a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'omens:chapters' %}">Chapters
+            </a>
+            <a class="dropdown-item" href="{% url 'omens:chapters' %}">Animals
+            </a>
+            <a class="dropdown-item" href="{% url 'omens:chapters' %}">Senses
+            </a>
+            <a class="dropdown-item" href="{% url 'omens:chapters' %}">Explore
+            </a>
+
+        </div>
     </li>
 
                 {% if 'vocabs' in APPS %}
