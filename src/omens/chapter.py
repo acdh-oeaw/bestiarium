@@ -5,11 +5,12 @@ A chapter containing one of more omens, derived from one of more workbooks
 import logging
 from xml.etree import ElementTree as ET
 
+from xlsx.workbook import Workbook
+
 from .models import Chapter as DB
 from .namespaces import NS, TEI_NS, XML_NS, get_attribute
 from .omen import Omen
 from .util import element2string
-from .workbook import Workbook
 
 logger = logging.getLogger(__name__)
 
@@ -26,17 +27,18 @@ class Chapter:
         '''
         adds the TEI skeleton
         '''
-        root = ET.Element('TEI', {'xmlns': NS['tei']})
-        header = ET.SubElement(root, 'teiHeader')
-        fileDesc = ET.SubElement(header, 'fileDesc')
-        titleStmt = ET.SubElement(fileDesc, 'titleStmt')
-        title = ET.SubElement(titleStmt, 'title')
-        editor = ET.SubElement(titleStmt, 'editor')
-        respStmt = ET.SubElement(titleStmt, 'respStmt')
-        publicationStmt = ET.SubElement(fileDesc, 'publicationStmt')
+        root = ET.Element(get_attribute('TEI', TEI_NS))
+        header = ET.SubElement(root, get_attribute('teiHeader', TEI_NS))
+        fileDesc = ET.SubElement(header, get_attribute('fileDesc', TEI_NS))
+        titleStmt = ET.SubElement(fileDesc, get_attribute('titleStmt', TEI_NS))
+        title = ET.SubElement(titleStmt, get_attribute('title', TEI_NS))
+        editor = ET.SubElement(titleStmt, get_attribute('editor', TEI_NS))
+        respStmt = ET.SubElement(titleStmt, get_attribute('respStmt', TEI_NS))
+        publicationStmt = ET.SubElement(
+            fileDesc, get_attribute('publicationStmt', TEI_NS))
         p = ET.SubElement(publicationStmt, 'p')
         p.text = 'Working copy, for internal use only'
-        sourceDesc = ET.SubElement(header, 'sourceDesc')
+        sourceDesc = ET.SubElement(header, get_attribute('sourceDesc', TEI_NS))
         ET.SubElement(sourceDesc, get_attribute('listWit', TEI_NS))
         text = ET.SubElement(root, get_attribute('text', TEI_NS))
         body = ET.SubElement(text, get_attribute('body', TEI_NS))
@@ -85,7 +87,9 @@ class Chapter:
                     root = Chapter._get_tei_outline()  # TEI skeleton
                 else:
                     root = ET.fromstring(db.tei)
-
+                    ET.dump(root)
+                title = root.find('.//tei:title', NS)
+                title.text = f'Chapter {omen.chapter_name}'
                 body = root.find('.//tei:body', NS)
 
                 # HACK  - when body is unsearchable within the "tei" namespace

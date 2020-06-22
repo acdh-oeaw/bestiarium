@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^browsing/', include('browsing.urls', namespace='browsing')),
     url(r'^info/', include('infos.urls', namespace='info')),
     url(r'^', include('webpage.urls', namespace='webpage')),
-    url(r'^upload/', include('upload.urls', namespace='upload')),
+    url(r'^curator/', include('curator.urls', namespace='curator')),
     url(r'^omens/', include('omens.urls', namespace='omens')),
 ]
 

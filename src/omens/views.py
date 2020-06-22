@@ -1,9 +1,11 @@
+from xml.etree import ElementTree as ET
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.core.paginator import Paginator
+from django.shortcuts import render
 
 # Create your views here.
-from .models import Omen
 from .omenview import (all_chapters, get_chapter, get_omen, omen_hypernyms,
                        omens_in_chapter, update_translation)
 
@@ -21,6 +23,26 @@ def chapter_detail(request, chapter_name):
 
 
 def chapter_tei(request, chapter_name):
+    '''
+    Javascript cannot handle line breaks in a string! And single quotes must be escaped because the template string is enclosed in single quotes.
+    '''
+    template_name = 'omens/embedded.html'
+    chapter = get_chapter(chapter_name=chapter_name)
+    context = {'tei': chapter.safe_tei}
+    return render(request, template_name, context, content_type='text/html')
+
+
+def chapter_xsl(request, chapter_name):
+    template_name = 'omens/tei2html.xsl'
+    return render(request, template_name, {}, content_type='application/xml')
+
+
+def omen_xsl(request, omen_id):
+    template_name = 'omens/tei2html.xsl'
+    return render(request, template_name, {}, content_type='application/xml')
+
+
+def chapter_tei_raw(request, chapter_name):
     template_name = 'omens/tei.xml'
     chapter = get_chapter(chapter_name=chapter_name)
     context = {'tei': chapter.tei}
@@ -33,11 +55,18 @@ def omen_detail(request, omen_id):
     return render(request, template_name, context, content_type='text/html')
 
 
-def omen_tei(request, omen_id):
+def omen_tei_raw(request, omen_id):
     template_name = 'omens/tei.xml'
     omen = get_omen(omen_id)
     context = {'tei': omen.tei}
     return render(request, template_name, context, content_type='text/xml')
+
+
+def omen_tei(request, omen_id):
+    template_name = 'omens/embedded.html'
+    omen = get_omen(omen_id)
+    context = {'tei': omen.chapter.safe_tei, 'omen_id': omen.omen_id}
+    return render(request, template_name, context, content_type='text/html')
 
 
 @login_required

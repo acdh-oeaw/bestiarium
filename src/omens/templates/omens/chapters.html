@@ -1,9 +1,9 @@
 {% extends "webpage/base.html" %}
 {% block Titel %} Chapters {% endblock %}
 {% block content %}
-<div class="jumbotron">
-    <h3 style="text-align: center;">Chapters</h3>
-</div>
+<!-- <div class="jumbotron">
+     <h3 style="text-align: center;">Chapters</h3>
+     </div> -->
 <div class="container">
     <ul class="list-inline  flex-wrap d-flex justify-content-around mt-3">
         {% for chapter in chapters %}
@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <div class="">
                         <a class="btn btn-primary" href="{{ request.path }}/{{ chapter.chapter_name }}"> Omens </a>
-                        <a class="btn btn-primary" href="{{ request.path }}/{{ chapter.chapter_name }}/tei.xml" target="_blank">TEI</a>
+                        <a class="btn btn-primary" href="{{ request.path }}/{{ chapter.chapter_name }}/tei" target="_blank">TEI</a>
                     </div>
                 </div>
             </div>

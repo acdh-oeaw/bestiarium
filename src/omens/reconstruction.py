@@ -3,7 +3,7 @@ Represents the reconstructions of an omen
 '''
 import logging
 import re
-from collections import UserDict, UserList, defaultdict
+from collections import UserDict, UserList, defaultdict, namedtuple
 from typing import NamedTuple
 from xml.etree import ElementTree as ET
 
@@ -21,18 +21,34 @@ from .util import clean_id
 logger = logging.getLogger(__name__)
 
 
-class ReconstructionId(NamedTuple):
-    '''
-    Hashable identifier for a readling line
-    '''
-    omen_prefix: str
-    label: str
-    siglum: str = ''
+class ReconstructionId(
+        namedtuple('ReconstructionId', 'omen_prefix,label,witness')):
+    @classmethod
+    def idno_parts(cls, idno):
+        m = re.match(
+            r'^(?P<label>[a-zA-Z\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$',
+            idno)
+        if not m: raise ValueError('Unrecognised row header %s', row)
+        return namedtuple('idno', 'label,witness,rdg_type')(
+            label=m.group('label'),
+            witness=m.group('siglum')[1:-1],
+            rdg_type=m.group('rdg_type'))
+
+    def __new__(cls, omen_prefix, idno):
+        '''
+        Converts the first two column values for a score line into an immutable namedtuple,
+        so it can be used as a key in the score dict
+        '''
+        ip = ReconstructionId.idno_parts(idno)
+        return super().__new__(cls,
+                               omen_prefix=omen_prefix,
+                               label=ip.label,
+                               witness=ip.witness)
 
     @property
     def xml_id(self):
         return (self.omen_prefix + '.' + clean_id(self.label) +
-                ('.' + clean_id(self.siglum) if self.siglum else ''))
+                ('.' + clean_id(self.witness) if self.witness else ''))
 
 
 class ReconstructionLine(Line):
@@ -44,16 +60,12 @@ class ReconstructionLine(Line):
 
     def __init__(self, row: list, omen_prefix):
         super().__init__(omen_prefix)
-        m = re.match(
-            r'^(?P<label>[a-zA-Z\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$',
-            row[0].full_text)
-        if not m: raise ValueError('Unrecognised row header %s', row)
         self.reconstruction_id = ReconstructionId(
             omen_prefix=omen_prefix,
-            label=m.group('label'),
-            siglum=m.group('siglum')[1:-1])
-
-        self.rdg_type = m.group('rdg_type')
+            idno=row[0].full_text,
+        )
+        ip = ReconstructionId.idno_parts(idno=row[0].full_text)
+        self.rdg_type = ip.rdg_type
         self.reference = row[1].full_text if row[1].column_name == 'B' else ''
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
@@ -99,42 +111,48 @@ class ReconstructionLine(Line):
                         'Unexpected values in translation row; expecting only one cell, \n%s',
                         word)
 
-            if '–' in full_translation:
-                translation_parts = full_translation.split('–')
-                print('PARTS: ', translation_parts)
+            translation_parts = full_translation.split('–')
+            if len(translation_parts) == 1:
+                translation_parts.append('')
+            elif len(translation_parts) > 2:
+                translation_parts[1] = '-'.join(translation_parts[1:])
 
-                protasis_element = ET.Element('div', {
-                    XML_ID: self.xml_id + '_protasis'
-                })
-                protasis_element.text = translation_parts[0]
-                ab.append(protasis_element)
+            print('PARTS: ', translation_parts)
 
-                protasis_translation_db = TranslationDB(
-                    translation_id=self.xml_id + '_protasis',
-                    reconstruction=reconstruction_db,
-                    segment=SegmentDB.protasis(reconstruction_db.omen),
-                    translation_txt=translation_parts[0].replace('[',
-                                                                 '').replace(
-                                                                     ']', ''))
-                # print("TRANSLATON DB", protasis_translation_db.segment)
-                protasis_translation_db.save()
+            protasis_element = ET.Element(
+                'div',
+                {
+                    XML_ID: self.xml_id + '_protasis',
+                    'type': 'protasis'
+                },
+            )
+            protasis_element.text = translation_parts[0]
+            ab.append(protasis_element)
 
-                if len(translation_parts) == 2:
-                    apodosis_element = ET.Element(
-                        'div', {
-                            XML_ID: self.xml_id + '_apodosis'
-                        })
-                    apodosis_element.text = translation_parts[1]
-                    ab.append(apodosis_element)
+            protasis_translation_db = TranslationDB(
+                translation_id=self.xml_id + '_protasis',
+                reconstruction=reconstruction_db,
+                segment=SegmentDB.protasis(reconstruction_db.omen),
+                translation_txt=translation_parts[0].replace('[', '').replace(
+                    ']', ''))
+            # print("TRANSLATON DB", protasis_translation_db.segment)
+            protasis_translation_db.save()
 
-                    apodosis_translation_db = TranslationDB(
-                        translation_id=self.xml_id + '_apodosis',
-                        reconstruction=reconstruction_db,
-                        segment=SegmentDB.apodosis(reconstruction_db.omen),
-                        translation_txt=translation_parts[1].replace(
-                            '[', '').replace(']', ''))
+            apodosis_element = ET.Element('div', {
+                XML_ID: self.xml_id + '_apodosis',
+                'type': 'apodosis'
+            })
+            apodosis_element.text = translation_parts[1]
+            ab.append(apodosis_element)
 
-                    apodosis_translation_db.save()
+            apodosis_translation_db = TranslationDB(
+                translation_id=self.xml_id + '_apodosis',
+                reconstruction=reconstruction_db,
+                segment=SegmentDB.apodosis(reconstruction_db.omen),
+                translation_txt=translation_parts[1].replace('[', '').replace(
+                    ']', ''))
+
+            apodosis_translation_db.save()
 
             # w = word.reconstruction_tei(self.omen_prefix)
             # w.tag = 'ab'
@@ -152,7 +170,6 @@ class Reconstruction(UserDict):
      - transcription,
      - translation
     '''
-
     def __init__(self, omen_prefix):
         super().__init__()
         self.omen_prefix = omen_prefix
@@ -173,9 +190,12 @@ class Reconstruction(UserDict):
                 XML_ID: clean_id(rdg_grp.xml_id)
             })
             # Create a database record for this reconstruction
-            recon_db = ReconstructionDB(
-                reconstruction_id=clean_id(rdg_grp.xml_id), omen=omen_db)
+            recon_db = ReconstructionDB(reconstruction_id=clean_id(
+                rdg_grp.xml_id),
+                                        label=rdg_grp.label,
+                                        omen=omen_db)
             recon_db.save()
             for line in lines:
                 elem.append(line.export_to_tei(recon_db))
-                yield elem
+
+            yield elem

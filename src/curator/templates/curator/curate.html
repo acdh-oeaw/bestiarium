@@ -1,0 +1,11 @@
+{% extends "webpage/base.html" %}
+{% block Titel %} Curate {% endblock %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container">
+    <div class="jumbotron">
+        <!-- <h1 style="text-align: center;">Curate Data</h1> -->
+    </div>
+    {% crispy form %}
+</div>
+{% endblock content %}

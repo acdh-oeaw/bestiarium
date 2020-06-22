@@ -1,0 +1,37 @@
+<div>
+<ul class="pagination justify-content-end">
+  <li class="page-item {%if not page_obj.has_previous %}disabled{%endif%}">
+    <a class="page-link" href="1"
+       {%if not page_obj.has_previous %} tabindex="-1"{%endif%}>
+      &laquo;
+    </a>
+  </li>
+  <li class="page-item {%if not page_obj.has_previous %}disabled{%endif%}">
+    <a class="page-link"
+       href="{%if not page_obj.has_previous %}#{%else%}{{page_obj.previous_page_number}}{%endif%}"
+       {%if not page_obj.has_previous %} tabindex="-1"{%endif%}>
+      Previous
+    </a>
+  </li>
+  <li class="page-item active">
+    <span class="page-link">
+      Page {{ page_obj.number }}/ {{ page_obj.paginator.num_pages }}
+      <span class="sr-only">(current)
+      </span>
+    </span>
+  </li>
+  <li class="page-item {%if not page_obj.has_next %}disabled{%endif%}">
+    <a class="page-link"
+       href="{%if not page_obj.has_next %}#{%else%}{{page_obj.next_page_number}}{%endif%}"
+       {%if not page_obj.has_next %} tabindex="-1"{%endif%}>
+      Next
+    </a>
+  </li>
+  <li class="page-item {%if not page_obj.has_next %}disabled{%endif%}">
+    <a class="page-link" href="{{page_obj.paginator.num_pages}}"
+       {%if not page_obj.has_next %} tabindex="-1"{%endif%}>
+      &raquo;
+    </a>
+  </li>
+</ul>
+</div>

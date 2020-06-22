@@ -17,9 +17,19 @@ urlpatterns = [
         name='chapter_detail',
     ),
     path(
-        'chapters/<chapter_name>/tei.xml',
+        'chapters/<chapter_name>/tei',
         views.chapter_tei,
         name='chapter_tei',
+    ),
+    path(
+        'chapters/<chapter_name>/tei.xml',
+        views.chapter_tei_raw,
+        name='chapter_tei',
+    ),
+    path(
+        'chapters/<chapter_name>/tei2html',
+        views.chapter_xsl,
+        name='chapter_xsl',
     ),
     path(
         '<omen_id>',
@@ -27,8 +37,18 @@ urlpatterns = [
         name='omen_detail',
     ),
     path(
-        '<omen_id>/tei.xml',
+        '<omen_id>/tei2html',
+        views.omen_xsl,
+        name='omen_xsl',
+    ),
+    path(
+        '<omen_id>/tei',
         views.omen_tei,
+        name='omen_tei',
+    ),
+    path(
+        '<omen_id>/tei.xml',
+        views.omen_tei_raw,
         name='omen_tei',
     ),
     path(

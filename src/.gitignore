@@ -1,4 +1,3 @@
-
 # Byte-compiled
 __pycache__/
 *.pyc
@@ -34,3 +33,8 @@ dev_secret.py
 /Untitled.ipynb
 /arche/data/fileType.json
 /arche/data/fileList.json
+
+# Emacs related
+*\#*
+*~
+*conda*

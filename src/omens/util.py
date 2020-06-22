@@ -27,4 +27,4 @@ def pretty_print(root):
 
 
 def clean_id(dirty_id):
-    return re.sub("[^A-Za-z0-9\-_\.]+", "_", dirty_id)
+    return re.sub("[^A-Za-z0-9]+", "-", dirty_id)

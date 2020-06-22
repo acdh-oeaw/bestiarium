@@ -1,0 +1,49 @@
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+{% extends "webpage/base.html" %}
+{% block Titel %} Curate {% endblock %}
+{% block content %}
+
+{% regroup page_obj by segment.omen.omen_id  as omen_list %}
+
+
+<div class="jumbotron">
+    <h1 style="text-align: center;">Curate
+    </h1>
+</div>
+<div class="container">
+
+    <ul  class="list-group">
+        {% if messages %}
+        <li class="list-group-item" >
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </li>
+        {% endif %}
+        {% include "webpage/pagination.html" %}
+        {% for omen in omen_list %}
+        {% regroup omen.list by reconstruction.label  as recon_list %}
+        <li  class="list-group-item">{{ omen.grouper }}
+            <ul >
+                {% for recon in recon_list %}
+                <li>{{recon.grouper}}
+                    <ul class="list-unstyled">
+                    {% for translation in recon.list %}
+                        <li>
+                            {% include "curator/translation.html" %}
+                        </li>
+
+                    {% endfor %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+
+</div>
+{% endblock content %}

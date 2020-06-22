@@ -7,12 +7,15 @@ from collections import UserList, namedtuple
 from typing import Dict, List
 from xml.etree import ElementTree as ET
 
-from .cell import Cell
+from xlsx.cell import Cell
+
 from .commentary import Commentary
 from .models import Omen as OmenDB
 from .models import Segment as SegmentDB
+from .namespaces import XML_ID
 from .reconstruction import Reconstruction
 from .score import Score
+from .util import clean_id
 
 ROWTYPE_BLANK = 'BLANK'
 ROWTYPE_SCORE = 'SCORE'
@@ -28,14 +31,14 @@ class Omen:
 
     def __init__(self, sheet):
         self.omen_name: str = sheet
-        self.commentary: Commentary = Commentary(self.omen_prefix)
-        self.score: Score = Score(self.omen_prefix)
-        self.reconstruction: Reconstruction = Reconstruction(self.omen_prefix)
+        self.commentary: Commentary = Commentary(self.xml_id)
+        self.score: Score = Score(self.xml_id)
+        self.reconstruction: Reconstruction = Reconstruction(self.xml_id)
         self._read(sheet)
 
     @property
-    def omen_prefix(self):
-        return self.omen_name.lower().replace(' ', '')
+    def xml_id(self):
+        return clean_id(self.omen_name)
 
     @property
     def chapter_name(self):
@@ -79,27 +82,31 @@ class Omen:
                 self.commentary.add_row(cells)
 
     def export_to_tei(self, chapter_db):
-        omen_db, created = OmenDB.objects.get_or_create(
-            omen_id=self.omen_name, omen_num=self.omen_num, chapter=chapter_db)
+        omen_db, created = OmenDB.objects.get_or_create(omen_id=self.xml_id,
+                                                        omen_num=self.omen_num,
+                                                        chapter=chapter_db)
 
         if created:
-            protasis = SegmentDB(
-                segment_id=self.omen_name + '_P',
-                omen=omen_db,
-                segment_type='PROTASIS')
+            protasis = SegmentDB(segment_id=self.xml_id + '_P',
+                                 omen=omen_db,
+                                 segment_type='PROTASIS')
             protasis.save()
-            apodosis = SegmentDB(
-                segment_id=self.omen_name + '_A',
-                omen=omen_db,
-                segment_type='APODOSIS')
+            apodosis = SegmentDB(segment_id=self.xml_id + '_A',
+                                 omen=omen_db,
+                                 segment_type='APODOSIS')
             apodosis.save()
 
-        omen_div = ET.Element('div', {'n': self.omen_name})
+        omen_div = ET.Element('tei:div', {
+            'n': self.omen_num,
+            XML_ID: self.xml_id
+        })
         omen_head = ET.SubElement(omen_div, 'head')
         score_div = self.score.export_to_tei(omen_db)
         omen_div.append(score_div)  #
         for reconstruction_group in self.reconstruction.export_to_tei(omen_db):
+            logging.debug(reconstruction_group)
             omen_div.append(reconstruction_group)  #
+
         comments_div = self.commentary.tei
         omen_div.append(comments_div)
         return omen_div
@@ -116,9 +123,8 @@ class Omen:
                 or 'comment' in cell.full_text.lower()):
             return ROWTYPE_COMMENT
 
-        if any(
-                rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
-                if rdg in cell.full_text.lower()):
+        if any(rdg for rdg in ('(en)', '(de)', '(trl)', '(trs)')
+               if rdg in cell.full_text.lower()):
             return ROWTYPE_RECONSTRUCTION
 
         return ROWTYPE_SCORE

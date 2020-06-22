@@ -26,7 +26,7 @@ class LemmaAdmin(admin.ModelAdmin):
 
 
 class ReconstructionAdmin(admin.ModelAdmin):
-    list_display = ('reconstruction_id', 'omen')
+    list_display = ('reconstruction_id', 'omen', 'label')
 
 
 class TransliterationAdmin(admin.ModelAdmin):

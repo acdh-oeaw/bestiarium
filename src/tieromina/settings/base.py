@@ -17,8 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes', 'django.contrib.sessions',
     'django.contrib.messages', 'django.contrib.staticfiles', 'reversion',
     'crispy_forms', 'django_filters', 'django_tables2', 'rest_framework',
-    'leaflet', 'idprovider', 'webpage', 'browsing', 'infos', 'upload', 'omens',
-    'xlsx2tei'
+    'leaflet', 'idprovider', 'webpage', 'browsing', 'infos', 'omens', 'xlsx',
+    'curator'
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -109,6 +109,6 @@ MEDIA_URL = '/media/'
 
 ARCHE_SETTINGS = {
     'project_name': ROOT_URLCONF.split('.')[0],
-    'base_url': "https://id.acdh.oeaw.ac.at/{}".format(
-        ROOT_URLCONF.split('.')[0])
+    'base_url':
+    "https://id.acdh.oeaw.ac.at/{}".format(ROOT_URLCONF.split('.')[0])
 }

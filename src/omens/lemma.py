@@ -1,7 +1,8 @@
 import logging
 from xml.etree import ElementTree as ET
 
-from .cell import Cell, Chunk
+from xlsx.cell import Cell, Chunk
+
 from .models import Lemma as LemmaDB
 from .namespaces import XML_ID
 
@@ -14,7 +15,6 @@ class Token:
     '''
     A unit smaller than a chunk - separating breaks/damages from the words and noting where they stop
     '''
-
     def __init__(self, text, fmt, xml_id='', plain_txt=True):
         self.plain_text = plain_txt
         self.text = text
@@ -37,7 +37,6 @@ class BreakStart(Token):
     '''
     Anchor to mark the beginning of a break
     '''
-
     def __init__(self, text, fmt, xml_id):
         super().__init__(text=text, fmt=fmt, xml_id=xml_id, plain_txt=False)
         self.span_to = ''
@@ -66,7 +65,6 @@ class BreakEnd(Token):
     '''
     Anchor to mark the end of a break
     '''
-
     def __init__(self, text, fmt, xml_id):
         super().__init__(text=text, fmt=fmt, xml_id=xml_id, plain_txt=False)
         self.corresp = ''
@@ -85,7 +83,6 @@ class Missing(Token):
     '''
     Missing signs
     '''
-
     def __init__(self, text, fmt):
         super().__init__(text=text, fmt=fmt, plain_txt=False)
         self.quantity = 1
@@ -108,7 +105,6 @@ class Lemma:
     Lemma as specified in the score
     Equivalent of "Cell"
     '''
-
     def __init__(self, cell, omen_prefix=''):
         self.column_name = cell.column_name
         self.address = cell.address
@@ -123,9 +119,9 @@ class Lemma:
                 self.apodosis = True
             if token_text:
                 self.tokens.append(
-                    Token(
-                        text=token_text, xml_id=word_id,
-                        fmt=chunk.cell_format))
+                    Token(text=token_text,
+                          xml_id=word_id,
+                          fmt=chunk.cell_format))
                 token_text = ''
 
             word_id = f'{self.omen_prefix}_{cell.address}'
@@ -134,19 +130,20 @@ class Lemma:
                 if char in '[]˹˺':
                     # TODO: Check that spaces mean nothing in general
                     self.tokens.append(
-                        Token(
-                            text=token_text,
-                            xml_id=anchor_id,
-                            fmt=chunk.cell_format))
+                        Token(text=token_text,
+                              xml_id=anchor_id,
+                              fmt=chunk.cell_format))
                     token_text = ''
 
                     if char in '[˹':
-                        anchor = BreakStart(
-                            text=char, xml_id=anchor_id, fmt=chunk.cell_format)
+                        anchor = BreakStart(text=char,
+                                            xml_id=anchor_id,
+                                            fmt=chunk.cell_format)
                         self.tokens.append(anchor)
                     elif char in '˺]':
-                        anchor = BreakEnd(
-                            text=char, xml_id=anchor_id, fmt=chunk.cell_format)
+                        anchor = BreakEnd(text=char,
+                                          xml_id=anchor_id,
+                                          fmt=chunk.cell_format)
                         self.tokens.append(anchor)
                     elif char == 'x':
                         if isinstance(self.tokens[-1], Missing):
