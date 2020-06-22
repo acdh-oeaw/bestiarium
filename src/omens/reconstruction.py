@@ -90,14 +90,15 @@ class ReconstructionLine(Line):
         if self.rdg_type in ('trl', 'trs'):
             for word in self.data:
                 if word.apodosis:
-                    print('Reconstruction; found apodosis @ ', word.xml_id)
+                    logging.debug('Reconstruction; found apodosis @ %s',
+                                  word.xml_id)
                     try:
                         lemma_db = LemmaDB.objects.get(lemma_id=word.xml_id)
                         lemma_db.set_segment_type_to_apodosis()
 
                     except Exception as e:
-                        print('------------>Could not change ', word.xml_id,
-                              'to APODOSIS')
+                        logging.debug('Could not change %s to APODOSIS',
+                                      word.xml_id)
 
                 w = word.reconstruction_tei(self.omen_prefix)
                 ab.append(w)
