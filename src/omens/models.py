@@ -15,6 +15,7 @@ for ns, uri in NS.items():
 class Witness(models.Model):
     '''
     Stores the physical tablet information - siglum
+    Probably unnecessary in the database
     '''
     witness_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
     siglum = models.CharField(max_length=100)
@@ -143,6 +144,7 @@ class Translation(models.Model):
 class Transliteration(models.Model):
     '''
     A row represents a lemma in a transliteration reconstruction of the omen
+    Probably unnecessary
     '''
     trl_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
     reconstruction = models.ForeignKey(Reconstruction,
@@ -154,6 +156,7 @@ class Transliteration(models.Model):
 class Transcription(models.Model):
     '''
     A row represents a lemma in a transcription of the omen
+    Probably unnecessary
     '''
     trs_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
     reconstruction = models.ForeignKey(Reconstruction,
