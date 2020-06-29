@@ -29,7 +29,7 @@
 <script type="text/javascript">
  var width = 1100;
  var height =
-     400;
+     1200;
  var color = d3.scaleOrdinal(d3.schemeCategory10);
  $('a[href="#menu2-{{translation.safe_id}}"]').on('hidden.bs.tab',function(e){
      console.log("hide");
@@ -46,7 +46,7 @@
 
          // Assigns parent, children, height, depth
          const root = d3.hierarchy(treeData, function(d) { return d.children; });
-         root.x0 = height / 2;
+         root.x0 = width/6 / 2;
          root.y0 = 0;
 
          root.descendants().forEach((d, i) => {
@@ -55,9 +55,9 @@
              if (d.depth >9) d.children = null;
          });
 
-         const margin = {top: 10, right: 10, bottom: 10, left: 40};
+         const margin = {top: 10, right: 200, bottom: 10, left: 50};
          const svg = d3.select("#svg{{translation.safe_id}}-{{token}}")
-                       .attr("viewBox", [-margin.left, -margin.top, width, 400]);
+                       .attr("viewBox", [-margin.left, -margin.top, width, 10]);
          //To prevent adding multiple graphs whenever ths sense is clicked
          svg.selectAll("*").remove();
 
@@ -78,13 +78,14 @@
 
          // declares a tree layout and assigns the size
 
-         d3.tree().size([height, width]);
          var treemap = d3.tree().size([height, width]);
 
 
 
          // Collapse after the second level
+
          //root.children.forEach(collapse);
+
          update(root);
 
          // Collapse the node and all its children
@@ -99,7 +100,7 @@
          function update(source) {
              const duration = d3.event && d3.event.altKey ? 2500 : 250;
              const nodes = root.descendants().reverse();
-             const links = root.links();
+             var links = root.descendants().slice(1);
 
              // Compute the new tree layout.
 
@@ -178,16 +179,13 @@
              const nodeExit = node.exit().transition(transition).remove()
                                   .attr("transform", d => `translate(${source.y},${source.x})`)
                                   .attr("fill-opacity", 0)
-                                  .attr("stroke-opacity", 0);
+                                  .attr("stroke-opacity", 0)
+                                  .select('circle')
+                                  .attr('r', 1e-6)
+                                  .select('text')
+                                  .style('fill-opacity', 1e-6);
 
 
-             // On exit reduce the node circles size to 0
-             nodeExit.select('circle')
-                     .attr('r', 1e-6);
-
-             // On exit reduce the opacity of text labels
-             nodeExit.select('text')
-                     .style('fill-opacity', 1e-6);
 
              // ****************** links section ***************************
 
