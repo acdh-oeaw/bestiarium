@@ -42,16 +42,36 @@
      console.log("Graph....");
      d3.json("/curator/segments/{{page_obj.number}}/wordsense/{{token}}").then(treeData =>{
          console.log(treeData);
-         d3.select("#test{{translation.safe_id}}-{{token}}").text("");
+
+         // Assigns parent, children, height, depth
+         const root = d3.hierarchy(treeData, function(d) { return d.children; });
+         root.x0 = height / 2;
+         root.y0 = 0;
+
          var margin = {top: 10, right: 10, bottom: 10, left: 40};
-
-
          var svg = d3.select("#svg{{translation.safe_id}}-{{token}}")
-                     .attr("viewBox", [-margin.left, -margin.top, width, height]);
-
-
+                     .attr("viewBox", [-margin.left, -margin.top, width, 100]);
          //To prevent adding multiple graphs whenever ths sense is clicked
          svg.selectAll("*").remove();
+
+
+         const gLink = svg.append("g")
+                          .attr("fill", "none")
+                          .attr("stroke", "#555")
+                          .attr("stroke-opacity", 0.4)
+                          .attr("stroke-width", 1.5);
+
+         const gNode = svg.append("g")
+                          .attr("cursor", "pointer")
+                          .attr("pointer-events", "all");
+
+
+         d3.select("#test{{translation.safe_id}}-{{token}}").text("");
+
+
+
+
+
          svg.append("g").attr("transform", "translate("
                                          + margin.left + "," + margin.top + ")");
          var i = 0,
@@ -61,10 +81,7 @@
          // declares a tree layout and assigns the size
          var treemap = d3.tree().size([height, width]);
 
-         // Assigns parent, children, height, depth
-         const root = d3.hierarchy(treeData, function(d) { return d.children; });
-         root.x0 = height / 2;
-         root.y0 = 0;
+
 
          // Collapse after the second level
          //root.children.forEach(collapse);
