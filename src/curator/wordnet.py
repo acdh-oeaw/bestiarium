@@ -9,11 +9,9 @@ from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import wordpunct_tokenize
 
-hyper = lambda s: s.hypernyms()
-hypo = lambda s: s.hyponyms()
-
 
 def synset_tree(word):
+    hyper = lambda s: s.hypernyms()
     node_id = 0
     G = DiGraph()
     G.add_node(node_id, value=word)
@@ -21,7 +19,6 @@ def synset_tree(word):
         tree = s.tree(hyper)
         print(tree)
         G, node_id = parse_synset_tree(tree, G, node_id, 0)
-        break
     return json_graph.tree_data(G, root=0)
 
 
