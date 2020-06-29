@@ -57,15 +57,14 @@
          svg.append("g").attr("transform", "translate("
                                          + margin.left + "," + margin.top + ")");
          var i = 0,
-             duration = d3.event && d3.event.altKey ? 2500 : 250,
-             root;
+             duration = d3.event && d3.event.altKey ? 2500 : 250;
 
 
          // declares a tree layout and assigns the size
          var treemap = d3.tree().size([height, width]);
 
          // Assigns parent, children, height, depth
-         root = d3.hierarchy(treeData, function(d) { return d.children; });
+         const root = d3.hierarchy(treeData, function(d) { return d.children; });
          root.x0 = height / 2;
          root.y0 = 0;
 
