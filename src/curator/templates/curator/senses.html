@@ -108,7 +108,9 @@
                                      return "translate(" + source.y0 + "," + source.x0 + ")";
                                  })
                                  .on('click', click)
-                                 .on("contextmenu", rtclick);
+                                 .on("contextmenu", rtclick)
+                                 .on("mouseover", mouseover)
+                                 .on("mouseout", mouseout);
 
              // Add Circle for the nodes
              nodeEnter.append('circle')
@@ -226,18 +228,35 @@
                  console.log(d);
                  console.log(i);
                  if (d.children) {
-                     // d._children = d.children;
-
+                     d._children = d.children;
                      d.children = null;
                  }
                  restart();
              }
+
+             function mouseover(d) {
+                 var g = d3.select(this); // The node
+                 // The class is used to remove the additional text later
+                 var info = g.append('text')
+                             .classed('info alert alert-primary', true)
+                             .attr('x', -20)
+                             .attr('y', -20)
+                             .text(d.data.defn);
+             }
+
+
+             function mouseout(d) {
+                 d3.select(this).select('.info').remove()
+
+             }
+
          }
 
 
      }).catch(function(error) {
          // Do some error handling.
      });
+
      console.log("Done.");
  });
 
