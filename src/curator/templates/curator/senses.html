@@ -28,7 +28,8 @@
 <!-- {{translation.hypernyms}} -->
 <script type="text/javascript">
  var width = 1100;
- var height = 400;
+ var height =
+     400;
  var color = d3.scaleOrdinal(d3.schemeCategory10);
  $('a[href="#menu2-{{translation.safe_id}}"]').on('hidden.bs.tab',function(e){
      console.log("hide");
@@ -48,9 +49,15 @@
          root.x0 = height / 2;
          root.y0 = 0;
 
-         var margin = {top: 10, right: 10, bottom: 10, left: 40};
-         var svg = d3.select("#svg{{translation.safe_id}}-{{token}}")
-                     .attr("viewBox", [-margin.left, -margin.top, width, 400]);
+         root.descendants().forEach((d, i) => {
+             d.id = i;
+             d._children = d.children;
+             if (d.depth >9) d.children = null;
+         });
+
+         const margin = {top: 10, right: 10, bottom: 10, left: 40};
+         const svg = d3.select("#svg{{translation.safe_id}}-{{token}}")
+                       .attr("viewBox", [-margin.left, -margin.top, width, 400]);
          //To prevent adding multiple graphs whenever ths sense is clicked
          svg.selectAll("*").remove();
 
@@ -70,6 +77,8 @@
 
 
          // declares a tree layout and assigns the size
+
+         d3.tree().size([height, width]);
          var treemap = d3.tree().size([height, width]);
 
 
@@ -78,7 +87,7 @@
          //root.children.forEach(collapse);
          update(root);
 
-         // Collapse the node and all it's children
+         // Collapse the node and all its children
          function collapse(d) {
              if(d.children) {
                  d._children = d.children
@@ -88,36 +97,51 @@
          }
 
          function update(source) {
+             const duration = d3.event && d3.event.altKey ? 2500 : 250;
+             const nodes = root.descendants().reverse();
+             const links = root.links();
+
+             // Compute the new tree layout.
 
              // Assigns the x and y position for the nodes
              var treeData = treemap(root);
-             const duration = d3.event && d3.event.altKey ? 2500 : 250;
+
+             let left = root;
+             let right = root;
+             root.eachBefore(node => {
+                 if (node.x < left.x) left = node;
+                 if (node.x > right.x) right = node;
+             });
+
+             const height = right.x - left.x + margin.top + margin.bottom;
+
+             const transition = svg.transition()
+                                   .duration(duration)
+                                   .attr("viewBox", [-margin.left, left.x - margin.top, width, height])
+                                   .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
 
              // Compute the new tree layout.
-             var nodes = treeData.descendants(),
-                 links = treeData.descendants().slice(1);
+             //links = treeData.descendants().slice(1);
 
-             // Normalize for fixed-depth.
-             nodes.forEach(function(d){
-                 d.y = d.depth *90});
 
              // ****************** Nodes section ***************************
 
              // Update the nodes...
-             var node = svg.selectAll('g.node')
-                           .data(nodes, function(d) {return d.id || (d.id = ++i); });
+             /* var node = svg.selectAll('g.node')
+              *               .data(nodes, function(d) {return d.id || (d.id = ++i); }); */
+             const node = gNode.selectAll("g")
+                               .data(nodes, d => d.id);
 
-             // Enter any new modes at the parent's previous position.
-             var nodeEnter = node.enter().append('g')
-                                 .attr('class', 'node')
-                                 .attr("transform", function(d) {
-                                     return "translate(" + source.y0 + "," + source.x0 + ")";
-                                 })
-                                 .on('click', click)
-                                 .on("contextmenu", rtclick)
-                                 .on("mouseover", mouseover)
-                                 .on("mouseout", mouseout);
+             console.log(node);
 
+             // Enter any new nodes at the parent's previous position.
+             const nodeEnter = node.enter().append("g")
+                                   .attr("transform", d => "translate(" + source.y0 + "," + source.x0 + ")")
+                                   .attr('class', 'node')
+                                   .on('click', click)
+                                   .on("contextmenu", rtclick)
+                                   .on("mouseover", mouseover)
+                                   .on("mouseout", mouseout);
              // Add Circle for the nodes
              nodeEnter.append('circle')
                       .attr('class', 'node')
@@ -129,37 +153,33 @@
 
              // Add labels for the nodes
              nodeEnter.append('text')
-                      .attr("dy", "-10")
-                      .attr("x", 0)
-                      .attr("text-anchor", "middle")
-                      .text(function(d) { return d.data.value; });
-
-             // UPDATE
-             var nodeUpdate = nodeEnter.merge(node);
-
-             // Transition to the proper position for the node
-             nodeUpdate.transition()
-                       .duration(duration)
-                       .attr("transform", function(d) {
-                           return "translate(" + d.y + "," + d.x + ")";
-                       });
-
-             // Update the node attributes and style
-             nodeUpdate.select('circle.node')
-                       .attr('r', 4)
-                       .style("fill", function(d) {
-                           return d._children ? "lightsteelblue" : "#fff";
-                       })
-                       .attr('cursor', 'pointer');
+                      .attr("dy", "0.31em")
+                      .attr("x", d => d._children ? -6 : 6)
+                      .attr("text-anchor", d => d._children ? "end" : "start")
+                      .text(function(d) { return d.data.value; })
+                      .clone(true).lower()
+                      .attr("stroke-linejoin", "round")
+                      .attr("stroke-width", 3)
+                      .attr("stroke", "white");
 
 
-             // Remove any exiting nodes
-             var nodeExit = node.exit().transition()
-                                .duration(duration)
-                                .attr("transform", function(d) {
-                                    return "translate(" + source.y + "," + source.x + ")";
-                                })
-                                .remove();
+             // Transition nodes to their new position.
+             const nodeUpdate = node.merge(nodeEnter).transition(transition)
+                                    .attr("transform", d => `translate(${d.y},${d.x})`)
+                                    .select('circle.node')
+                                    .attr('r', 4)
+                                    .style("fill", function(d) {
+                                        return d._children ? "lightsteelblue" : "#fff";
+                                    })
+                                    .attr('cursor', 'pointer');
+
+
+             // Transition exiting nodes to the parent's new position.
+             const nodeExit = node.exit().transition(transition).remove()
+                                  .attr("transform", d => `translate(${source.y},${source.x})`)
+                                  .attr("fill-opacity", 0)
+                                  .attr("stroke-opacity", 0);
+
 
              // On exit reduce the node circles size to 0
              nodeExit.select('circle')
