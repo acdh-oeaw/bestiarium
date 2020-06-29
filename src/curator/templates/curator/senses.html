@@ -50,7 +50,7 @@
 
          var margin = {top: 10, right: 10, bottom: 10, left: 40};
          var svg = d3.select("#svg{{translation.safe_id}}-{{token}}")
-                     .attr("viewBox", [-margin.left, -margin.top, width, 100]);
+                     .attr("viewBox", [-margin.left, -margin.top, width, 400]);
          //To prevent adding multiple graphs whenever ths sense is clicked
          svg.selectAll("*").remove();
 
@@ -66,16 +66,7 @@
                           .attr("pointer-events", "all");
 
 
-
-
-
-
-
-
-         svg.append("g").attr("transform", "translate("
-                                         + margin.left + "," + margin.top + ")");
-         var i = 0,
-             duration = d3.event && d3.event.altKey ? 2500 : 250;
+         var i = 0;
 
 
          // declares a tree layout and assigns the size
@@ -100,6 +91,7 @@
 
              // Assigns the x and y position for the nodes
              var treeData = treemap(root);
+             const duration = d3.event && d3.event.altKey ? 2500 : 250;
 
              // Compute the new tree layout.
              var nodes = treeData.descendants(),
