@@ -19,24 +19,34 @@
  $('a[href="#menu2-{{translation.safe_id}}-{{token}}"]').on('shown.bs.tab',function(e){
      console.log("show");
      var word = d3.select('a[href="#menu2-{{translation.safe_id}}"]')
-     console.log(word);
-     console.log("/curator/segments/{{page_obj.number}}/{{translation.translation_id}}/sensed3");
+     console.log("Graph....");
      d3.json("/curator/segments/{{page_obj.number}}/wordsense/{{token}}").then(data =>{
+         console.log(data);
          d3.select("#test{{translation.safe_id}}-{{token}}").text("");
+         var margin = {top: 20, right: 90, bottom: 30, left: 90},
+             width = 1600 - margin.left - margin.right,
+             height = 960 - margin.top - margin.bottom;
 
-         var graph = JSON.parse(data);
-         console.log(graph);
-         var svg = d3.select("#svg{{translation.safe_id}}-{{token}}").attr("width", width).attr("height", height);
 
-         //To prevent adding multiple grahs whenever ths sense is clicked
+         var svg = d3.select("#svg{{translation.safe_id}}-{{token}}").attr("width", width).attr("height", height)
+                     .append("g")
+                     .attr("transform", "translate("
+                                      + margin.left + "," + margin.top + ")");
+
+
+         //To prevent adding multiple graphs whenever ths sense is clicked
          svg.selectAll("*").remove();
-
-         var label = {
-             'nodes': [],
-             'links': []
-         };
+         var i = 0,
+             duration = d3.event && d3.event.altKey ? 2500 : 250,
+             root;
 
 
+
+
+     }).catch(function(error) {
+         // Do some error handling.
+     });
+     console.log("Done.");
  });
 
 
