@@ -18,7 +18,7 @@ from omens.models import Translation
 
 from .forms import CurateSense, UploadSpreadSheet
 from .models import Spreadsheet
-from .wordnet import get_hypernyms
+from .wordnet import synset_tree
 
 #from xl2tei.workbook import Workbook
 
@@ -27,10 +27,10 @@ UPLOAD_LOC = '/'
 
 
 def wordsense(request, page, word):
-    print("REQUESTED", page, word)
-    data = get_hypernyms(word)
-    print(data)
-    print('\nRETURNING------------\n\n', JsonResponse(list(data), safe=False))
+    data = synset_tree(word)
+    logging.debug(data)
+    logging.debug('\nRETURNING------------\n\n%s',
+                  JsonResponse(list(data), safe=False))
     return JsonResponse(data, safe=False)
 
 
@@ -43,6 +43,7 @@ def sensed3(request, page, translation_id):
 def view_senses(request, page=1):
     template_name = 'curator/segments.html'
     all_translations = []
+
     paginator = Paginator(Translation.objects.all(), 4, 1)
     page_obj = paginator.get_page(page)
 
