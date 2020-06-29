@@ -55,7 +55,7 @@
              if (d.depth >9) d.children = null;
          });
 
-         const margin = {top: 10, right: 200, bottom: 10, left: 50};
+         const margin = {top: 30, right: 200, bottom: 30, left: 50};
          const svg = d3.select("#svg{{translation.safe_id}}-{{token}}")
                        .attr("viewBox", [-margin.left, -margin.top, width, 10]);
          //To prevent adding multiple graphs whenever ths sense is clicked
@@ -155,9 +155,9 @@
 
              // Add labels for the nodes
              nodeEnter.append('text')
-                      .attr("dy", "0.31em")
+                      .attr("dy", "-0.5em")
                       .attr("x", d => d._children ? -6 : 6)
-                      .attr("text-anchor", d => d._children ? "end" : "start")
+                      .attr("text-anchor", "middle")
                       .text(function(d) { return d.data.value; })
                       .clone(true).lower()
                       .attr("stroke-linejoin", "round")
