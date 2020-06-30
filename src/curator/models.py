@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.db import models
 from django.utils.timezone import now
+
 from omens.models import Segment
 
 
@@ -20,7 +21,7 @@ class Spreadsheet(models.Model):
 
 
 class WordSenses(models.Model):
-    sense_id = models.TextField(default='')
+    curated_sense = models.TextField(default='')
     ctime = models.DateTimeField(default=now)
     word = models.TextField(default='')
     segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
@@ -28,7 +29,7 @@ class WordSenses(models.Model):
     reviewed_by = models.TextField(default='')
 
     def __str__(self):
-        return f'"{self.word}" = {self.sense_id}'
+        return f'"{self.word}" = {self.curated_sense}'
 
     def __repr__(self):
-        return f'"{self.word}" = {self.sense_id}'
+        return f'"{self.word}" = {self.curated_sense}'

@@ -8,12 +8,12 @@
 {% with translation.translation_txt|tokens as tokens %}
 <ul class="nav nav-pills" id="myTab" role="tablist">
     <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#menu2-{{translation.safe_id}}-dummy">&minus;	</a>
+        <a class="nav-link active py-0 px-2 btn-sm" data-toggle="tab" href="#menu2-{{translation.safe_id}}-dummy">&minus;	</a>
     </li>
 
     {% for token,postag in tokens %}
     <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#menu2-{{translation.safe_id}}-{{token}}">{{ token }}</a>
+        <a class="nav-link py-0 px-1" data-toggle="tab" href="#menu2-{{translation.safe_id}}-{{token}}">{{ token }}</a>
     </li>
     {% endfor %}
 

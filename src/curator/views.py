@@ -26,6 +26,10 @@ from .wordnet import synset_tree
 UPLOAD_LOC = '/'
 
 
+def save_senses(request, segment_id, sense_tree):
+    pass
+
+
 def wordsense(request, page, word):
     data = synset_tree(word)
     return JsonResponse(data, safe=False)

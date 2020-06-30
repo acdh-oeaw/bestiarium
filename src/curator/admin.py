@@ -9,8 +9,8 @@ class SpreadsheetAdmin(admin.ModelAdmin):
 
 
 class WordSensesAdmin(admin.ModelAdmin):
-    list_display = ('ctime', '__str__', 'sense_id', 'segment', 'curated_by',
-                    'reviewed_by')
+    list_display = ('ctime', '__str__', 'curated_sense', 'segment',
+                    'curated_by', 'reviewed_by')
 
 
 admin.site.register(Spreadsheet, SpreadsheetAdmin)
