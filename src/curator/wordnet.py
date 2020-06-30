@@ -17,7 +17,6 @@ def synset_tree(word):
     G.add_node(node_id, value=word)
     for s in wordnet.synsets(word):
         tree = s.tree(hyper)
-        print(tree)
         G, node_id = parse_synset_tree(tree, G, node_id, 0)
     return json_graph.tree_data(G, root=0)
 

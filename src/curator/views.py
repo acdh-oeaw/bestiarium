@@ -28,9 +28,6 @@ UPLOAD_LOC = '/'
 
 def wordsense(request, page, word):
     data = synset_tree(word)
-    logging.debug(data)
-    logging.debug('\nRETURNING------------\n\n%s',
-                  JsonResponse(list(data), safe=False))
     return JsonResponse(data, safe=False)
 
 

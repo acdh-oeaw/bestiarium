@@ -134,14 +134,14 @@
              const node = gNode.selectAll("g")
                                .data(nodes, d => d.id);
 
-             console.log(node);
+
 
              // Enter any new nodes at the parent's previous position.
              const nodeEnter = node.enter().append("g")
                                    .attr("transform", d => "translate(" + source.y0 + "," + source.x0 + ")")
                                    .attr('class', 'node')
                                    .on('click', click)
-                                   .on("contextmenu", rtclick)
+                                   .on("contextmenu", removeNode)
                                    .on("mouseover", mouseover)
                                    .on("mouseout", mouseout);
              // Add Circle for the nodes
@@ -253,13 +253,50 @@
                      d._children = null;
                      d.children = null;
                  }
-                 console.log("BEFORE", root.descendants());
-                     .splice(i,1);
-                 console.log("AFTER", root.descendants());
 
                  update(root);
+             }
+             function removeNode(d,i){
+
+                 d3.event.preventDefault();
+                 if (d.children){
+                     d.children = null;
+                     d._children = null;
+                     console.log("Children deleted", i, d.id);
+                     update(d);
+                 }
+                 var target = d;
+                 console.log("Parent", d.parent, "SELF", d.id);
+                 //this is the links target node which you want to remove
+                 //make new set of children
+                 var children = [];
+                 //iterate through the children
+
+                 console.log("Parent has ", target.parent.children.length, "Children");
+                 console.log("Parent is ", target.parent, target.parent.data);
+                 target.parent.children.forEach(function(child){
+                     console.log("CHILD", child);
+                     if (child.id != target.id){
+                         //add to the child list if target id is not same
+                         //so that the node target is removed.
+                         children.push(child);
+                     }
+                 });
+
+                 //set the target parent with new set of children sans the one which is removed
+                 if (children.length){
+                     target.parent.children = children;
+                 }
+                 else{
+                     target.parent.children = null;
+                 }
+                 //redraw the parent since one of its children is removed
+                 console.log("Updated, now refreshing", i);
+                 update(target.parent);
+                 console.log("Refreshed");
 
 
+                 update(target.parent);
              }
 
              function mouseover(d) {
@@ -269,7 +306,7 @@
                              .classed('info alert alert-primary', true)
                              .attr('x', -20)
                              .attr('y', 15)
-                             .text(d.data.defn);
+                             .text(d.id + "-" + d.data.defn);
              }
 
 
