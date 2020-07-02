@@ -14,7 +14,7 @@ def synset_tree(word):
     hyper = lambda s: s.hypernyms()
     node_id = 0
     G = DiGraph()
-    G.add_node(node_id, value=word)
+    G.add_node(node_id, value=word, defn='', examples=[])
     for s in wordnet.synsets(word):
         tree = s.tree(hyper)
         G, node_id = parse_synset_tree(tree, G, node_id, 0)

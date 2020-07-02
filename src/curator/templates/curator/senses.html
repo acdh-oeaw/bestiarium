@@ -17,12 +17,15 @@
  }
 
 </style>
-
-<svg id="svg{{translation.safe_id}}-{{token}}"></svg>
+<form action="/curator/segments/{{page_obj.number}}/edit/{{translation.translation_id}}-{{token}}">
+    <input class="btn btn-success btn-sm" type="submit" />    <svg id="svg{{translation.safe_id}}-{{token}}"></svg>
 
 <div id ="test{{translation.safe_id}}-{{token}}">
     You should not be seeing this.
 </div>
+
+
+</form>
 <!-- {{translation.hypernyms}} -->
 <script type="text/javascript">
  var width = 1100;
@@ -153,8 +156,8 @@
 
              // Add labels for the nodes
              nodeEnter.append('text')
-                      .attr("dy", "-0.5em")
-                      .attr("x", d => d._children ? -6 : 6)
+                      .attr("dy", "1.25em")
+             //.attr("x", d => d._children ? -6 : 6)
                       .attr("text-anchor", "middle")
                       .text(function(d) { return d.data.value; })
                       .clone(true).lower()
@@ -255,7 +258,6 @@
                  update(root);
              }
              function removeNode(d,i){
-
                  d3.event.preventDefault();
                  if (d.children){
                      d.children = null;
@@ -279,11 +281,13 @@
                          //so that the node target is removed.
                          children.push(child);
                      }
+
                  });
 
                  //set the target parent with new set of children sans the one which is removed
                  if (children.length){
                      target.parent.children = children;
+                     target.parent._children = children;
                  }
                  else{
                      target.parent.children = null;
@@ -302,9 +306,9 @@
                  // The class is used to remove the additional text later
                  var info = g.append('text')
                              .classed('info alert alert-primary', true)
-                             .attr('x', -20)
-                             .attr('y', 15)
-                             .text(d.id + "-" + d.data.defn);
+                             .attr('y', "-0.75em")
+                             .text(d.data.defn)
+                             .attr("text-anchor", "middle");
              }
 
 
