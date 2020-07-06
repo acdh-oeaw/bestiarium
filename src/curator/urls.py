@@ -28,4 +28,9 @@ urlpatterns = [
         views.wordsense,
         name='wordsense',
     ),
+    path(
+        r'segments/<page>/wordsense/<word>/',
+        views.save_senses,
+        name='save_senses',
+    ),
 ]

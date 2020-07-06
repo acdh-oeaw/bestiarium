@@ -6,7 +6,7 @@ register = template.Library()
 
 STOP_WORDS = ('the', 'man', 'and', 'will', 'onto', 'them', 'they', 'thereby',
               'all', 'that', 'his', 'are', 'each', 'who', 'him', 'out', 'onto',
-              'ditto', 'take', 'into', 'then', 'from', 'but', 'its')
+              'ditto', 'take', 'into', 'then', 'from', 'but', 'its', 'for')
 
 
 @register.filter(name='tokens')

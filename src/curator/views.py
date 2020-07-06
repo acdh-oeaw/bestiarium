@@ -26,7 +26,7 @@ from .wordnet import synset_tree
 UPLOAD_LOC = '/'
 
 
-def save_senses(request, segment_id, sense_tree):
+def save_senses(request, segment_id, word):
     pass
 
 
