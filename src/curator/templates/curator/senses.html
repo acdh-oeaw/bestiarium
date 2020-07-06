@@ -16,10 +16,16 @@
      stroke-width: 2px;
  }
 
+ svg{
+     overflow-x: auto;
+ }
 </style>
-<form action="/curator/segments/{{page_obj.number}}/edit/{{translation.translation_id}}-{{token}}">
-    <input class="btn btn-success btn-sm" type="submit" />    <svg id="svg{{translation.safe_id}}-{{token}}"></svg>
+<form action="/curator/segments/{{page_obj.number}}/edit/{{translation.translation_id}}-{{token}}" style="width:100%">
 
+    <input class="btn btn-success btn-sm" type="submit" />
+    <div class="overflow-auto">
+    <svg id="svg{{translation.safe_id}}-{{token}}" style="overflow-x:scroll"></svg>
+    </div>
 <div id ="test{{translation.safe_id}}-{{token}}">
     You should not be seeing this.
 </div>
@@ -84,9 +90,9 @@
 
 
 
-         // Collapse after the second level
+         // Collapse after the second el
 
-         //root.children.forEach(collapse);
+         root.children.forEach(collapse);
 
          update(root);
 
