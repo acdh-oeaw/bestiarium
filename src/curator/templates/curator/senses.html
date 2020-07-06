@@ -58,8 +58,8 @@
 
          root.descendants().forEach((d, i) => {
              d.id = i;
-             d._children = d.children;
-             if (d.depth >9) d.children = null;
+             // d._children = d.children;
+             // if (d.depth >9) d.children = null;
          });
 
          const margin = {top: 30, right: 200, bottom: 30, left: 50};
@@ -92,7 +92,7 @@
 
          // Collapse after the second el
 
-         root.children.forEach(collapse);
+         // root.children.forEach(collapse);
 
          update(root);
 
@@ -293,7 +293,7 @@
                  //set the target parent with new set of children sans the one which is removed
                  if (children.length){
                      target.parent.children = children;
-                     target.parent._children = children;
+                     // target.parent._children = children;
                  }
                  else{
                      target.parent.children = null;
