@@ -29,7 +29,7 @@ urlpatterns = [
         name='wordsense',
     ),
     path(
-        r'segments/<page>/wordsense/<word>/',
+        r'segments/<translation_id>/<word>/save',
         views.save_senses,
         name='save_senses',
     ),

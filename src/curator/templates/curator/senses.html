@@ -20,7 +20,7 @@
      overflow-x: auto;
  }
 </style>
-<form action="/curator/segments/{{page_obj.number}}/edit/{{translation.translation_id}}-{{token}}" style="width:100%">
+<form action="/curator/segments/{{translation.translation_id}}/{{token}}/save" style="width:100%">
 
     <input class="btn btn-success btn-sm" type="submit" />
     <div class="overflow-auto">
@@ -254,6 +254,7 @@
                  }
                  update(d);
              }
+
              function rtclick(d, i) {
                  d3.event.preventDefault();
                  if (d.children) {
@@ -307,6 +308,7 @@
                  update(target.parent);
              }
 
+
              function mouseover(d) {
                  var g = d3.select(this); // The node
                  // The class is used to remove the additional text later
@@ -332,6 +334,5 @@
 
      console.log("Done.");
  });
-
 
 </script>
