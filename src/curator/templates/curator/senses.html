@@ -1,56 +1,69 @@
 <style>
 
- .node circle {
-     fill: #fff;
-     stroke: steelblue;
-     stroke-width: 3px;
- }
+  .node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+  }
 
- .node text {
-     font: 11px sans-serif;
- }
+  .node text {
+  font: 11px sans-serif;
+  }
 
- .link {
-     fill: none;
-     stroke: #ccc;
-     stroke-width: 2px;
- }
+  .link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+  }
 
- svg{
-     overflow-x: auto;
- }
+  svg{
+  overflow-x: auto;
+  }
 </style>
-<form action="/curator/segments/{{translation.translation_id}}/{{token}}/save" style="width:100%">
-
-    <input class="btn btn-success btn-sm" type="submit" />
-    <div class="overflow-auto">
+<form  style="width:100%" method="post">{% csrf_token %}
+  <input id ="save-senses-{{translation.safe_id}}-{{token}}" class="btn btn-success btn-sm d-inline  m-2" type="button" value ="Save" />
+  <div id ="message-{{translation.safe_id}}-{{token}}" class="alert-sm alert-success m-2 p-1 d-none" role="alert" >
+  </div>
+  <div class="overflow-auto">
     <svg id="svg{{translation.safe_id}}-{{token}}" style="overflow-x:scroll"></svg>
-    </div>
-<div id ="test{{translation.safe_id}}-{{token}}">
-    You should not be seeing this.
-</div>
+  </div>
+  <div id ="test{{translation.safe_id}}-{{token}}">
+      You should not be seeing this.
+  </div>
 
 
 </form>
 <!-- {{translation.hypernyms}} -->
 <script type="text/javascript">
+
+
+ function csrfSafeMethod(method) {
+     // these HTTP methods do not require CSRF protection
+     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+ }
+ $.ajaxSetup({
+     beforeSend: function(xhr, settings) {
+         var csrftoken = Cookies.get('csrftoken');
+         if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+             xhr.setRequestHeader("X-CSRFToken", csrftoken);
+         }
+     }
+ });
+
+
  var width = 1100;
- var height =
-     1200;
+ var height = 1200;
  var color = d3.scaleOrdinal(d3.schemeCategory10);
  $('a[href="#menu2-{{translation.safe_id}}"]').on('hidden.bs.tab',function(e){
      console.log("hide");
      var svg = d3.select("#svg{{translation.safe_id}}");
      svg.selectAll("*").remove();
  });
-
  $('a[href="#menu2-{{translation.safe_id}}-{{token}}"]').on('shown.bs.tab',function(e){
-     console.log("show");
      var word = d3.select('a[href="#menu2-{{translation.safe_id}}"]')
      console.log("Graph....");
      d3.json("/curator/segments/{{page_obj.number}}/wordsense/{{token}}").then(treeData =>{
-         console.log(treeData);
-
+         console.log("TREE", treeData);
          // Assigns parent, children, height, depth
          const root = d3.hierarchy(treeData, function(d) { return d.children; });
          root.x0 = width/6 / 2;
@@ -104,6 +117,20 @@
                  d.children = null
              }
          }
+         $('#save-senses-{{translation.safe_id}}-{{token}}').on('click', function(e){
+             // action=
+             console.log("Saving... /curator/segments/{{translation.translation_id}}/{{token}}/save");
+             console.log("MAPPED", root.descendants().map(d => d.data));
+             console.log("ROOT", root);
+             console.log("CSVFormat", d3.csvFormat(root.descendants().map(d => d.data)));
+             //console.log(JSON.stringify(root['children']));
+             $.ajax({
+                 type: "POST",
+                 url: "/curator/segments/{{translation.translation_id}}/{{token}}/save",
+                 data: JSON.stringify(root.descendants().map(d => d.data)),
+                 success: console.log("... saved."),
+             });
+         });
 
          function update(source) {
              const duration = d3.event && d3.event.altKey ? 2500 : 250;
@@ -130,7 +157,7 @@
                                    .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
 
              // Compute the new tree layout.
-             //links = treeData.descendants().slice(1);
+             links = treeData.descendants().slice(1);
 
 
              // ****************** Nodes section ***************************
@@ -138,8 +165,7 @@
              // Update the nodes...
              /* var node = svg.selectAll('g.node')
               *               .data(nodes, function(d) {return d.id || (d.id = ++i); }); */
-             const node = gNode.selectAll("g")
-                               .data(nodes, d => d.id);
+             const node = gNode.selectAll("g").data(nodes, d => d.id);
 
 
 
@@ -236,9 +262,9 @@
              function diagonal(s, d) {
 
                  path = `M ${s.y} ${s.x}
-            C ${(s.y + d.y) / 2} ${s.x},
-              ${(s.y + d.y) / 2} ${d.x},
-              ${d.y} ${d.x}`
+    C ${(s.y + d.y) / 2} ${s.x},
+    ${(s.y + d.y) / 2} ${d.x},
+    ${d.y} ${d.x}`
 
                  return path
              }
@@ -269,20 +295,15 @@
                  if (d.children){
                      d.children = null;
                      d._children = null;
-                     console.log("Children deleted", i, d.id);
                      update(d);
                  }
                  var target = d;
-                 console.log("Parent", d.parent, "SELF", d.id);
                  //this is the links target node which you want to remove
                  //make new set of children
                  var children = [];
                  //iterate through the children
 
-                 console.log("Parent has ", target.parent.children.length, "Children");
-                 console.log("Parent is ", target.parent, target.parent.data);
                  target.parent.children.forEach(function(child){
-                     console.log("CHILD", child);
                      if (child.id != target.id){
                          //add to the child list if target id is not same
                          //so that the node target is removed.
@@ -300,12 +321,8 @@
                      target.parent.children = null;
                  }
                  //redraw the parent since one of its children is removed
-                 console.log("Updated, now refreshing", i);
                  update(target.parent);
-                 console.log("Refreshed");
-
-
-                 update(target.parent);
+                 update(root);
              }
 
 

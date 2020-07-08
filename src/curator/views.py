@@ -1,5 +1,6 @@
 import logging
 import os
+from json import loads
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -8,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic.edit import FormView
 
@@ -28,13 +29,15 @@ UPLOAD_LOC = '/'
 
 def save_senses(request, translation_id, word):  #
     print("Saving the graph\n-----------------------")
-    messages.add_message(request, messages.SUCCESS, 'saved!')
-    print(request.body)
-    return redirect(request.META['HTTP_REFERER'])
+    print("POST", request.body)
+    print("DIR", dir(request))
+    return HttpResponse("Saved")
 
 
 def wordsense(request, page, word):
     data = synset_tree(word)
+    print(data, "\n")
+    print(JsonResponse(data, safe=False))
     return JsonResponse(data, safe=False)
 
 
