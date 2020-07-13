@@ -126,7 +126,7 @@
                  type: "POST",
                  url: "/curator/segments/{{translation.translation_id}}/{{token}}/save",
                  data: JSON.stringify(root, function( key, value) {
-                     if( key != 'parent') { //removing circular reference
+                     if( key != 'parent' && key!= 'x' && key != 'x0' && key != 'y' && key != 'y0' && key != 'height' && key != 'depth') { //removing circular reference
                          return value;
                      }
                  }),

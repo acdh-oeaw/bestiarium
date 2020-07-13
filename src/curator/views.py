@@ -1,6 +1,6 @@
 import logging
 import os
-from json import loads
+from json import dumps, loads
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -31,10 +31,11 @@ UPLOAD_LOC = '/'
 def save_senses(request, translation_id, word):  #
     logging.debug("Saving the graph\n-----------------------")
     logging.debug("POST%s ", request.body)
+    dicted = loads(request.body)
     trs = Translation.objects.get(translation_id=translation_id)
 
     sTree = SenseTree(word=word,
-                      curated_sense=str(request.body),
+                      curated_sense=dumps(dicted['data']),
                       translation=trs)
     sTree.save()
     return HttpResponse("Saved")
@@ -46,10 +47,11 @@ def wordsense(request, translation_id, word):
     data = None
     if stree_from_db:
         curated_sense = stree_from_db.curated_sense
-        logging.debug("FROM DB %s", curated_sense[2:-1])
         if curated_sense:
-            logging.debug(f"Dicted %s", loads(curated_sense[2:-1]))
-            data = loads(curated_sense[2:-1])
+            logging.debug("FROM DB %s", curated_sense)
+            logging.debug("Dicted %s", loads(curated_sense))
+            logging.debug("Original %s", synset_tree(word))
+            data = loads(curated_sense)
 
     if not data:
         data = synset_tree(word)
