@@ -29,8 +29,8 @@ UPLOAD_LOC = '/'
 
 @login_required
 def save_senses(request, translation_id, word):  #
-    print("Saving the graph\n-----------------------")
-    print("POST", request.body)
+    logging.debug("Saving the graph\n-----------------------")
+    logging.debug("POST%s ", request.body)
     trs = Translation.objects.get(translation_id=translation_id)
 
     sTree = SenseTree(word=word,
@@ -40,10 +40,20 @@ def save_senses(request, translation_id, word):  #
     return HttpResponse("Saved")
 
 
-def wordsense(request, page, word):
-    data = synset_tree(word)
-    print(data, "\n")
-    print(JsonResponse(data, safe=False))
+def wordsense(request, translation_id, word):
+    # Check if a Sense Tree exists already
+    stree_from_db = SenseTree.objects.filter(word=word).first()
+    data = None
+    if stree_from_db:
+        curated_sense = stree_from_db.curated_sense
+        logging.debug("FROM DB %s", curated_sense[2:-1])
+        if curated_sense:
+            logging.debug(f"Dicted %s", loads(curated_sense[2:-1]))
+            data = loads(curated_sense[2:-1])
+
+    if not data:
+        data = synset_tree(word)
+
     return JsonResponse(data, safe=False)
 
 

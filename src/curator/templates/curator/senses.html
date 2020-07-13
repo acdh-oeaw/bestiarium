@@ -120,13 +120,12 @@
          $('#save-senses-{{translation.safe_id}}-{{token}}').on('click', function(e){
              // action=
              console.log("Saving... /curator/segments/{{translation.translation_id}}/{{token}}/save");
-             console.log("MAPPED", root.descendants().map(d => d.data));
              console.log("ROOT", root);
 
              $.ajax({
                  type: "POST",
                  url: "/curator/segments/{{translation.translation_id}}/{{token}}/save",
-                 data: JSON.stringify(root.data, function( key, value) {
+                 data: JSON.stringify(root, function( key, value) {
                      if( key != 'parent') { //removing circular reference
                          return value;
                      }

@@ -24,7 +24,7 @@ urlpatterns = [
         name='sensed3',
     ),
     path(
-        r'segments/<page>/wordsense/<word>/',
+        r'segments/<translation_id>/wordsense/<word>/',
         views.wordsense,
         name='wordsense',
     ),
