@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.utils.timezone import now
 
-from omens.models import Segment
+from omens.models import Segment, Translation
 
 
 # Create your models here.
@@ -24,7 +24,7 @@ class SenseTree(models.Model):
     curated_sense = models.TextField(default='')
     ctime = models.DateTimeField(default=now)
     word = models.TextField(default='')
-    segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
+    translation = models.ForeignKey(Translation, on_delete=models.CASCADE)
     curated_by = models.TextField(default='')
     reviewed_by = models.TextField(default='')
 

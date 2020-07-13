@@ -18,7 +18,7 @@ from omens.models import Chapter as ChapterDB
 from omens.models import Translation
 
 from .forms import CurateSense, UploadSpreadSheet
-from .models import Spreadsheet
+from .models import Sense, SenseTree, Spreadsheet
 from .wordnet import synset_tree
 
 #from xl2tei.workbook import Workbook
@@ -27,10 +27,16 @@ from .wordnet import synset_tree
 UPLOAD_LOC = '/'
 
 
+@login_required
 def save_senses(request, translation_id, word):  #
     print("Saving the graph\n-----------------------")
     print("POST", request.body)
-    print("DIR", dir(request))
+    trs = Translation.objects.get(translation_id=translation_id)
+
+    sTree = SenseTree(word=word,
+                      curated_sense=str(request.body),
+                      translation=trs)
+    sTree.save()
     return HttpResponse("Saved")
 
 

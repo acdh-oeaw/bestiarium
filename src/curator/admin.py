@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import SenseTree, Spreadsheet
+from .models import Sense, SenseTree, Spreadsheet
 
 
 class SpreadsheetAdmin(admin.ModelAdmin):
@@ -9,9 +9,14 @@ class SpreadsheetAdmin(admin.ModelAdmin):
 
 
 class SenseTreeAdmin(admin.ModelAdmin):
-    list_display = ('ctime', '__str__', 'curated_sense', 'segment',
+    list_display = ('ctime', 'word', 'curated_sense', 'translation',
                     'curated_by', 'reviewed_by')
+
+
+class SenseAdmin(admin.ModelAdmin):
+    list_display = ('sense_uri', )
 
 
 admin.site.register(Spreadsheet, SpreadsheetAdmin)
 admin.site.register(SenseTree, SenseTreeAdmin)
+admin.site.register(Sense, SenseAdmin)

@@ -139,6 +139,9 @@ class Translation(models.Model):
     def safe_id(self):
         return f'{self.reconstruction.safe_id}-{self.segment.segment_type}'
 
+    def __str__(self):
+        return f'{self.translation_id}'
+
 
 class Transliteration(models.Model):
     '''

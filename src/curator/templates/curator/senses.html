@@ -1,35 +1,35 @@
 <style>
 
-  .node circle {
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 3px;
-  }
+ .node circle {
+     fill: #fff;
+     stroke: steelblue;
+     stroke-width: 3px;
+ }
 
-  .node text {
-  font: 11px sans-serif;
-  }
+ .node text {
+     font: 11px sans-serif;
+ }
 
-  .link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 2px;
-  }
+ .link {
+     fill: none;
+     stroke: #ccc;
+     stroke-width: 2px;
+ }
 
-  svg{
-  overflow-x: auto;
-  }
+ svg{
+     overflow-x: auto;
+ }
 </style>
 <form  style="width:100%" method="post">{% csrf_token %}
-  <input id ="save-senses-{{translation.safe_id}}-{{token}}" class="btn btn-success btn-sm d-inline  m-2" type="button" value ="Save" />
-  <div id ="message-{{translation.safe_id}}-{{token}}" class="alert-sm alert-success m-2 p-1 d-none" role="alert" >
-  </div>
-  <div class="overflow-auto">
-    <svg id="svg{{translation.safe_id}}-{{token}}" style="overflow-x:scroll"></svg>
-  </div>
-  <div id ="test{{translation.safe_id}}-{{token}}">
-      You should not be seeing this.
-  </div>
+    <input id ="save-senses-{{translation.safe_id}}-{{token}}" class="btn btn-success btn-sm d-inline  m-2" type="button" value ="Save" />
+    <div id ="message-{{translation.safe_id}}-{{token}}" class="alert-sm alert-success m-2 p-1 d-none" role="alert" >
+    </div>
+    <div class="overflow-auto">
+        <svg id="svg{{translation.safe_id}}-{{token}}" style="overflow-x:scroll"></svg>
+    </div>
+    <div id ="test{{translation.safe_id}}-{{token}}">
+        You should not be seeing this.
+    </div>
 
 
 </form>
@@ -122,12 +122,15 @@
              console.log("Saving... /curator/segments/{{translation.translation_id}}/{{token}}/save");
              console.log("MAPPED", root.descendants().map(d => d.data));
              console.log("ROOT", root);
-             console.log("CSVFormat", d3.csvFormat(root.descendants().map(d => d.data)));
-             //console.log(JSON.stringify(root['children']));
+
              $.ajax({
                  type: "POST",
                  url: "/curator/segments/{{translation.translation_id}}/{{token}}/save",
-                 data: JSON.stringify(root.descendants().map(d => d.data)),
+                 data: JSON.stringify(root.data, function( key, value) {
+                     if( key != 'parent') { //removing circular reference
+                         return value;
+                     }
+                 }),
                  success: console.log("... saved."),
              });
          });
@@ -292,37 +295,25 @@
              }
              function removeNode(d,i){
                  d3.event.preventDefault();
-                 if (d.children){
-                     d.children = null;
-                     d._children = null;
-                     update(d);
-                 }
                  var target = d;
-                 //this is the links target node which you want to remove
-                 //make new set of children
                  var children = [];
-                 //iterate through the children
-
                  target.parent.children.forEach(function(child){
                      if (child.id != target.id){
-                         //add to the child list if target id is not same
-                         //so that the node target is removed.
                          children.push(child);
                      }
 
                  });
 
-                 //set the target parent with new set of children sans the one which is removed
                  if (children.length){
                      target.parent.children = children;
-                     // target.parent._children = children;
+                     target.parent.data.children = children;
                  }
                  else{
                      target.parent.children = null;
+                     target.parent.data.children = null;
                  }
                  //redraw the parent since one of its children is removed
                  update(target.parent);
-                 update(root);
              }
 
 
@@ -330,6 +321,7 @@
                  var g = d3.select(this); // The node
                  // The class is used to remove the additional text later
                  var info = g.append('text')
+
                              .classed('info alert alert-primary', true)
                              .attr('y', "-0.75em")
                              .text(d.data.defn)
