@@ -62,7 +62,7 @@
  $('a[href="#menu2-{{translation.safe_id}}-{{token}}"]').on('shown.bs.tab',function(e){
      var word = d3.select('a[href="#menu2-{{translation.safe_id}}"]')
      console.log("Graph....");
-     d3.json("/curator/segments/{{page_obj.number}}/wordsense/{{token}}").then(treeData =>{
+     d3.json("/curator/segments/{{translation.translation_id}}/wordsense/{{token}}").then(treeData =>{
          console.log("TREE", treeData);
          // Assigns parent, children, height, depth
          const root = d3.hierarchy(treeData, function(d) { return d.children; });
