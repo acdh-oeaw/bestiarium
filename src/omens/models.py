@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from xml.etree import ElementTree as ET
 
@@ -75,9 +76,7 @@ class Segment(models.Model):
 
     @classmethod
     def protasis(cls, omen):
-        print(f"Looking for segment with id: '{omen.omen_id}_P'")
-        print("Found ",
-              Segment.objects.filter(segment_id=omen.omen_id + '_P')[0])
+        logging.debug(f"Looking for segment with id: '{omen.omen_id}_P'")
         return cls.objects.filter(segment_id=omen.omen_id + '_P')[0]
 
     @classmethod
@@ -97,7 +96,7 @@ class Lemma(models.Model):
     segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
 
     def set_segment_type_to_apodosis(self):
-        print('Changing to Apodosis', self.lemma_id)
+        logging.debug('Changing to Apodosis %s', self.lemma_id)
         apodosis_segment = Segment.objects.filter(omen=self.omen,
                                                   segment_type='APODOSIS')[0]
         self.segment = apodosis_segment
@@ -139,6 +138,9 @@ class Translation(models.Model):
     @property
     def safe_id(self):
         return f'{self.reconstruction.safe_id}-{self.segment.segment_type}'
+
+    def __str__(self):
+        return f'{self.translation_id}'
 
 
 class Transliteration(models.Model):

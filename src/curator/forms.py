@@ -2,7 +2,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
 
-from .models import Spreadsheet, WordSenses
+from .models import SenseTree, Spreadsheet
 
 
 class UploadSpreadSheet(forms.Form):
@@ -31,7 +31,7 @@ class UploadSpreadSheet(forms.Form):
 
 class CurateSense(forms.Form):
     class Meta:
-        model = WordSenses
+        model = SenseTree
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):

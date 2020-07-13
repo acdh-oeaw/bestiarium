@@ -24,8 +24,13 @@ urlpatterns = [
         name='sensed3',
     ),
     path(
-        r'segments/<page>/wordsense/<word>/',
+        r'segments/<translation_id>/wordsense/<word>/',
         views.wordsense,
         name='wordsense',
+    ),
+    path(
+        r'segments/<translation_id>/<word>/save',
+        views.save_senses,
+        name='save_senses',
     ),
 ]

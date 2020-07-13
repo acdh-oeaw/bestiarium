@@ -1,5 +1,6 @@
 import logging
 import os
+from json import loads
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -8,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic.edit import FormView
 
@@ -17,7 +18,7 @@ from omens.models import Chapter as ChapterDB
 from omens.models import Translation
 
 from .forms import CurateSense, UploadSpreadSheet
-from .models import Spreadsheet
+from .models import Sense, SenseTree, Spreadsheet
 from .wordnet import synset_tree
 
 #from xl2tei.workbook import Workbook
@@ -26,12 +27,33 @@ from .wordnet import synset_tree
 UPLOAD_LOC = '/'
 
 
-def save_senses(request, segment_id, sense_tree):
-    pass
+@login_required
+def save_senses(request, translation_id, word):  #
+    logging.debug("Saving the graph\n-----------------------")
+    logging.debug("POST%s ", request.body)
+    trs = Translation.objects.get(translation_id=translation_id)
+
+    sTree = SenseTree(word=word,
+                      curated_sense=str(request.body),
+                      translation=trs)
+    sTree.save()
+    return HttpResponse("Saved")
 
 
-def wordsense(request, page, word):
-    data = synset_tree(word)
+def wordsense(request, translation_id, word):
+    # Check if a Sense Tree exists already
+    stree_from_db = SenseTree.objects.filter(word=word).first()
+    data = None
+    if stree_from_db:
+        curated_sense = stree_from_db.curated_sense
+        logging.debug("FROM DB %s", curated_sense[2:-1])
+        if curated_sense:
+            logging.debug(f"Dicted %s", loads(curated_sense[2:-1]))
+            data = loads(curated_sense[2:-1])
+
+    if not data:
+        data = synset_tree(word)
+
     return JsonResponse(data, safe=False)
 
 
