@@ -10,8 +10,19 @@
   <xsl:key name="witness" match="tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w/app/rdg" use="./@wit" />
   <xsl:template match="/">
     <div class="container">
-      <h1 class="bd-title"><xsl:value-of select=".//tei:title"/><small><a class="btn btn-light" role="button" href="tei.xml" target="BLANK">&#11123;
-      </a></small></h1>
+      <h2 class="bd-title mt-3 mb-0">
+           <!-- parameter has not been supplied -->
+            <xsl:value-of select=".//tei:title"/>
+            <small>
+              <a class="btn btn-light" role="button" href="tei.xml" target="BLANK">&#11123;
+              </a>
+            </small>
+        <xsl:choose>
+          <xsl:when test="$omen">
+            Omen <xsl:value-of select=".//tei:body/tei:div[@xml:id = $omen]/@n"/>
+          </xsl:when>
+        </xsl:choose>
+      </h2>
 
       <div id ="omens">
         <xsl:choose>
@@ -30,16 +41,16 @@
 
   <xsl:template match="tei:body/tei:div"> <!-- Omen -->
     <div class="card">
-              <xsl:choose>
-      <xsl:when test="not($omen)"> <!-- parameter has not been supplied -->
-      <div class="card-header">
-        <xsl:value-of select="./@n"/>          <a  target="_blank" class="btn-sm btn-link text-decoration-none">
-        <xsl:attribute name="href">/omens/<xsl:value-of select="@xml:id"/>/tei</xsl:attribute>
-        &#8599;
-      </a>
-      </div>
-    </xsl:when>
-        </xsl:choose>
+      <xsl:choose>
+        <xsl:when test="not($omen)"> <!-- parameter has not been supplied -->
+          <div class="card-header">
+            <xsl:value-of select="./@n"/>          <a  target="_blank" class="btn-sm btn-link text-decoration-none">
+            <xsl:attribute name="href">/omens/<xsl:value-of select="@xml:id"/>/tei</xsl:attribute>
+            &#8599;
+          </a>
+          </div>
+        </xsl:when>
+      </xsl:choose>
 
       <div class="card-body">
         <div  class="table-responsive">
