@@ -29,8 +29,6 @@ UPLOAD_LOC = '/'
 
 @login_required
 def save_senses(request, translation_id, word):  #
-    logging.debug("Saving the graph\n-----------------------")
-    logging.debug("POST%s ", request.body)
     dicted = loads(request.body)
     trs = Translation.objects.get(translation_id=translation_id)
 
@@ -46,9 +44,6 @@ def wordsense(request, translation_id, word):
     if stree_from_db:
         curated_sense = stree_from_db.curated_sense
         if curated_sense:
-            logging.debug("FROM DB %s", curated_sense)
-            logging.debug("Dicted %s", loads(curated_sense))
-            logging.debug("Original %s", synset_tree(word))
             data = loads(curated_sense)
 
     if not data:
@@ -63,6 +58,7 @@ def sensed3(request, page, translation_id):
     return JsonResponse(data, safe=False)
 
 
+@login_required
 def view_senses(request, page=1):
     template_name = 'curator/segments.html'
     all_translations = []
