@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:tei="http://www.tei-c.org/ns/1.0">
-<xsl:param name="omen">
+  <xsl:param name="omen">
 
-  <!-- Content:template -->
+    <!-- Content:template -->
 
-</xsl:param>
+  </xsl:param>
 
   <xsl:key name="witness" match="tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w/app/rdg" use="./@wit" />
   <xsl:template match="/">
@@ -14,37 +14,42 @@
       </a></small></h1>
 
       <div id ="omens">
-          <xsl:choose>
-            <xsl:when test="not($omen)"> <!-- parameter has not been supplied -->
-              <xsl:apply-templates select=".//tei:body/tei:div"> <!-- All Omens -->
-                <xsl:sort select="./@n" data-type="number"/>
-              </xsl:apply-templates>
-            </xsl:when>
-            <xsl:otherwise> <!--parameter has been supplied -->
-              <xsl:apply-templates select=".//tei:body/tei:div[@xml:id = $omen]"/> <!-- Omen -->
-            </xsl:otherwise>
-          </xsl:choose>
+        <xsl:choose>
+          <xsl:when test="not($omen)"> <!-- parameter has not been supplied -->
+            <xsl:apply-templates select=".//tei:body/tei:div"> <!-- All Omens -->
+              <xsl:sort select="./@n" data-type="number"/>
+            </xsl:apply-templates>
+          </xsl:when>
+          <xsl:otherwise> <!--parameter has been supplied -->
+            <xsl:apply-templates select=".//tei:body/tei:div[@xml:id = $omen]"/> <!-- Omen -->
+          </xsl:otherwise>
+        </xsl:choose>
       </div>
     </div>
   </xsl:template>
 
   <xsl:template match="tei:body/tei:div"> <!-- Omen -->
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title"><xsl:value-of select="./@n"/></h5>
-          <div  class="table-responsive">
+    <div class="card">
+      <div class="card-header">
+        <xsl:value-of select="./@n"/>          <a  target="_blank" class="btn-sm btn-link text-decoration-none">
+        <xsl:attribute name="href">/omens/<xsl:value-of select="@xml:id"/>/tei</xsl:attribute>
+        &#8599;
+      </a>
+      </div>
+      <div class="card-body">
+        <div  class="table-responsive">
           <table class="table-bordered table-striped table-condensed"><tbody>
             <xsl:apply-templates select="./div[@type = &apos;score&apos;]"/> <!-- Score -->
             <xsl:apply-templates select="./div[@n]"/> <!-- Reconstruction -->
           </tbody></table>
-          </div>
-          <xsl:apply-templates select="./div[@type = &apos;commentary&apos;]"/> <!-- Commentary -->
         </div>
+        <xsl:apply-templates select="./div[@type = &apos;commentary&apos;]"/> <!-- Commentary -->
       </div>
+    </div>
   </xsl:template>
   <xsl:template match="tei:body/tei:div/div[@type = &apos;score&apos;]"> <!-- Score -->
-        <xsl:variable name="omenid" select="../@xml:id"/>
-        <tr>
+    <xsl:variable name="omenid" select="../@xml:id"/>
+    <tr>
       <th colspan="100%">
         <a data-toggle="collapse" role="button" aria-expanded="false"  >
           <xsl:attribute name="data-target">.<xsl:value-of select="$omenid"/>-score-row</xsl:attribute>
@@ -69,8 +74,8 @@
             <xsl:sort select="./@xml:id"/>
 
             <td>
-            <xsl:value-of select="app/rdg[@wit=$witid]" />
-                 </td>
+              <xsl:value-of select="app/rdg[@wit=$witid]" />
+            </td>
           </xsl:for-each>
         </tr>
       </xsl:if>
