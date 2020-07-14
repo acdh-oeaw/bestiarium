@@ -121,12 +121,15 @@
              // action=
              console.log("Saving... /curator/segments/{{translation.translation_id}}/{{token}}/save");
              console.log("ROOT", root);
-
              $.ajax({
                  type: "POST",
                  url: "/curator/segments/{{translation.translation_id}}/{{token}}/save",
                  data: JSON.stringify(root, function( key, value) {
                      if( key != 'parent' && key!= 'x' && key != 'x0' && key != 'y' && key != 'y0' && key != 'height' && key != 'depth') { //removing circular reference
+                         if (value != null && typeof value === "object" &&
+                             "data" in value){
+                             return value["data"];
+                         }
                          return value;
                      }
                  }),

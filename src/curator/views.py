@@ -34,9 +34,7 @@ def save_senses(request, translation_id, word):  #
     dicted = loads(request.body)
     trs = Translation.objects.get(translation_id=translation_id)
 
-    sTree = SenseTree(word=word,
-                      curated_sense=dumps(dicted['data']),
-                      translation=trs)
+    sTree = SenseTree(word=word, curated_sense=dumps(dicted), translation=trs)
     sTree.save()
     return HttpResponse("Saved")
 
