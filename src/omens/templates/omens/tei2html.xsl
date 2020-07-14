@@ -30,12 +30,17 @@
 
   <xsl:template match="tei:body/tei:div"> <!-- Omen -->
     <div class="card">
+              <xsl:choose>
+      <xsl:when test="not($omen)"> <!-- parameter has not been supplied -->
       <div class="card-header">
         <xsl:value-of select="./@n"/>          <a  target="_blank" class="btn-sm btn-link text-decoration-none">
         <xsl:attribute name="href">/omens/<xsl:value-of select="@xml:id"/>/tei</xsl:attribute>
         &#8599;
       </a>
       </div>
+    </xsl:when>
+        </xsl:choose>
+
       <div class="card-body">
         <div  class="table-responsive">
           <table class="table-bordered table-striped table-condensed"><tbody>
