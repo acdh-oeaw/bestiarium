@@ -7,18 +7,20 @@
 <div class="container">
     <ul class="flex-wrap d-flex  mt-3">
         {% for chapter in chapters %}
-        <li class="list-group-item m-3  rounded ">
+        <li class="list-group-item m-3  rounded p-0">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Chapter {{ chapter.chapter_name }}</h3>
-                </div>
+                <a href="{{ request.path }}/{{ chapter.chapter_name }}/tei" class="btn btn-light p-0 m-0 rounded-0">
+                    <div class="card-header">
+
+                        <span class="card-title">Chapter {{ chapter.chapter_name }}</span>
+
+                    </div>
+                </a>
                 <div class="card-body mx-auto">
-                    <div class="">
-                        <a class="btn btn-outline-primary btn-sm" href="{{ request.path }}/{{ chapter.chapter_name }}"> Omens </a>
-                        <a class="btn btn-outline-primary btn-sm" href="{{ request.path }}/{{ chapter.chapter_name }}/tei" target="_blank">TEI</a>
                     </div>
                 </div>
-            </div>
+
+
         </li>
         {% endfor %}
     </ul>
