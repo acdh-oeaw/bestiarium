@@ -83,6 +83,9 @@ class Segment(models.Model):
     def apodosis(cls, omen):
         return cls.objects.filter(segment_id=omen.omen_id + '_A')[0]
 
+    def __str__(self):
+        return f"Omen {self.omen.omen_id} - {self.segment_type}"
+
 
 class Lemma(models.Model):
     '''
@@ -140,7 +143,7 @@ class Translation(models.Model):
         return f'{self.reconstruction.safe_id}-{self.segment.segment_type}'
 
     def __str__(self):
-        return f'{self.translation_id}'
+        return f'{self.translation_id} {self.segment}'
 
 
 class Transliteration(models.Model):

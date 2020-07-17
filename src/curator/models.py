@@ -29,15 +29,15 @@ class SenseTree(models.Model):
     reviewed_by = models.TextField(default='')
 
     def __str__(self):
-        return f'"{self.word}" = {self.curated_sense}'
+        return f'"{self.word}" in {self.translation.translation_id} for {self.translation.segment.omen.omen_id}'
 
     def __repr__(self):
-        return f'"{self.word}" = {self.curated_sense}'
+        return f'"{self.word}" = {self.translation.translation_id}'
 
 
 class Sense(models.Model):
     sense_uri = models.TextField(default='')
-    segment = models.ManyToManyField(Segment)
+    sTree = models.ForeignKey(SenseTree, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.sense_uri

@@ -14,7 +14,7 @@ class SenseTreeAdmin(admin.ModelAdmin):
 
 
 class SenseAdmin(admin.ModelAdmin):
-    list_display = ('sense_uri', )
+    list_display = ('sense_uri', 'sTree')
 
 
 admin.site.register(Spreadsheet, SpreadsheetAdmin)

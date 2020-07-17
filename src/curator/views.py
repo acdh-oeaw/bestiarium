@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
+from django.db import transaction
+from django.db.utils import OperationalError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic.edit import FormView
@@ -27,19 +29,59 @@ from .wordnet import synset_tree
 UPLOAD_LOC = '/'
 
 
+def deep_parse(nested_dict, root=False):
+    unique_nodes = []
+    if not root:
+        # add value
+        unique_nodes = [nested_dict.get('value')]
+
+    children = []
+
+    if nested_dict.get('children'):
+        for child in nested_dict.get('children'):
+            unique_nodes.extend(deep_parse(child))
+
+    return list(set(unique_nodes))
+
+
 @login_required
 def save_senses(request, translation_id, word):  #
     dicted = loads(request.body)
+    unique_nodes = deep_parse(dicted, root=True)
+
     trs = Translation.objects.get(translation_id=translation_id)
 
-    sTree = SenseTree(word=word, curated_sense=dumps(dicted), translation=trs)
-    sTree.save()
-    return HttpResponse("Saved")
+    # Save sense tree
+    try:
+        with transaction.atomic():
+            try:
+                sTree_in_db = SenseTree.objects.get(word=word, translation=trs)
+                sTree_in_db.delete()
+            except SenseTree.DoesNotExist as dne:
+                pass
+
+            sTree = SenseTree.objects.create(word=word,
+                                             curated_sense=dumps(dicted),
+                                             translation=trs)  # TODO: Add user
+            for node in unique_nodes:
+                print('Saving', node)
+                Sense.objects.create(sense_uri=node, sTree=sTree)
+
+            return HttpResponse("Saved")
+    except OperationalError as oe:
+        logging.error(repr(oe))
+        return HttpResponse("Exception occured")
 
 
 def wordsense(request, translation_id, word):
     # Check if a Sense Tree exists already
-    stree_from_db = SenseTree.objects.filter(word=word).first()
+    trs = Translation.objects.get(translation_id=translation_id)
+    print(trs, translation_id)
+    try:
+        stree_from_db = SenseTree.objects.get(word=word, translation=trs)
+    except SenseTree.DoesNotExist as dne:
+        stree_from_db = SenseTree.objects.filter(word=word).first()
+
     data = None
     if stree_from_db:
         curated_sense = stree_from_db.curated_sense
