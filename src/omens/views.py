@@ -73,13 +73,13 @@ def omen_tei(request, omen_id):
 def edit_translation(request, omen_id, translation_id):
     try:
         updated_data = request.GET.dict()
-        print(translation_id, updated_data)
+        logging.debug("%s - %s", translation_id, updated_data)
         update_translation(translation_id,
                            updated_data.get(f'input_{translation_id}'))
         messages.add_message(request, messages.SUCCESS,
                              'Your changes have been saved!')
     except Exception as e:
-        print(repr(e))
+        logging.error(repr(e))
         messages.add_message(
             request,
             messages.ERROR,

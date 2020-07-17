@@ -111,7 +111,6 @@ def view_senses(request, page=1):
     #     sense_data['translation'] = t
     #     sense_data['hypernyms'] = get_hypernyms(t.translation_txt)
     #     all_translations.append(sense_data)
-    # print(len(all_translations))
     # paginator = Paginator(all_translations, 20, 1)
     # page_obj = paginator.get_page(page)
     return render(request, template_name, {

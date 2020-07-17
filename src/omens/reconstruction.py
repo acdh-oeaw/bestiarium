@@ -118,7 +118,7 @@ class ReconstructionLine(Line):
             elif len(translation_parts) > 2:
                 translation_parts[1] = '-'.join(translation_parts[1:])
 
-            print('PARTS: ', translation_parts)
+            logging.debug('PARTS: %s', translation_parts)
 
             protasis_element = ET.Element(
                 'div',
@@ -136,7 +136,6 @@ class ReconstructionLine(Line):
                 segment=SegmentDB.protasis(reconstruction_db.omen),
                 translation_txt=translation_parts[0].replace('[', '').replace(
                     ']', ''))
-            # print("TRANSLATON DB", protasis_translation_db.segment)
             protasis_translation_db.save()
 
             apodosis_element = ET.Element('div', {
