@@ -64,7 +64,6 @@ def save_senses(request, translation_id, word):  #
                                              curated_sense=dumps(dicted),
                                              translation=trs)  # TODO: Add user
             for node in unique_nodes:
-                print('Saving', node)
                 Sense.objects.create(sense_uri=node, sTree=sTree)
 
             return HttpResponse("Saved")
@@ -76,7 +75,6 @@ def save_senses(request, translation_id, word):  #
 def wordsense(request, translation_id, word):
     # Check if a Sense Tree exists already
     trs = Translation.objects.get(translation_id=translation_id)
-    print(trs, translation_id)
     try:
         stree_from_db = SenseTree.objects.get(word=word, translation=trs)
     except SenseTree.DoesNotExist as dne:
@@ -131,7 +129,7 @@ def edit_translation(request, page, translation_id):
         messages.add_message(request, messages.SUCCESS,
                              'Your changes have been saved!')
     except Exception as e:
-        print(repr(e))
+        logging.error(repr(e))
         messages.add_message(
             request,
             messages.ERROR,
