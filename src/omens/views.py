@@ -29,7 +29,11 @@ def chapter_tei(request, chapter_name):
     '''
     template_name = 'omens/chapter_full.html'
     chapter = get_chapter(chapter_name=chapter_name)
-    context = {'tei': chapter.safe_tei, 'chapter_name': chapter_name}
+    context = {
+        'tei': chapter.safe_tei,
+        'chapter_name': chapter_name,
+        'xsldoc': 'tei2html'
+    }
     return render(request, template_name, context, content_type='text/html')
 
 
@@ -71,7 +75,8 @@ def omen_tei(request, omen_id):
             'tei': omen.chapter.safe_tei,
             'omen_id': omen.omen_id,
             'omen_num': omen.omen_num,
-            'chapter_name': omen.chapter.chapter_name
+            'chapter_name': omen.chapter.chapter_name,
+            'xsldoc': 'tei2html'
         }
         return render(request,
                       template_name,

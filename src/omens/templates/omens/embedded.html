@@ -35,7 +35,7 @@
  var displayResult = function()
  {
      parser = new DOMParser();
-     xsl =loadXMLDoc('tei2html');
+     xsl =loadXMLDoc("{{xsldoc}}");
      xml = parser.parseFromString('{{tei|safe }}',"application/xml");
      console.log("XML", xml);
      console.log("XSL", xsl);
