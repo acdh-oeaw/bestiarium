@@ -12,8 +12,6 @@
     <div class="container">
       <h2 class="bd-title mt-3 mb-0">
            <!-- parameter has not been supplied -->
-
-
         <xsl:choose>
           <xsl:when test="$omen">
             Omen <xsl:value-of select=".//tei:body/tei:div[@xml:id = $omen]/@n"/>
@@ -48,49 +46,50 @@
       <xsl:choose>
         <xsl:when test="not($omen)"> <!-- parameter has not been supplied -->
           <div class="card-header">
-            <xsl:value-of select="./@n"/>          <a  target="_blank" class="btn-sm btn-link text-decoration-none">
+            <h5><xsl:value-of select="./@n"/>          <a  target="_blank" class="btn-sm btn-link text-decoration-none">
             <xsl:attribute name="href">/omens/<xsl:value-of select="@xml:id"/>/tei</xsl:attribute>
             &#8599;
           </a>
+            </h5>
           </div>
         </xsl:when>
       </xsl:choose>
 
       <div class="card-body">
-        <div  class="table-responsive">
-          <table class="table-bordered table-striped table-condensed"><tbody>
-            <xsl:apply-templates select="./div[@n]"/> <!-- Reconstruction -->
-          </tbody></table>
-        </div>
+            <ul class="list-group list-group-flush">
+              <xsl:apply-templates select="./div[@n]"/> <!-- Reconstruction -->
+            </ul>
       </div>
     </div>
   </xsl:template>
 
   <xsl:template match="tei:body/tei:div/div[@n]"> <!-- Reconstruction -->
-    <tr>
-      <th colspan="100%">
-        <a data-toggle="collapse" role="button" aria-expanded="false" >
-          <xsl:attribute name="href">#<xsl:value-of select="@xml:id"/>-reading</xsl:attribute>
+        <xsl:variable name="rdgname" select="@n"/>
+
+      <li class="list-group-item m-0 p-1 border-0">
+      <h6 class="card-title mb-0 mt-1">
           <xsl:value-of select="@n"/>
-        </a>
-      </th>
-    </tr>
+      </h6>
+      </li>
+      <li class="list-group-item border-0 p-1" >
+      <ul class="list-group list-group-flush">
+
     <xsl:apply-templates select="./ab[@type = &apos;transcription&apos;]"/>
     <xsl:apply-templates select="./ab[@type = &apos;translation&apos;]"/>
+      </ul>
+      </li>
+
   </xsl:template>
 
 
   <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;translation&apos;]">
-    <tr>
-      <th scope="row">Translation (<xsl:value-of select="@lang"/>)</th>
-      <td colspan="100%">
+<li class="list-group-item border-0 p-1" >
         <xsl:attribute name="lang">
           <xsl:value-of select="@lang"/>
         </xsl:attribute>
         <xsl:apply-templates select="./div[@type = &apos;protasis&apos;]"/>
         <xsl:apply-templates select="./div[@type = &apos;apodosis&apos;]"/>
-      </td>
-    </tr>
+</li>
   </xsl:template>
   <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;translation&apos;]/div[@type = &apos;protasis&apos;]">
     <span class="protasis">
@@ -103,49 +102,20 @@
     </span>
   </xsl:template>
 
-  <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;transliteration&apos;]">
-    <xsl:variable name="rdgid" select="../@n"/>
-
-    <!-- <xsl:value-of select="@xml:id"/> -->
-    <tr>
-      <th scope="row">Transliteration</th>
-      <xsl:for-each select="../../div[@type = &apos;score&apos;]/ab/w">
-        <xsl:sort select="./@xml:id"/>
-        <!-- <xsl:for-each select="//tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w"> -->
-        <xsl:variable name="wordid" select="./@xml:id"/>
-        <td>
-          <xsl:value-of select="../../../div[@n=$rdgid]/ab[@type = &apos;transliteration&apos;]/w[@corresp=$wordid]"/>
-        </td>
-      </xsl:for-each>
-    </tr>
-  </xsl:template>
 
   <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;transcription&apos;]">
     <xsl:variable name="rdgid" select="../@n"/>
-    <tr>
-      <th scope="row">Transcription</th>
+<li class="list-group-item border-0 p-1">
       <xsl:for-each select="../../div[@type = &apos;score&apos;]/ab/w">
         <xsl:sort select="./@xml:id"/>
         <!-- <xsl:for-each select="//tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w"> -->
         <xsl:variable name="wordid" select="./@xml:id"/>
-        <td>
+        <span>
           <xsl:value-of select="../../../div[@n=$rdgid]/ab[@type = &apos;transcription&apos;]/w[@corresp=$wordid]"/>
-        </td>
+        </span>
+        <xsl:text> </xsl:text>
       </xsl:for-each>
-    </tr>
-  </xsl:template>
-
-  <xsl:template match="tei:body/tei:div/div[@type = &apos;commentary&apos;]"> <!-- Commentary -->
-    <a data-toggle="collapse" role="button" aria-expanded="false" >
-      <xsl:attribute name="href">#<xsl:value-of select="../@xml:id"/>-comments</xsl:attribute>
-      <small class="text-muted"><xsl:value-of select="./head"/></small>
-    </a>
-    <div class="collapse">
-      <xsl:attribute name="id"><xsl:value-of select="../@xml:id"/>-comments</xsl:attribute>
-      <xsl:for-each select="./p">
-        <p><xsl:value-of select ="."/></p>
-      </xsl:for-each>
-    </div>
+</li>
   </xsl:template>
 
 </xsl:stylesheet>
