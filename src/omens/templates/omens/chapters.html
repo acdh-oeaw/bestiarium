@@ -17,7 +17,7 @@
         {% for chapter in chapters %}
         <li class="list-group-item m-3  rounded p-0">
             <div class="card">
-                <a href="{{ request.path }}/{{ chapter.chapter_name }}/tei" class="btn btn-outline  p-0 m-0 rounded-0">
+                <a href="{{ request.path }}/{{ chapter.chapter_name }}" class="btn btn-outline  p-0 m-0 rounded-0">
                     <div class="card-header">
                         <h4 class="card-title">Chapter {{ chapter.chapter_name }}</h4>
 
@@ -29,6 +29,9 @@
                        &#9998;
                     </a>
                     {%endif%}
+                    <a href="{% url 'omens:chapter_tei' chapter_name=chapter.chapter_name %}" class="btn btn-light" title="View TEI">
+                        TEI
+                    </a>
                 </div>
             </div>
         </li>
