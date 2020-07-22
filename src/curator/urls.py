@@ -9,7 +9,7 @@ urlpatterns = [
     re_path(r'^upload$', views.UploadSpreadSheet.as_view(),
             name='upload_file'),
     path(
-        r'segments/<page>',
+        r'segments/<chapter>/<page>',
         views.view_senses,
         name='segments',
     ),

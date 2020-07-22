@@ -3,6 +3,7 @@ from xml.etree import ElementTree as ET
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import Http404
 from django.shortcuts import render
 
 # Create your views here.
@@ -17,8 +18,13 @@ def chapters(request):
 
 
 def chapter_detail(request, chapter_name):
-    template_name = 'omens/chapter_detail.html'
-    context = omens_in_chapter(chapter_name)
+    template_name = 'omens/chapter_full.html'
+    chapter = get_chapter(chapter_name=chapter_name)
+    context = {
+        'tei': chapter.safe_tei,
+        'chapter_name': chapter_name,
+        'xsldoc': 'chapter_detail'
+    }
     return render(request, template_name, context)
 
 
@@ -26,19 +32,18 @@ def chapter_tei(request, chapter_name):
     '''
     Javascript cannot handle line breaks in a string! And single quotes must be escaped because the template string is enclosed in single quotes.
     '''
-    template_name = 'omens/embedded.html'
+    template_name = 'omens/chapter_full.html'
     chapter = get_chapter(chapter_name=chapter_name)
-    context = {'tei': chapter.safe_tei}
+    context = {
+        'tei': chapter.safe_tei,
+        'chapter_name': chapter_name,
+        'xsldoc': 'tei2html'
+    }
     return render(request, template_name, context, content_type='text/html')
 
 
-def chapter_xsl(request, chapter_name):
-    template_name = 'omens/tei2html.xsl'
-    return render(request, template_name, {}, content_type='application/xml')
-
-
-def omen_xsl(request, omen_id):
-    template_name = 'omens/tei2html.xsl'
+def xsldoc(request, xsl_name):
+    template_name = f'omens/{xsl_name}.xsl'
     return render(request, template_name, {}, content_type='application/xml')
 
 
@@ -63,10 +68,22 @@ def omen_tei_raw(request, omen_id):
 
 
 def omen_tei(request, omen_id):
-    template_name = 'omens/embedded.html'
-    omen = get_omen(omen_id)
-    context = {'tei': omen.chapter.safe_tei, 'omen_id': omen.omen_id}
-    return render(request, template_name, context, content_type='text/html')
+    template_name = 'omens/omen_full.html'
+    try:
+        omen = get_omen(omen_id)
+        context = {
+            'tei': omen.chapter.safe_tei,
+            'omen_id': omen.omen_id,
+            'omen_num': omen.omen_num,
+            'chapter_name': omen.chapter.chapter_name,
+            'xsldoc': 'tei2html'
+        }
+        return render(request,
+                      template_name,
+                      context,
+                      content_type='text/html')
+    except Exception as e:
+        raise Http404
 
 
 @login_required

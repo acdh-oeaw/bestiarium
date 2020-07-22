@@ -12,16 +12,20 @@
     <div class="container">
       <h2 class="bd-title mt-3 mb-0">
            <!-- parameter has not been supplied -->
-            <xsl:value-of select=".//tei:title"/>
-            <small>
-              <a class="btn btn-light" role="button" href="tei.xml" target="BLANK">&#11123;
-              </a>
-            </small>
+
+
         <xsl:choose>
           <xsl:when test="$omen">
             Omen <xsl:value-of select=".//tei:body/tei:div[@xml:id = $omen]/@n"/>
           </xsl:when>
+          <xsl:otherwise>
+                <xsl:value-of select=".//tei:title"/>
+          </xsl:otherwise>
         </xsl:choose>
+        <small>
+          <a class="btn btn-light" role="button" href="tei.xml" target="BLANK">&#11123;
+          </a>
+        </small>
       </h2>
 
       <div id ="omens">

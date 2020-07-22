@@ -1,25 +1,39 @@
 {% extends "webpage/base.html" %}
 {% block Titel %} Chapters {% endblock %}
+
 {% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Chapters</li>
+    </ol>
+</nav>
 <!-- <div class="jumbotron">
      <h3 style="text-align: center;">Chapters</h3>
      </div> -->
 <div class="container">
+
     <ul class="flex-wrap d-flex  mt-3">
         {% for chapter in chapters %}
         <li class="list-group-item m-3  rounded p-0">
             <div class="card">
-                <a href="{{ request.path }}/{{ chapter.chapter_name }}/tei" class="btn btn-outline  p-0 m-0 rounded-0">
+                <a href="{{ request.path }}/{{ chapter.chapter_name }}" class="btn btn-outline  p-0 m-0 rounded-0">
                     <div class="card-header">
                         <h4 class="card-title">Chapter {{ chapter.chapter_name }}</h4>
 
                     </div>
                 </a>
                 <div class="card-body mx-auto">
-                    </div>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'curator:segments' page='1' chapter=chapter.chapter_name %}" class="btn btn-light" title="Curate">
+                       &#9998;
+                    </a>
+                    {%endif%}
+                    <a href="{% url 'omens:chapter_tei' chapter_name=chapter.chapter_name %}" class="btn btn-light" title="View TEI">
+                        TEI
+                    </a>
                 </div>
-
-
+            </div>
         </li>
         {% endfor %}
     </ul>

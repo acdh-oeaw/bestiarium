@@ -9,6 +9,7 @@
 
 
 <div class="container">
+    {% include "webpage/pagination.html" %}
 
     <ul  class="list-group">
         {% if messages %}
@@ -20,7 +21,6 @@
             {% endfor %}
         </li>
         {% endif %}
-        {% include "webpage/pagination.html" %}
         {% for omen in omen_list %}
         {% regroup omen.list by reconstruction.label  as recon_list %}
         <li  class="list-group-item">{{ omen.grouper }}

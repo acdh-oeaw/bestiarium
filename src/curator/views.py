@@ -99,11 +99,12 @@ def sensed3(request, page, translation_id):
 
 
 @login_required
-def view_senses(request, page=1):
+def view_senses(request, page=1, chapter=''):
     template_name = 'curator/segments.html'
     all_translations = []
-
-    paginator = Paginator(Translation.objects.all(), 4, 1)
+    paginator = Paginator(
+        Translation.objects.filter(
+            reconstruction__omen__chapter__chapter_name=chapter), 3, 1)
     page_obj = paginator.get_page(page)
 
     # for t in Translation.objects.all():

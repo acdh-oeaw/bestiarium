@@ -2,41 +2,39 @@
 {% block Titel %} Chapter {{chapter.chapter_name}} {% endblock %}
 {% block content %}
 
-<div class="jumbotron">
-    {% if not error %}
-    <h3 style="text-align: center;">Chapter {{chapter.chapter_name}}</h3>
-    {% endif%}
-</div>
+<!-- <div class="jumbotron">
 
-<div class="container  mt-3" >
-    {% if error %}
-    <div class="alert alert-warning" role="alert">
-        {{error}}
-    </div>
-    {% else %}
-    <ul class="list-inline   flex-wrap d-flex ">
-        {% for omen in omens %}
-        <li class="list-group-item  rounded m-3 flex-fill">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Omen {{chapter.chapter_name}}.{{omen.omen_num}}</h3>
-                </div>
-                <div class="card-body justify-center">
-                    <div class="">
-                        <!-- <a href="/omens/{{omen.omen_id }}" target="_blank" class="btn btn-primary"> Readings </a>
-                             <a href="#" target="_blank" class="btn btn-primary"> Score </a>
-                        -->
-                        <a href="/omens/{{omen.omen_id }}/tei" target="_blank" class="btn btn-primary"> TEI </a>
-                    </div>
-                    <footer class="small">
+     {% if not error %}
+     <h3 style="text-align: center;">Chapter {{chapter.chapter_name}}</h3>
+     {% endif%}
+     </div>
 
-                    </footer>
-                </div>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif%}
-</div>
+     <div class="container  mt-3" >
+     {% if error %}
+     <div class="alert alert-warning" role="alert">
+     {{error}}
+     </div>
+     {% else %}
+     <ul class="list">
+     {% for omen in omens %}
+     <li class="list-group-item  rounded m-3 flex-fill">
+     <div class="card">
+     <div class="card-header">
+     <h3 class="card-title">Omen {{chapter.chapter_name}}.{{omen.omen_num}}</h3>
+     </div>
+     <div class="card-body justify-center">
+     <div class="">
+     <a href="/omens/{{omen.omen_id }}/tei" target="_blank" class="btn btn-primary"> TEI </a>
+     </div>
+     <footer class="small">
+
+     </footer>
+     </div>
+     </div>
+     </li>
+     {% endfor %}
+     </ul>
+     {% endif%}
+     </div> -->
 
 {% endblock content %}
