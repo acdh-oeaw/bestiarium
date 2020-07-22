@@ -16,10 +16,13 @@
                     </div>
                 </a>
                 <div class="card-body mx-auto">
-                    </div>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'curator:segments' page="1" %}" class="btn btn-light">
+                       &#9998;
+                    </a>
+                    {%endif%}
                 </div>
-
-
+            </div>
         </li>
         {% endfor %}
     </ul>
