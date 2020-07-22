@@ -3,6 +3,7 @@ from xml.etree import ElementTree as ET
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.http import Http404
 from django.shortcuts import render
 
 # Create your views here.
@@ -64,14 +65,20 @@ def omen_tei_raw(request, omen_id):
 
 def omen_tei(request, omen_id):
     template_name = 'omens/embedded.html'
-    omen = get_omen(omen_id)
-    context = {
-        'tei': omen.chapter.safe_tei,
-        'omen_id': omen.omen_id,
-        'omen_num': omen.omen_num,
-        'chapter_name': omen.chapter.chapter_name
-    }
-    return render(request, template_name, context, content_type='text/html')
+    try:
+        omen = get_omen(omen_id)
+        context = {
+            'tei': omen.chapter.safe_tei,
+            'omen_id': omen.omen_id,
+            'omen_num': omen.omen_num,
+            'chapter_name': omen.chapter.chapter_name
+        }
+        return render(request,
+                      template_name,
+                      context,
+                      content_type='text/html')
+    except Exception as e:
+        raise Http404
 
 
 @login_required
