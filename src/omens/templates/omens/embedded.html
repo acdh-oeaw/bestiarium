@@ -23,9 +23,9 @@
          xhttp = new ActiveXObject("Msxml2.XMLHTTP");
      }
      else
-     {
-         xhttp = new XMLHttpRequest();
-     }
+         {
+             xhttp = new XMLHttpRequest();
+         }
      xhttp.open("GET", filename, false);
      try {xhttp.responseType = "application/xml"} catch(err) {} // Helping IE11
      xhttp.send("");
@@ -35,7 +35,7 @@
  var displayResult = function()
  {
      parser = new DOMParser();
-     xsl =loadXMLDoc("{{xsldoc}}");
+     xsl =loadXMLDoc("{% url 'omens:xsldoc' xsl_name=xsldoc%}");
      xml = parser.parseFromString('{{tei|safe }}',"application/xml");
      console.log("XML", xml);
      console.log("XSL", xsl);

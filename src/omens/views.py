@@ -18,8 +18,13 @@ def chapters(request):
 
 
 def chapter_detail(request, chapter_name):
-    template_name = 'omens/chapter_detail.html'
-    context = omens_in_chapter(chapter_name)
+    template_name = 'omens/chapter_full.html'
+    chapter = get_chapter(chapter_name=chapter_name)
+    context = {
+        'tei': chapter.safe_tei,
+        'chapter_name': chapter_name,
+        'xsldoc': 'chapter_detail'
+    }
     return render(request, template_name, context)
 
 
@@ -37,13 +42,8 @@ def chapter_tei(request, chapter_name):
     return render(request, template_name, context, content_type='text/html')
 
 
-def chapter_xsl(request, chapter_name):
-    template_name = 'omens/tei2html.xsl'
-    return render(request, template_name, {}, content_type='application/xml')
-
-
-def omen_xsl(request, omen_id):
-    template_name = 'omens/tei2html.xsl'
+def xsldoc(request, xsl_name):
+    template_name = f'omens/{xsl_name}.xsl'
     return render(request, template_name, {}, content_type='application/xml')
 
 
