@@ -24,7 +24,7 @@ urlpatterns = [
     path(
         'chapters/<chapter_name>/tei.xml',
         views.chapter_tei_raw,
-        name='chapter_tei',
+        name='chapter_tei_raw',
     ),
     path(
         'chapters/<chapter_name>/tei2html',

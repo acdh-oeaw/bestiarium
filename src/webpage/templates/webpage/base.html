@@ -92,10 +92,9 @@
                     </a>
                   </div>
                 </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'curator:segments' page="1" %}">
-            Curate
-        </a>
+                <li class="nav-item">
+                    <a class="dropdown-item" href="{% url 'omens:chapters' %}">Chapters
+                    </a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'curator:upload_file' %}">
@@ -107,8 +106,7 @@
             Browse
         </a>
         <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'omens:chapters' %}">Chapters
-            </a>
+
             <a class="dropdown-item" href="{% url 'omens:chapters' %}">Animals
             </a>
             <a class="dropdown-item" href="{% url 'omens:chapters' %}">Senses
