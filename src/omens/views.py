@@ -27,7 +27,7 @@ def chapter_tei(request, chapter_name):
     '''
     Javascript cannot handle line breaks in a string! And single quotes must be escaped because the template string is enclosed in single quotes.
     '''
-    template_name = 'omens/embedded.html'
+    template_name = 'omens/chapter_full.html'
     chapter = get_chapter(chapter_name=chapter_name)
     context = {'tei': chapter.safe_tei, 'chapter_name': chapter_name}
     return render(request, template_name, context, content_type='text/html')
@@ -64,7 +64,7 @@ def omen_tei_raw(request, omen_id):
 
 
 def omen_tei(request, omen_id):
-    template_name = 'omens/embedded.html'
+    template_name = 'omens/omen_full.html'
     try:
         omen = get_omen(omen_id)
         context = {

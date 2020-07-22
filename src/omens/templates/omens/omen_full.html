@@ -1,0 +1,13 @@
+{% extends "webpage/base.html" %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active"><a href="{% url 'omens:chapters' %}">Chapters</a></li>
+        <li class="breadcrumb-item active" ><a href="{% url 'omens:chapter_tei' chapter_name=chapter_name %}">Chapter {{chapter_name}}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Omen {{omen_num}}</li>
+    </ol>
+</nav>
+{%include "omens/embedded.html" %}
+{% endblock content %}
