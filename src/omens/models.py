@@ -59,7 +59,7 @@ class Omen(models.Model):
     @property
     def tei(self):
         chapter_tei = ET.XML(self.chapter.tei)
-        omen_tei = chapter_tei.find(f'.//*[@n="{self.omen_id}"]')
+        omen_tei = chapter_tei.find(f'.//*[@n="{self.omen_num}"]')
         return element2string(omen_tei)
 
 
