@@ -67,11 +67,13 @@ class ReconstructionLine(Line):
         ip = ReconstructionId.idno_parts(idno=row[0].full_text)
         self.rdg_type = ip.rdg_type
         self.reference = row[1].full_text if row[1].column_name == 'B' else ''
+
         for cell in row:
             if not cell.full_text or cell.column_name in 'AB': continue
-            self.data.append(Lemma(cell, omen_prefix=self.omen_prefix))
-
-        self.connect_damaged_ends()
+            if self.rdg_type in ('trl', 'trs'):
+                self.data.append(Lemma(cell, omen_prefix=self.omen_prefix))
+            else:
+                self.data.append(cell)
 
     @property
     def xml_id(self):
@@ -88,6 +90,7 @@ class ReconstructionLine(Line):
             ab.attrib['lang'] = self.rdg_type
 
         if self.rdg_type in ('trl', 'trs'):
+            self.connect_damaged_ends()
             for word in self.data:
                 if word.apodosis:
                     logging.debug('Reconstruction; found apodosis @ %s',
@@ -106,12 +109,14 @@ class ReconstructionLine(Line):
         else:  # No W tag in translations - but it contains text, might contain anchor elements for breaks
             full_translation = ''
             for i, word in enumerate(self.data):
-                full_translation += ' ' + word.plain_text
+                print(i, word.full_text, " =? ")
+                full_translation += ' ' + word.full_text
                 if i > 0:
                     logger.warning(
                         'Unexpected values in translation row; expecting only one cell, \n%s',
                         word)
 
+            print("BEFORE removing breaks", full_translation)
             translation_parts = full_translation.split('–')
             if len(translation_parts) == 1:
                 translation_parts.append('')
