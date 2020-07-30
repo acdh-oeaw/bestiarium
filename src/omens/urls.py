@@ -12,7 +12,7 @@ urlpatterns = [
         name='chapters',
     ),
     path(
-        'chapters/<chapter_name>',
+        'chapters/<chapter_name>/',
         views.chapter_detail,
         name='chapter_detail',
     ),
