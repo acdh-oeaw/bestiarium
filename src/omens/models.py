@@ -6,11 +6,14 @@ from xml.etree import ElementTree as ET
 from django.db import models
 from django.utils.timezone import now
 
+from curator.models import SenseTree
+
 from .namespaces import NS
 from .util import element2string
 
 for ns, uri in NS.items():
     ET.register_namespace(ns, uri)
+
 
 
 class Witness(models.Model):
@@ -144,6 +147,19 @@ class Translation(models.Model):
 
     def __str__(self):
         return f'{self.translation_id} {self.segment}'
+
+
+class Word(models.Model):
+    '''
+    Words and word roots from the translation,
+    to be linked with the curated SenseTree later
+    '''
+    translation = models.ForeignKey(Translation, on_delete=models.CASCADE)
+    # position of the word in the in the translation segment
+    word_idx = models.IntegerField(default=0)
+    # root form of the word
+    word_root = models.CharField(max_length=100, default='')
+    sense_tree = models.ForeignKey(SenseTree, on_delete=models.CASCADE)
 
 
 class Transliteration(models.Model):

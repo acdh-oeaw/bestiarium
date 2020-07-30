@@ -9,12 +9,12 @@ class SpreadsheetAdmin(admin.ModelAdmin):
 
 
 class SenseTreeAdmin(admin.ModelAdmin):
-    list_display = ('ctime', 'word', 'curated_sense', 'translation',
-                    'curated_by', 'reviewed_by')
+    list_display = ('ctime', 'word_root', 'curated_sense', 'curated_by',
+                    'reviewed_by')
 
 
 class SenseAdmin(admin.ModelAdmin):
-    list_display = ('sense_uri', 'sTree')
+    list_display = ('sense_uri', 'sense_tree')
 
 
 admin.site.register(Spreadsheet, SpreadsheetAdmin)

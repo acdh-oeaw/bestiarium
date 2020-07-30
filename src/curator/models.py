@@ -3,8 +3,6 @@ from datetime import datetime
 from django.db import models
 from django.utils.timezone import now
 
-from omens.models import Segment, Translation
-
 
 # Create your models here.
 class Spreadsheet(models.Model):
@@ -23,21 +21,20 @@ class Spreadsheet(models.Model):
 class SenseTree(models.Model):
     curated_sense = models.TextField(default='')
     ctime = models.DateTimeField(default=now)
-    word = models.TextField(default='')
-    translation = models.ForeignKey(Translation, on_delete=models.CASCADE)
+    word_root = models.TextField(default='')
     curated_by = models.TextField(default='')
     reviewed_by = models.TextField(default='')
 
     def __str__(self):
-        return f'"{self.word}" in {self.translation.translation_id} for {self.translation.segment.omen.omen_id}'
+        return f'"{self.word_root}"'
 
     def __repr__(self):
-        return f'"{self.word}" = {self.translation.translation_id}'
+        return f'"{self.word_root}" = {self.curated_sense}'
 
 
 class Sense(models.Model):
     sense_uri = models.TextField(default='')
-    sTree = models.ForeignKey(SenseTree, on_delete=models.CASCADE)
+    sense_tree = models.ForeignKey(SenseTree, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.sense_uri

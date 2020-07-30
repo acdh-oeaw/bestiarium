@@ -1,6 +1,6 @@
 [![DOI](https://zenodo.org/badge/95352230.svg)](https://zenodo.org/badge/latestdoi/95352230)
 
-# 
+#
 
 ## About
 
@@ -14,7 +14,9 @@ For development just append `--settings=tieromina.settings.dev` to the following
 
 1. `python manage.py makemigrations --settings=tieromina.settings.dev`
 2. `python manage.py migrate --settings=tieromina.settings.dev`
-3. `python manage.py runserver --settings=tieromina.settings.dev`
+3. `python manage.py loaddata initial --settings=tieromina.settings.dev`
+4. `python manage.py runserver --settings=tieromina.settings.dev`
+
 
 6. Check [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
