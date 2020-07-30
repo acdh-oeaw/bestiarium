@@ -21,7 +21,16 @@
           </xsl:otherwise>
         </xsl:choose>
         <small>
-          <a class="btn btn-light" role="button" href="tei.xml" target="BLANK">&#11123;
+          <a class="btn btn-light" role="button" >
+            <xsl:attribute name="href">tei</xsl:attribute>
+            TEI
+          </a>
+        </small>
+
+        <small>
+          <a class="btn btn-light" role="button" target="BLANK">
+            <xsl:attribute name="href">tei.xml</xsl:attribute>
+            &#11123;
           </a>
         </small>
       </h2>
@@ -117,5 +126,6 @@
       </xsl:for-each>
 </li>
   </xsl:template>
+
 
 </xsl:stylesheet>
