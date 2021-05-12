@@ -49,8 +49,6 @@
     <div class="card-body">
         {% block custom %}
             <legend>Basic Information</legend>
-            {{ object.field_dict }}
-
                 <table class="table table-bordered table-hover">
                     {% for key, value in object.field_dict.items %}
                         <tr>

@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.conf.urls import handler404, include, url
+from django.conf.urls.static import static
 from django.contrib import admin
 from rest_framework import routers
 
@@ -21,7 +22,8 @@ urlpatterns = [
     url(r'^', include('webpage.urls', namespace='webpage')),
     url(r'^curator/', include('curator.urls', namespace='curator')),
     url(r'^omens/', include('omens.urls', namespace='omens')),
-]
+    url(r'^explore/', include('dataviz.urls', namespace='dataviz')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if 'bib' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'^bib/', include('bib.urls', namespace='bib')), )

@@ -16,15 +16,20 @@
      stroke-width: 2px;
  }
 
- svg{
-     overflow-x: auto;
+ .svgrow svg {
+     width: 90rem;
+ }
+
+ .svgrow{
+     max-width: 1100px;
+     overflow-x: scroll;
  }
 </style>
 <form  style="width:100%" method="post">{% csrf_token %}
     <input id ="save-senses-{{translation.safe_id}}-{{token}}" class="btn btn-success btn-sm d-inline  m-2" type="button" value ="Save" />
     <div id ="message-{{translation.safe_id}}-{{token}}" class="alert-sm alert-success m-2 p-1 d-none" role="alert" >
     </div>
-    <div class="overflow-auto">
+    <div class="overflow-auto svgrow">
         <svg id="svg{{translation.safe_id}}-{{token}}" style="overflow-x:scroll"></svg>
     </div>
     <div id ="test{{translation.safe_id}}-{{token}}">

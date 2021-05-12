@@ -1,6 +1,5 @@
 <div class="container">
 
-
     <div id="tei"  >
 
     </div>
@@ -13,9 +12,47 @@
  .apodosis{
      color:DarkCyan;
  }
+ .score-table{
+ }
+ .spacer{
+     flex: 1 1 auto;
+ }
+ .toggle-buttons{
+     text-align:right;
+     float:right;
+ }
+
+ .translation, .transcription,  .transliteration{
+     min-width: 25%;
+     font-size: 90%;
+     padding: 0.5em;
+ }
+
+ span.lemma:after{
+     content: " ";
+     white-space: break-spaces;
+ }
+ .reconstruction-label{
+     min-width: 100px;
+ }
 </style>
 
+
 <script onload="displayResult()">
+ function toggleClass(checkbox, className){
+     console.log("Toggling");
+     var elements = document.getElementsByClassName(className);
+     for (let selected of elements){
+         if (checkbox.checked) {
+             selected.classList.remove('d-none');
+         }else{
+             selected.classList.add('d-none');
+         }
+     }
+ }
+
+
+
  function loadXMLDoc(filename)
  {
      if (window.ActiveXObject)
@@ -23,9 +60,9 @@
          xhttp = new ActiveXObject("Msxml2.XMLHTTP");
      }
      else
-         {
-             xhttp = new XMLHttpRequest();
-         }
+     {
+         xhttp = new XMLHttpRequest();
+     }
      xhttp.open("GET", filename, false);
      try {xhttp.responseType = "application/xml"} catch(err) {} // Helping IE11
      xhttp.send("");

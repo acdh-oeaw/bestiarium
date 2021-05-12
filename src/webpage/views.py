@@ -4,8 +4,8 @@ import requests
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, render_to_response
-from django.template import RequestContext, loader
+from django.shortcuts import render
+from django.template import loader
 from django.views.generic import TemplateView
 
 from .forms import form_user_login

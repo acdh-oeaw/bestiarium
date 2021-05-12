@@ -1,0 +1,24 @@
+{% extends "webpage/base.html" %}
+{% load pos_splitter %}
+{% block Titel %} Curate Senses {% endblock %}
+{% block content %}
+<div class="container">
+    <div class="jumbotron">
+        <h1 style="text-align: center;">Curate Senses</h1>
+    </div>
+    {% if error%}
+    <div class="alert alert-warning m-3" role="alert">
+        Sorry! Something went wrong</em>.
+        <pre>{{ error }}</pre>
+    </div>
+    {% endif %}
+    {% with words|goodwords as good_words %}
+    {% for original_w, w, count in good_words %}
+    <a href="edit-sense/{{w}}" type="button" class="btn btn-light">
+        {{w}} <span class="badge badge-light">{{count}}</span>
+    </a>
+    {% endfor %}
+
+    {% endwith %}
+</div>
+{% endblock content %}

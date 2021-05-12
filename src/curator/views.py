@@ -1,5 +1,7 @@
 import logging
 import os
+#from xl2tei.workbook import Workbook
+from collections import defaultdict
 from json import dumps, loads
 
 from crispy_forms.helper import FormHelper
@@ -14,19 +16,48 @@ from django.db.utils import OperationalError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic.edit import FormView
-
 from omens.chapter import Chapter
 from omens.models import Chapter as ChapterDB
-from omens.models import Translation
+from omens.models import Omen, Reconstruction, Segment, Translation
 
 from .forms import CurateSense, UploadSpreadSheet
 from .models import Sense, SenseTree, Spreadsheet
-from .wordnet import synset_tree
-
-#from xl2tei.workbook import Workbook
+from .wordnet import pos_data, synset_tree
 
 # Create your views here.
 UPLOAD_LOC = '/'
+
+
+def words():
+    translations = Translation.objects.filter(lang='en')
+    omen_data = defaultdict(dict)
+    for t in translations:
+        if not t.translation_txt.strip(): continue
+        omen_data[t.reconstruction.reconstruction_id][
+            t.segment.segment_type] = t.translation_txt.replace('[',
+                                                                '').replace(
+                                                                    ']', '')
+        omen_data[t.reconstruction.
+                  reconstruction_id]['omen_id'] = t.segment.omen.omen_id
+        omen_data[t.reconstruction.reconstruction_id][
+            'chapter'] = t.segment.omen.chapter.chapter_name
+
+    data = []
+    for recon, info in omen_data.items():
+        data.append({
+            'omen': info.get('omen_id'),
+            'chapter': info.get('chapter'),
+            'reconstruction': recon,
+            'protasis': info.get('PROTASIS', ''),
+            'apodosis': info.get('APODOSIS', ''),
+        })
+    return data
+
+
+def loom(request, outer, inner):
+    print(outer, inner)
+    data = words()
+    return JsonResponse(data, safe=False)
 
 
 def deep_parse(nested_dict, root=False):
@@ -76,9 +107,9 @@ def wordsense(request, translation_id, word):
     # Check if a Sense Tree exists already
     trs = Translation.objects.get(translation_id=translation_id)
     try:
-        stree_from_db = SenseTree.objects.get(word=word, translation=trs)
+        stree_from_db = SenseTree.objects.get(word_root=word)
     except SenseTree.DoesNotExist as dne:
-        stree_from_db = SenseTree.objects.filter(word=word).first()
+        stree_from_db = SenseTree.objects.filter(word_root=word).first()
 
     data = None
     if stree_from_db:
@@ -92,10 +123,8 @@ def wordsense(request, translation_id, word):
     return JsonResponse(data, safe=False)
 
 
-def sensed3(request, page, translation_id):
-    trs = Translation.objects.get(translation_id=translation_id)
-    data = get_hypernyms(trs.translation_txt)
-    return JsonResponse(data, safe=False)
+def sensed3(request, word):
+    return JsonResponse(synset_tree(word), safe=False)
 
 
 @login_required
@@ -117,6 +146,42 @@ def view_senses(request, page=1, chapter=''):
     return render(request, template_name, {
         'page_obj': page_obj,
     })
+
+
+@login_required
+def edit_sense(request, word):
+    template_name = 'curator/editsenses.html'
+    segment_info = []
+    translations = Translation.objects.filter(lang='en')
+    for t in translations:
+        clean_t = t.translation_txt.replace('[', '').replace(']', '')
+        if word in clean_t:
+            segment_info.append({
+                "omen": t.segment.omen.omen_id,
+                "segment": t.translation_txt
+            })
+    return render(request, template_name, {
+        'segments': segment_info,
+        'word': word
+    })
+
+
+@login_required
+def curate_senses(request):
+    template_name = 'curator/curate_senses.html'
+    # Get all words that are unattached to senses
+    translations = Translation.objects.filter(lang='en')
+    words = defaultdict(int)
+    for t in translations:
+        for w in t.translation_txt.split():
+            words[w] += 1
+
+    words = {
+        k: v
+        for k, v in sorted(
+            words.items(), key=lambda item: item[1], reverse=True)
+    }
+    return render(request, template_name, {'words': words})
 
 
 @login_required
