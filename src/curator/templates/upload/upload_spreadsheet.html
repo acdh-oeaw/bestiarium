@@ -1,3 +1,16 @@
+<style>
+ pre {
+     white-space: pre-wrap;       /* Since CSS 2.1 */
+     white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+     white-space: -pre-wrap;      /* Opera 4-6 */
+     white-space: -o-pre-wrap;    /* Opera 7 */
+     word-wrap: break-word;       /* Internet Explorer 5.5+ */
+ }
+ .report{
+     font-size:small;
+     font-family:monospace;
+ }
+</style>
 {% extends "webpage/base.html" %}
 {% block Titel %} Import TEI {% endblock %}
 {% block content %}
@@ -8,8 +21,21 @@
     </div>
     {% if report%}
     <div class="alert alert-warning m-3" role="alert">
-        Sorry! Something went wrong.
-        <pre>{{ report }}</pre>
+        Sorry! We encountered the following errors.
+        <ol class="report">
+            {% for report_item in report %}
+            {% for fname, fault in report_item.items %}
+            <li>{{ fname }}:
+                <ol>
+                    {% for f in fault %}
+                    <li>{{ f }}</li>
+                    {% endfor %}
+                </ol>
+            </li>
+            {% endfor %}
+            {% endfor %}
+        </ol>
+
     </div>
     {% elif message %}
     <div class="alert alert-primary m-3" role="alert">

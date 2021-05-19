@@ -26,12 +26,19 @@ class WitnessAdmin(admin.ModelAdmin):
     )
 
 
-# class ChapterAdmin(admin.ModelAdmin):
-#     list_display = ('chapter_name', 'ctime')
+class ChapterAdmin(admin.ModelAdmin):
+    list_display = (
+        "chapter_name",
+        "animal",
+        "author",
+        "reviewer",
+        "proofreader",
+        "ctime",
+    )
 
 
-# class OmenAdmin(admin.ModelAdmin):
-#     list_display = ('omen_id', 'omen_num', 'chapter', all_witnesses)
+class OmenAdmin(admin.ModelAdmin):
+    list_display = ("xml_id", "omen_name", "omen_num", "chapter", "ctime")
 
 
 # class LemmaAdmin(admin.ModelAdmin):
@@ -58,9 +65,9 @@ class WitnessAdmin(admin.ModelAdmin):
 #     list_display = ('segment_id', 'segment_type', 'omen')
 
 
-# admin.site.register(Omen, OmenAdmin)
+admin.site.register(Omen, OmenAdmin)
 admin.site.register(Witness, WitnessAdmin)
-# admin.site.register(Chapter, ChapterAdmin)
+admin.site.register(Chapter, ChapterAdmin)
 # admin.site.register(Lemma, LemmaAdmin)
 # admin.site.register(Reconstruction, ReconstructionAdmin)
 # admin.site.register(Transliteration, TransliterationAdmin)

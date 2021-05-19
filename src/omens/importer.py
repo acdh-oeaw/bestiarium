@@ -2,7 +2,6 @@ import logging
 
 import pandas as pd
 
-from omens.models import Witness
 
 
 class Importer:
@@ -13,8 +12,23 @@ class Importer:
     expected_columns: str = []
     missing_columns: str = []
 
-    def __init__(self, file_to_import):
-        self.df = pd.read_excel(file_to_import).fillna("")
+    def __init__(self, file_to_import, sheet_name=0):
+        """
+        @file_to_import: name of the excel file
+        @sheet_name: str, int, list, or None, default 0
+          Strings are used for sheet names.
+          Integers are used in zero-indexed sheet positions.
+          Lists of strings/integers are used to request multiple sheets.
+          Specify None to get all sheets.
+          Available cases:
+          Defaults to 0: 1st sheet as a DataFrame
+          1: 2nd sheet as a DataFrame
+          "Sheet1": Load sheet with name “Sheet1”
+          [0, 1, "Sheet5"]: Load first, second and sheet named “Sheet5” as a dict of DataFrame
+          None: All sheets.
+        """
+        self.fname = file_to_import._name
+        self.df = pd.read_excel(file_to_import, sheet_name=sheet_name).fillna("")
         self.validate_header()
 
     def validate_header(self):
@@ -37,46 +51,4 @@ class Importer:
 
     def read_rows(self):
         for i, row in self.df.iterrows():
-            yield row.to_dict()
-
-
-class IndexImporter(Importer):
-    """
-    Imports index files into the database
-    """
-
-    expected_columns = [
-        "Siglum",
-        "Museum numbers",
-        "Provenance",
-        "Script",
-        "State of publication",
-        "State of preservation",
-        "Type of manuscript",
-        "šumma ālu Tablets attested",
-        "Omens attested",
-        "CDLI number",
-        "Remarks",
-    ]
-
-    def save_index(self):
-        for row in self.read_rows():
-            wit = Witness(
-                witness_id=row.get("Siglum"),
-                museum_numbers=row.get("Museum numbers"),
-                provenance=row.get("provenance"),
-                script=row.get("provenance"),
-                state_publication=row.get("State of publication"),
-                state_preservation=row.get("State of preservation"),
-                manuscript_type=row.get("Type of manuscript"),
-                tablets_attested=row.get("šumma ālu Tablets attested"),
-                omens_attested=row.get("Omens attested"),
-                cdli_number=row.get("CDLI number"),
-                remarks=row.get("Remarks"),
-            )
-            try:
-                wit.save()
-            except Exception as e:
-                print(repr(e))
-
-        return
+            yield {k.strip(): str(v).strip() for k, v in row.to_dict().items()}

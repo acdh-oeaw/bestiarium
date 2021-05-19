@@ -20,7 +20,6 @@ class USTATUS:
 
 # Create your models here.
 class Upload(models.Model):
-
     name = models.FileField(blank=False)
     location = models.TextField(blank=True)
     ctime = models.DateTimeField(default=now)

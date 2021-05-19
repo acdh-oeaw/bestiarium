@@ -7,7 +7,9 @@ from django.core.files.storage import default_storage
 from django.shortcuts import render
 from django.views.generic.edit import FormView
 from omens.chapter import Chapter
-from omens.importer import IndexImporter
+from omens.creditsimporter import CreditsImporter
+from omens.indeximporter import IndexImporter
+from omens.omenimporter import OmenImporter
 
 from .forms import UploadSpreadSheet
 from .models import USTATUS, UTYPES, Upload
@@ -276,6 +278,25 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
 
     def upload(self, ftype, f):
         logging.debug("Uploading %s file %s", ftype, f._name)
+        upload = self.record_upload(f, utype=ftype)
+        report = None
+        if ftype == UTYPES.INDEX_FILE:
+            report = IndexImporter(f).save()
+        elif ftype == UTYPES.OMEN_FILE:
+            report = OmenImporter(f, upload).save()
+
+        elif ftype == UTYPES.COMMENTS_FILE:
+            pass
+        elif ftype == UTYPES.DITTO_FILE:
+            pass
+        elif ftype == UTYPES.CREDITS_FILE:
+            report = CreditsImporter(f).save()
+
+        upload.report = report
+        upload.ustatus = USTATUS.ERROR if report else USTATUS.SUCCESS
+        upload.save()
+        if report:
+            return {f._name: report}
 
     def record_upload(self, uploaded_file, utype):
         """
@@ -297,36 +318,24 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
         upload.save()
         return upload
 
-    def upload_index_file(self, f):
-        logging.debug("Uploading index file %s", f._name)
-        upload = self.record_upload(f, utype=UTYPES.INDEX_FILE)
-        # Extract index
-        importer = IndexImporter(f)
-        report = importer.save_index()
-        ustatus = USTATUS.ERROR if report else USTATUS.SUCCESS
-        upload.report = report
-        upload.ustatus = ustatus
-        upload.save()
-        if report:
-            return report
+    # def upload_omen_file(self, f):
+    # FIXME: Delete this
+    #     logging.debug("Uploading omen file %s", f._name)
+    #     upload = self.record_upload(f, utype=UTYPES.OMEN_FILE)
+    #     # Extract omens
+    #     try:
+    #         # Add/create a chapter
+    #         chapter = Chapter()
+    #         chapter_db = chapter.export_to_tei(f)
+    #         # Save upload record
+    #         logging.debug("Default storage: %s", f)
+    #         upload.ustatus = USTATUS.SUCCESS
+    #     except Exception as e:
+    #         report = {f._name: repr(e)}
+    #         upload.report = report
+    #         upload.ustatus = USTATUS.ERROR
+    #         logging.error(repr(e))
+    #         # raise
 
-    def upload_omen_file(self, f):
-        logging.debug("Uploading omen file %s", f._name)
-        upload = self.record_upload(f, utype=UTYPES.OMEN_FILE)
-        # Extract omens
-        try:
-            # Add/create a chapter
-            chapter = Chapter()
-            chapter_db = chapter.export_to_tei(f)
-            # Save upload record
-            logging.debug("Default storage: %s", f)
-            upload.ustatus = USTATUS.SUCCESS
-        except Exception as e:
-            report = {f._name: repr(e)}
-            upload.report = report
-            upload.ustatus = USTATUS.ERROR
-            logging.error(repr(e))
-            # raise
-
-        upload.save()
-        return upload.report
+    #     upload.save()
+    #     return upload.report

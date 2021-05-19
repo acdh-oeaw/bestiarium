@@ -1,14 +1,11 @@
-import logging
-from datetime import datetime
 from xml.etree import ElementTree as ET
 
-from curator.models import SenseTree
+from curator.models import Upload
 # Create your models here.
 from django.db import models
 from django.utils.timezone import now
 
 from .namespaces import NS
-from .util import element2string
 
 for ns, uri in NS.items():
     ET.register_namespace(ns, uri)
@@ -36,43 +33,58 @@ class Witness(models.Model):
     def __str__(self):
         return f"{self.witness_id}: {self.museum_numbers}"
 
-
-# class Chapter(models.Model):
-#     """
-#     Stores the chapter number and
-#     links to all the omens
-#     that are a part of this chapter
-#     """
-
-#     chapter_name = models.CharField(max_length=100)
-#     ctime = models.DateTimeField(default=now)
-#     tei = models.TextField(default="")
-#     witness = models.ManyToManyField(Witness)
-
-#     def __str__(self):
-#         return f"Chapter {self.chapter_name}"
-
-#     @property
-#     def safe_tei(self):
-#         return self.tei.replace("\n", "").replace("'", "&#8217;")
+    # @staticmethod
+    # def corresponding_witness(cls, witness_label):
+    #     """
+    #     returns the corresponding witness object (eg. BM 036389+)
+    #     given the witness label found in the score (eg. BM 36389+.2)
+    #     """
+    #     search_str = witness_label.split("+")[0]
+    #     return Witness.objects.filter(witness_id__startswith=search_str)
 
 
-# class Omen(models.Model):
-#     """
-#     Individual omen
-#     """
+class Chapter(models.Model):
+    """
+    Stores the chapter number, name and links to omens
+    """
 
-#     omen_id = models.CharField(max_length=100, primary_key=True)  # TEI ID
-#     omen_num = models.CharField(max_length=100)
-#     ctime = models.DateTimeField(default=now)
-#     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default="")
-#     witness = models.ManyToManyField(Witness)
+    chapter_name = models.CharField(max_length=100, unique=True)
+    animal = models.CharField(max_length=100, blank=True, null=True)
+    author = models.CharField(max_length=100, blank=True, null=True)
+    reviewer = models.CharField(max_length=100, blank=True, null=True)
+    proofreader = models.CharField(max_length=100, blank=True, null=True)
+    remarks = models.CharField(max_length=100, blank=True, null=True)
+    ctime = models.DateTimeField(default=now, blank=True, null=True)
+    tei = models.TextField(default="", blank=True, null=True)
+    witness = models.ManyToManyField(Witness)
+    upload = models.ManyToManyField(Upload)
 
-#     @property
-#     def tei(self):
-#         chapter_tei = ET.XML(self.chapter.tei)
-#         omen_tei = chapter_tei.find(f'.//*[@n="{self.omen_num}"]')
-#         return element2string(omen_tei)
+    def __str__(self):
+        return f"Chapter {self.chapter_name}"
+
+    @property
+    def safe_tei(self):
+        return self.tei.replace("\n", "").replace("'", "&#8217;")
+
+
+class Omen(models.Model):
+    """
+    Individual omen
+    """
+
+    xml_id = models.CharField(max_length=100, unique=True)  # TEI ID
+    omen_name = models.CharField(max_length=100, primary_key=True)  # TEI @n
+    omen_num = models.CharField(max_length=100)  # from sheet name
+    ctime = models.DateTimeField(default=now)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default="")
+    witness = models.ManyToManyField(Witness)
+    upload = models.ManyToManyField(Upload)
+
+    @property
+    def tei(self):
+        chapter_tei = ET.XML(self.chapter.tei)
+        omen_tei = chapter_tei.find(f'.//*[@n="{self.omen_num}"]')
+        return element2string(omen_tei)
 
 
 # class Segment(models.Model):
