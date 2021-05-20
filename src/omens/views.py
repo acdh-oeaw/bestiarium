@@ -41,11 +41,14 @@ def chapter_overview(request, chapter_name):
 def chapter_layout(request, chapter_name):
     template_name = "omens/chapter_full.html"
     chapter = get_chapter(chapter_name=chapter_name)
+    omens = omens_in_chapter(chapter_name)
+    num_omens = len(omens.get("omens")) if omens else 0
+    logging.debug("NUM OMENS in %s: %s", chapter_name, num_omens)
     context = {
         "tei": chapter.safe_tei,
         "chapter_name": chapter_name,
         "animal": chapter.animal,
-        "num_omens": len(omens_in_chapter(chapter_name)["omens"]),
+        "num_omens": num_omens,
         "witnesses": [],
         "xsldoc": "threecolumn",
         "author": chapter.author if chapter.author else "Nicla De Zorzi et al.",
