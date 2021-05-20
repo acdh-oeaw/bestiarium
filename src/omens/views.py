@@ -1,3 +1,4 @@
+import logging
 from json import dumps
 from xml.etree import ElementTree as ET
 
@@ -42,6 +43,7 @@ def chapter_layout(request, chapter_name):
     template_name = "omens/chapter_full.html"
     chapter = get_chapter(chapter_name=chapter_name)
     omens = omens_in_chapter(chapter_name)
+    logging.debug("Found omens", omens)
     num_omens = len(omens.get("omens")) if omens else 0
     logging.debug("NUM OMENS in %s: %s", chapter_name, num_omens)
     context = {
