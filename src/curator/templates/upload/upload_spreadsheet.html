@@ -15,13 +15,19 @@
 {% block Titel %} Import TEI {% endblock %}
 {% block content %}
 {% load crispy_forms_tags %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Upload</li>
+    </ol>
+</nav>
 <div class="container">
     <div class="jumbotron">
         <h1 style="text-align: center;">Upload Omens</h1>
     </div>
     {% if report%}
     <div class="alert alert-warning m-3" role="alert">
-        Sorry! We encountered the following errors.
+        We encountered the following errors while processing.
         <ol class="report">
             {% for report_item in report %}
             {% for fname, fault in report_item.items %}

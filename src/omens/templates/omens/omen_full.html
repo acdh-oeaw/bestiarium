@@ -5,9 +5,24 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="#">Home</a></li>
         <li class="breadcrumb-item active"><a href="{% url 'omens:chapters' %}">Chapters</a></li>
-        <li class="breadcrumb-item active" ><a href="{% url 'omens:chapter_tei' chapter_name=chapter_name %}">Chapter {{chapter_name}}</a></li>
+        <li class="breadcrumb-item active" ><a href="{% url 'omens:chapter_layout' chapter_name=chapter_name %}">Chapter {{chapter_name}}</a></li>
         <li class="breadcrumb-item active" aria-current="page">Omen {{omen_num}}</li>
     </ol>
 </nav>
-{%include "omens/embedded.html" %}
+<div class="container">
+    <h5 class="bd-title mt-3 mb-2">
+        Omen {{omen_num}}
+    </h5>
+    <h6 class="card-subtitle mb-2 text-muted">
+        <div class="citation mw-50">
+            <small>
+                {{ author }}, 2021, "Šumma ālu, Chapter {{chapter_name}}: {{animal}} Omens", Nicla De Zorzi et al., Bestiarium Mesopotamicum, 2018-2021; accessed {% now "SHORT_DATETIME_FORMAT" %} at <a href="http://{{request.get_host }}{{ request.get_full_path|urlencode }}">{{request.get_host }}{{ request.get_full_path|urlencode }}</a>
+            </small>
+        </div>
+    </h6>
+    {%include "omens/toggleview.html" %}
+    <div id="tei"  >
+        {%include "omens/embedded.html" %}
+    </div>
+</div>
 {% endblock content %}

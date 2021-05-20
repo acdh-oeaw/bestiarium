@@ -1,6 +1,10 @@
+import logging
+
 from omens.models import Chapter
 
 from .importer import Importer
+
+logger = logging.getLogger(__name__)
 
 
 class CreditsImporter(Importer):
@@ -26,15 +30,17 @@ class CreditsImporter(Importer):
                 continue
             chapter, created = Chapter.objects.update_or_create(
                 chapter_name=row.get("Chapter").rstrip(".0"),
-                animal=row.get("Animal"),
-                author=row.get("Author"),
-                reviewer=row.get("Reviewer"),
-                proofreader=row.get("Proofreader"),
-                remarks=row.get("Remarks"),
             )
+            chapter.animal = row.get("Animal")
+            chapter.author = row.get("Author")
+            chapter.reviewer = row.get("Reviewer")
+            chapter.proofreader = row.get("Proofreader")
+            chapter.remarks = row.get("Remarks")
+
             try:
                 chapter.save()
             except Exception as e:
+                logger.error("Error saving credits for %s", self.fname)
                 return {self.fname: repr(e)}
 
         return

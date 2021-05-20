@@ -9,12 +9,17 @@ for ns, uri in NS.items():
 
 from typing import NamedTuple
 
+from django.db import DatabaseError, transaction
 from django.db.utils import IntegrityError
 from xlsx.workbook import Workbook
 
 from .importer import Importer
-from .models import Chapter, Omen, Witness
+from .models import Chapter, Omen, Segment, Witness
+from .reconstruction import Reconstruction
+from .score import Score
 from .util import clean_id, element2string
+
+logger = logging.getLogger(__name__)
 
 
 class OmenImporter:
@@ -23,6 +28,7 @@ class OmenImporter:
     """
 
     expected_columns = []
+    root = None  # tei root
 
     @staticmethod
     def tei_root():
@@ -62,7 +68,7 @@ class OmenImporter:
         chapter_name = self.sheets[0].name.split(".")[0]
 
         if not chapter_name.isnumeric():
-            logging.error("Unexpected chapter name %s", chapter_name)
+            logger.error("Unexpected chapter name %s", chapter_name)
             report.append(f"Unexpected chapter name {chapter_name}")
             return report
 
@@ -70,43 +76,48 @@ class OmenImporter:
             chapter_name=chapter_name
         )
         self.chapter.upload.add(self.upload)
-        logging.debug("Chapter: %s from %s", chapter_name, self.chapter.upload)
         self.chapter.save()
 
-        body, root = None, None
+        body, self.root = None, None
         # build TEI
-        if self.chapter.tei and not root:
+        if self.chapter.tei and not self.root:
             # load existing TEI
-            root = ET.fromstring(self.chapter.tei)
-        elif not root:
-            root = OmenImporter.tei_root()  # TEI skeleton
+            self.root = ET.fromstring(self.chapter.tei)
+        elif not self.root:
+            self.root = OmenImporter.tei_root()  # TEI skeleton
 
-        body = root.find(".//tei:body", NS)
-        title = root.find(".//tei:title", NS)
+        body = self.root.find(".//tei:body", NS)
+        title = self.root.find(".//tei:title", NS)
         title.text = f"Chapter {chapter_name}"
 
         for sheet in self.sheets:  # Read sheet by sheet
             # extract omen data
             try:
-                omen_data = self.extract_omen_data(sheet)
+                with transaction.atomic():
+                    omen_data = self.extract_omen_data(sheet)
             except ValueError as ve:
                 report.append(str(ve))
                 continue
 
-            logging.debug("\tSheet: %s", omen_data)
+            logger.debug("Found %s witnesses", omen_data.witnesses)
+            for witness in omen_data.witnesses:
+                witness_elem = self.root.find(
+                    f'.//tei:witness[@xml:id="{witness.xml_id}"]',
+                    NS,
+                )
+
+                if witness_elem is None:
+                    self.root.find(".//tei:listWit", NS).append(witness.tei)
 
             # Check and remove if omen already exists in the TEI
             omen_div_old = body.find(f'.//tei:div[@n="{omen_data.label}"]', NS)
-            print("----------->", omen_div_old)
             if omen_div_old is not None:
-                logging.warning(
-                    "Overwriting existing omen div: %s", ET.tostring(omen_div_old)
-                )
+                logger.warning("Overwriting existing omen div: %s", omen_data.label)
                 body.remove(omen_div_old)
 
             # Add omen div to TEI
             body.append(omen_data.tei)
-        self.chapter.tei = element2string(root)
+        self.chapter.tei = element2string(self.root)
         self.chapter.save()
         return report
 
@@ -148,6 +159,8 @@ class OmenImporter:
 
         label = sheet.get_cell_at("A1").full_text
         xml_id = clean_id(label)
+        witnesses = []
+
         try:
             omen, created = Omen.objects.update_or_create(
                 xml_id=xml_id,
@@ -156,9 +169,21 @@ class OmenImporter:
                 chapter=self.chapter,
             )
             omen.save()
+            if created:  # create records for protasis and apodosis
+                protasis = Segment(
+                    xml_id=xml_id + "_P", omen=omen, segment_type="PROTASIS"
+                )
+                protasis.save()
+                apodosis = Segment(
+                    xml_id=xml_id + "_A", omen=omen, segment_type="APODOSIS"
+                )
+                apodosis.save()
         except IntegrityError as ie:
             raise ValueError(f"Error creating omen {label} from {sheet.name}")
-        tei = ET.Element("tei:div", {"n": label, XML_ID: label})
+
+        score = Score(omen)
+        recon = Reconstruction(omen)
+        tei = ET.Element("tei:div", {"n": label, XML_ID: xml_id})
 
         row_type = None
         for row_num, row in sheet.get_rows():
@@ -167,9 +192,10 @@ class OmenImporter:
 
             cells = list(sheet.get_cells(row))
             row_type = get_row_type(cells[0], row_type)
-            logging.debug("Current row (%s) %s", row_num, row_type)
 
+            # Score data
             if row_type == ROWTYPE.SCORE:
+
                 # Get the witness for score line
                 search_str = cells[0].full_text.split("+")[0]
                 wit = Witness.objects.filter(
@@ -180,29 +206,43 @@ class OmenImporter:
                         f'Unknown siglum - "{cells[0].full_text}". Unable to find any siglum starting with {search_str} for {label} in sheet {sheet.name}'
                     )
 
-                logging.debug(
-                    "Found the following witnesses %s for %s", wit, search_str
-                )
-                for w in wit:
-                    omen.witness.add(w)
+                if len(wit) != 1:
+                    raise ValueError(
+                        f'Ambiguous siglum - "{cells[0].full_text}". Found {len(wit)} matches.'
+                    )
 
-            # Score data
-            # line info
-            # lemmas
+                witnesses.extend(wit)
+                omen.witness.add(wit[0])
+
+                # build score
+                score.add_row(cells, wit[0])
+            elif row_type == ROWTYPE.RECONSTRUCTION:
+                recon.add_to_reconstruction(cells)
+
             # Readings
             ## Transliteration
             ## Transcription
             ## Translation
             # Philologocal commentary?
-            pass
 
-        return OmenData(name=sheet.name, label=label, tei=tei)
+        # append score div to omen
+        tei.append(score.tei)
+        for recon_grp in recon.tei:
+            tei.append(recon_grp)
+
+        return OmenData(
+            name=sheet.name, label=label, tei=tei, witnesses=list(set(witnesses))
+        )
+
+    def add_score_line(self):
+        pass
 
 
 class OmenData(NamedTuple):
     name: str
     label: str
     tei: any
+    witnesses: any
 
 
 class ROWTYPE:

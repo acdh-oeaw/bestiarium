@@ -16,7 +16,7 @@ from .models import USTATUS, UTYPES, Upload
 
 # from xl2tei.workbook import Workbook
 
-
+logger = logging.getLogger(__name__)
 # Create your views here.
 UPLOAD_LOC = "/"
 
@@ -256,7 +256,7 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
 
     def is_valid(self):
         num_files = sum(len(v) for _, v in self.upload_files.items())
-        logging.debug("FOUND %s files", num_files)
+        logger.debug("FOUND %s files", num_files)
         if not num_files:
             return False
 
@@ -277,7 +277,7 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
         return render(self.request, self.template_name, context)
 
     def upload(self, ftype, f):
-        logging.debug("Uploading %s file %s", ftype, f._name)
+        logger.debug("Uploading %s file %s", ftype, f._name)
         upload = self.record_upload(f, utype=ftype)
         report = None
         if ftype == UTYPES.INDEX_FILE:
@@ -320,7 +320,7 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
 
     # def upload_omen_file(self, f):
     # FIXME: Delete this
-    #     logging.debug("Uploading omen file %s", f._name)
+    #     logger.debug("Uploading omen file %s", f._name)
     #     upload = self.record_upload(f, utype=UTYPES.OMEN_FILE)
     #     # Extract omens
     #     try:
@@ -328,13 +328,13 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
     #         chapter = Chapter()
     #         chapter_db = chapter.export_to_tei(f)
     #         # Save upload record
-    #         logging.debug("Default storage: %s", f)
+    #         logger.debug("Default storage: %s", f)
     #         upload.ustatus = USTATUS.SUCCESS
     #     except Exception as e:
     #         report = {f._name: repr(e)}
     #         upload.report = report
     #         upload.ustatus = USTATUS.ERROR
-    #         logging.error(repr(e))
+    #         logger.error(repr(e))
     #         # raise
 
     #     upload.save()

@@ -1,15 +1,17 @@
 {% extends "webpage/base.html" %}
 {% block Titel %} Chapter {{chapter.chapter_name}} {% endblock %}
 {% block content %}
-<script>
- function resizeIframe(obj) {
-     obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
- }
-</script>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item" ><a href="/omens/chapters">Chapters</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Chapter {{chapter.chapter_name}}</li>
+    </ol>
+</nav>
 
 <div class="container">
-    <iframe src="https://docs.google.com/document/d/e/2PACX-1vRYMRdnyx3qUHZxlKK4irnv9gE3hdpSYf7lidZy2BIrDRQuY2BtvoZljLzEjiD_V0yVF3u1noKaeqcs/pub?embedded=true" frameborder="0" width="960" height="569" ></iframe>
-
+    This page is under construction.
 </div>
 
 {% endblock content %}
