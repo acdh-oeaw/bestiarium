@@ -238,3 +238,13 @@ class Transcription(models.Model):
         Reconstruction, on_delete=models.CASCADE, default=""
     )
     lemma = models.ForeignKey(Lemma, on_delete=models.CASCADE, default="")
+
+
+class Sequence(models.Model):
+    """
+    A row represents a named sequence of omens curated
+    """
+
+    seq_name = models.CharField(max_length=100, unique=True)
+    omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
+    position = models.IntegerField(default=0)

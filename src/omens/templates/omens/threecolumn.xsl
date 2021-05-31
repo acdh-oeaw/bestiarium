@@ -98,7 +98,27 @@
   <xsl:template match="tei:body/tei:div/div[@n]"> <!-- Reconstruction -->
     <tr>
       <td class="reconstruction-label">
-        <small><xsl:value-of select="@n"/></small>
+        <xsl:value-of select="@n"/>
+        <xsl:if test="*[@source]">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" value="others">
+              <xsl:attribute name="id">
+                <xsl:value-of select="./@xml:id"/>-others
+              </xsl:attribute>
+              <xsl:attribute name="onclick">
+                toggleClass&#x28;this,&apos;<xsl:value-of select="./@xml:id"/>-others&apos;&#x29;
+              </xsl:attribute>
+            </input>
+            <label class="form-check-label" >
+              <xsl:attribute name="for">
+                <xsl:value-of select="./@xml:id"/>-others
+              </xsl:attribute>
+              <small class="text-muted">Previous readings and translations</small>
+            </label>
+          </div>
+        </xsl:if>
+
+
       </td>
       <td class="transliteration"><ul class="list-group">
         <xsl:apply-templates select="./ab[@type = &apos;transliteration&apos;]"/></ul>
@@ -123,24 +143,14 @@
       </xsl:attribute>
       <xsl:choose>
         <xsl:when test="@source">
-          <a data-toggle="collapse" role="button" aria-expanded="true"  >
-            <xsl:attribute name="data-target">#<xsl:value-of select="./@xml:id"/>
-            </xsl:attribute>
-            <xsl:attribute name="href">#</xsl:attribute>
-            <xsl:value-of select="@source"/>
-          </a>
+          <xsl:attribute name="class">list-group-item <xsl:value-of select="../@xml:id"/>-others others d-none </xsl:attribute>
+          <xsl:value-of select="@source"/>
         </xsl:when>
       </xsl:choose>
       <div>
         <xsl:attribute name="id"><xsl:value-of select="./@xml:id"/>
         </xsl:attribute>
-        <xsl:choose>
-          <xsl:when test="@source">
-            <xsl:attribute name="class">collapse show</xsl:attribute>
-          </xsl:when>
-        </xsl:choose>
-        [<xsl:value-of select="@lang"/>]
-        <xsl:apply-templates select="./div[@type = &apos;protasis&apos;]"/>–
+        <xsl:apply-templates select="./div[@type = &apos;protasis&apos;]"/>
         <xsl:apply-templates select="./div[@type = &apos;apodosis&apos;]"/>
       </div>
     </li>
@@ -151,9 +161,12 @@
     </span>
   </xsl:template>
   <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;translation&apos;]/div[@type = &apos;apodosis&apos;]">
+    <xsl:if test=".!=''">
+      &#x2D;&#160;
     <span class="apodosis">
       <xsl:value-of select="." />
     </span>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;transliteration&apos;]">
@@ -164,22 +177,13 @@
     <li  class="list-group-item">
       <xsl:choose>
         <xsl:when test="@source">
-          <a data-toggle="collapse" role="button" aria-expanded="true"  >
-            <xsl:attribute name="data-target">#<xsl:value-of select="./@xml:id"/>
-            </xsl:attribute>
-            <xsl:attribute name="href">#</xsl:attribute>
-            <xsl:value-of select="@source"/>
-          </a>
+          <xsl:attribute name="class">list-group-item <xsl:value-of select="../@xml:id"/>-others others d-none</xsl:attribute>
+          <xsl:value-of select="@source"/>
         </xsl:when>
       </xsl:choose>
       <div>
         <xsl:attribute name="id"><xsl:value-of select="./@xml:id"/>
         </xsl:attribute>
-        <xsl:choose>
-          <xsl:when test="@source">
-            <xsl:attribute name="class">collapse show</xsl:attribute>
-          </xsl:when>
-        </xsl:choose>
         <xsl:for-each select="../../div[@type = &apos;score&apos;]/ab/w">
           <xsl:sort select="./@xml:id"/>
           <!-- <xsl:for-each select="//tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w"> -->
@@ -188,8 +192,6 @@
         </xsl:for-each>
       </div>
     </li>
-
-
   </xsl:template>
 
   <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;transcription&apos;]">
@@ -199,23 +201,13 @@
     <li  class="list-group-item">
       <xsl:choose>
         <xsl:when test="@source">
-          <a data-toggle="collapse" role="button" aria-expanded="true"  >
-            <xsl:attribute name="data-target">#<xsl:value-of select="./@xml:id"/>
-            </xsl:attribute>
-            <xsl:attribute name="href">#</xsl:attribute>
-            <xsl:value-of select="@source"/>
-          </a>
+          <xsl:attribute name="class">list-group-item <xsl:value-of select="../@xml:id"/>-others others d-none</xsl:attribute>
+          <xsl:value-of select="@source"/>
         </xsl:when>
       </xsl:choose>
       <div>
         <xsl:attribute name="id"><xsl:value-of select="./@xml:id"/>
         </xsl:attribute>
-        <xsl:choose>
-          <xsl:when test="@source">
-            <xsl:attribute name="class">collapse show</xsl:attribute>
-          </xsl:when>
-        </xsl:choose>
-
         <xsl:for-each select="../../div[@type = &apos;score&apos;]/ab/w">
           <xsl:sort select="./@xml:id"/>
           <xsl:variable name="wordid" select="./@xml:id"/>

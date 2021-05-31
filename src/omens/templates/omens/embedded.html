@@ -8,6 +8,15 @@
  .apodosis{
      color:DarkCyan;
  }
+
+ .others .protasis, .others .apodosis{
+     color:unset !important;
+ }
+
+ .others{
+     font-size:smaller;
+ }
+
  .score-table{
  }
  .spacer{
@@ -16,6 +25,7 @@
  .toggle-buttons{
      text-align:right;
      float:right;
+     max-width: 30%;
  }
 
  .translation, .transcription,  .transliteration{
@@ -29,7 +39,11 @@
      white-space: break-spaces;
  }
  .reconstruction-label{
-     min-width: 100px;
+     min-width: 150px;
+     font-variant: small-caps;
+ }
+ .reconstruction-label .form-check-label{
+     font-variant: normal;
  }
 
  .list-group-item{
@@ -47,15 +61,16 @@
 
 <script onload="displayResult()">
  function toggleClass(checkbox, className){
-     console.log("Toggling");
+     console.log("Toggling", className);
      var elements = document.getElementsByClassName(className);
      for (let selected of elements){
-         if (checkbox.checked) {
+         if (selected.classList.contains("d-none")) {
              selected.classList.remove('d-none');
          }else{
              selected.classList.add('d-none');
          }
      }
+     return false;
  }
 
 

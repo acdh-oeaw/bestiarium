@@ -65,6 +65,10 @@ class SegmentAdmin(admin.ModelAdmin):
     list_display = ("xml_id", "segment_type", "omen")
 
 
+class SequenceAdmin(admin.ModelAdmin):
+    list_display = ("seq_name", "omen", "position")
+
+
 admin.site.register(Omen, OmenAdmin)
 admin.site.register(Witness, WitnessAdmin)
 admin.site.register(Chapter, ChapterAdmin)
