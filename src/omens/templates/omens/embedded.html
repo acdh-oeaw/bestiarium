@@ -1,21 +1,80 @@
-<div class="container">
-
-
-    <div id="tei"  >
-
-    </div>
-</div>
-
 <style>
+ td{
+     padding:0.3em;
+ }
  .protasis{
      color:DarkGoldenRod;
  }
  .apodosis{
      color:DarkCyan;
  }
+
+ .others .protasis, .others .apodosis{
+     color:unset !important;
+ }
+
+ .others{
+     font-size:smaller;
+ }
+
+ .score-table{
+ }
+ .spacer{
+     flex: 1 1 auto;
+ }
+ .toggle-buttons{
+     text-align:right;
+     float:right;
+     max-width: 30%;
+ }
+
+ .translation, .transcription,  .transliteration{
+     min-width: 25%;
+     font-size: 90%;
+     padding: 0.5em;
+ }
+
+ span.lemma:after{
+     content: " ";
+     white-space: break-spaces;
+ }
+ .reconstruction-label{
+     min-width: 150px;
+     font-variant: small-caps;
+ }
+ .reconstruction-label .form-check-label{
+     font-variant: normal;
+ }
+
+ .list-group-item{
+     background: transparent;
+     border: none;
+
+ }
+
+ .score-table{
+     min-width:50%;
+     margin-left:2em;
+ }
 </style>
 
+
 <script onload="displayResult()">
+ function toggleClass(checkbox, className){
+     console.log("Toggling", className);
+     var elements = document.getElementsByClassName(className);
+     for (let selected of elements){
+         if (selected.classList.contains("d-none")) {
+             selected.classList.remove('d-none');
+         }else{
+             selected.classList.add('d-none');
+         }
+     }
+     return false;
+ }
+
+
+
  function loadXMLDoc(filename)
  {
      if (window.ActiveXObject)
@@ -23,9 +82,9 @@
          xhttp = new ActiveXObject("Msxml2.XMLHTTP");
      }
      else
-         {
-             xhttp = new XMLHttpRequest();
-         }
+     {
+         xhttp = new XMLHttpRequest();
+     }
      xhttp.open("GET", filename, false);
      try {xhttp.responseType = "application/xml"} catch(err) {} // Helping IE11
      xhttp.send("");

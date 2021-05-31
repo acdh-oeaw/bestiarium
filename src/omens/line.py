@@ -7,20 +7,20 @@ logger = logging.getLogger(__name__)
 
 
 class Line(UserList):
-    '''
+    """
     Common base class for rows in an Omen Spreadsheet (Score, Readings, etc.)
-    '''
+    """
 
     def __init__(self, omen_prefix):
         super().__init__()
         self.omen_prefix = omen_prefix
 
     def connect_damaged_ends(self):
-        '''
+        """
         The lemmas are reviewed once again and
         damages that span across lemmas
         are appropriately connected
-        '''
+        """
         damage_stack = []
         for lemma in self.data:
             if isinstance(lemma, Lemma):
@@ -33,5 +33,8 @@ class Line(UserList):
                             token.corresp = damage_start
                         except IndexError:
                             logging.warning(
-                                'Found damage end without beginning @ %s',
-                                lemma)
+                                f"Found a block end (problematic reading) without beginning @ cell {lemma.address}",
+                            )
+                            raise ValueError(
+                                f"Found a block end (problematic reading) without beginning @ cell {lemma.address}",
+                            )

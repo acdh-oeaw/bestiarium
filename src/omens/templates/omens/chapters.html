@@ -17,20 +17,17 @@
         {% for chapter in chapters %}
         <li class="list-group-item m-3  rounded p-0">
             <div class="card">
-                <a href="{{ request.path }}/{{ chapter.chapter_name }}/" class="btn btn-outline  p-0 m-0 rounded-0">
-                    <div class="card-header">
-                        <h4 class="card-title">Chapter {{ chapter.chapter_name }}</h4>
 
-                    </div>
-                </a>
+                <div class="card-header">
+                    <h4 class="card-title">Chapter {{ chapter.chapter_name }}</h4>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ chapter.animal | default_if_none:'' }}</h6>
+
+                </div>
+
                 <div class="card-body mx-auto">
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'curator:segments' page='1' chapter=chapter.chapter_name %}" class="btn btn-light" title="Curate">
-                       &#9998;
-                    </a>
-                    {%endif%}
-                    <a href="{% url 'omens:chapter_tei' chapter_name=chapter.chapter_name %}" class="btn btn-light" title="View TEI">
-                        TEI
+                    <a href="{{ request.path }}/{{ chapter.chapter_name }}/structure" class="btn btn-light">Overview</a>
+                    <a href="{% url 'omens:chapter_layout' chapter_name=chapter.chapter_name %}" class="btn btn-light" title="View TEI">
+                        Contents
                     </a>
                 </div>
             </div>

@@ -1,0 +1,23 @@
+{% extends "webpage/base.html" %}
+{% load staticfiles %}
+{% block Titel %} Explore {% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'loom.css' %}" rel="stylesheet"/>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript"  src="{% static 'loom.js' %}"></script>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dataviz:explore' %}">Explore</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ dataviz_title}}</li>
+    </ol>
+</nav>
+
+
+<div class="container">
+    <div id="lotr-chart"></div>
+
+</div>
+<script type="text/javascript"  src="{% static 'script.js' %}"></script>
+{% endblock content %}

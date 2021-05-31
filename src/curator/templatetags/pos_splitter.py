@@ -24,3 +24,18 @@ def tokens(value):
                 yield ((w, pos))
 
     return
+
+
+@register.filter(name='goodwords')
+def good_words(all_words):
+    """
+        Returns a filtered list of candidate words for senses
+    """
+    relevant_tokens = []
+    for w in all_words:
+        wclean = w.replace('[', '').replace(']', '')
+        if wclean.isalpha() and len(wclean) > 2 and wclean not in STOP_WORDS:
+            if wordnet.synsets(wclean):
+                yield (w, wclean, all_words.get(w))
+
+    return

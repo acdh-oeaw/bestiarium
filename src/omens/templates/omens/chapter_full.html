@@ -1,5 +1,4 @@
 {% extends "webpage/base.html" %}
-
 {% block content %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -8,5 +7,29 @@
         <li class="breadcrumb-item active" aria-current="page">Chapter {{chapter_name}}</li>
     </ol>
 </nav>
-{%include "omens/embedded.html" %}
+<div class="container">
+    <h5 class="bd-title mt-3 mb-0">
+        Chapter {{chapter_name}}
+        <small>
+            <a class="btn btn-light" role="button" href="../tei.xml" target="BLANK">&#11123;
+            </a>
+        </small>
+    </h5>
+
+    {%include "omens/toggleview.html" %}
+    <h6 class="card-subtitle mb-2 text-muted">
+        {% if num_omens %}
+        <div>
+            This chapter contains {{num_omens}} omens{%if animal %} about {{animal |lower}}{% endif %}.
+        </div>
+        {% endif %}
+        <div class="citation mw-50">
+            <small>{{ author }}, 2021, "Šumma ālu, Chapter {{chapter_name}}: {{animal}}", Nicla De Zorzi et al., Bestiarium Mesopotamicum, 2018-2021; accessed {% now "d.m.Y H:i T"  %} at <a href="http://{{request.get_host }}{{ request.get_full_path|urlencode }}">{{request.get_host }}{{ request.get_full_path|urlencode }}</a></small>
+        </div>
+    </h6>
+
+    <div id="tei"  >
+        {%include "omens/embedded.html" %}
+    </div>
+</div>
 {% endblock content %}

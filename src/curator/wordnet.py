@@ -9,6 +9,10 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import wordpunct_tokenize
 
 
+def pos_data(protasis, apodosis):
+    pass
+
+
 def synset_tree(word):
     hyper = lambda s: s.hypernyms()
     node_id = 0

@@ -1,0 +1,26 @@
+{% extends "webpage/base.html" %}
+{% load pos_splitter %}
+{% block Titel %} Curate Senses {% endblock %}
+{% block content %}
+<div class="container">
+    <div class="jumbotron">
+        <h1 style="text-align: center;">Curate Senses</h1>
+    </div>
+    {% if error%}
+    <div class="alert alert-warning m-3" role="alert">
+        Sorry! Something went wrong</em>.
+        <pre>{{ error }}</pre>
+    </div>
+    {% endif %}
+    <button type="button" class="btn btn-primary w-100">Save</button>
+    {% include "curator/sensetree.html" with word=word%}
+
+    {% for s in segments %}
+
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1" checked>
+        <label class="form-check-label" for="exampleCheck1"> {{s.omen}} - {{s.segment}}</label>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

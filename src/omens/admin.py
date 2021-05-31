@@ -1,48 +1,72 @@
 from django.contrib import admin
 
+from .models import *
+
 # Register your models here.
-from .models import (Chapter, Lemma, Omen, Reconstruction, Segment,
-                     Transcription, Translation, Transliteration, Witness)
 
 
 def all_witnesses(obj):
-    return (', '.join([s for s in obj.witness.values_list()]))
+    return ", ".join([s for s in obj.witness.values_list()])
 
 
 class WitnessAdmin(admin.ModelAdmin):
-    list_display = ('witness_id', 'siglum', 'joins', 'ctime')
+    list_display = (
+        "witness_id",
+        "museum_numbers",
+        "provenance",
+        "script",
+        "state_publication",
+        "state_preservation",
+        "manuscript_type",
+        "tablets_attested",
+        "omens_attested",
+        "cdli_number",
+        "remarks",
+        "ctime",
+    )
 
 
 class ChapterAdmin(admin.ModelAdmin):
-    list_display = ('chapter_name', 'ctime')
+    list_display = (
+        "chapter_name",
+        "animal",
+        "author",
+        "reviewer",
+        "proofreader",
+        "ctime",
+    )
 
 
 class OmenAdmin(admin.ModelAdmin):
-    list_display = ('omen_id', 'omen_num', 'chapter', all_witnesses)
+    list_display = ("xml_id", "omen_name", "omen_num", "chapter", "ctime")
 
 
 class LemmaAdmin(admin.ModelAdmin):
-    list_display = ('lemma_id', 'lemma_idx', 'omen', 'segment')
+    list_display = ("xml_id", "lemma_idx", "omen", "segment")
 
 
 class ReconstructionAdmin(admin.ModelAdmin):
-    list_display = ('reconstruction_id', 'omen', 'label')
+    list_display = ("xml_id", "omen", "label")
 
 
 class TransliterationAdmin(admin.ModelAdmin):
-    list_display = ('trl_id', 'reconstruction', 'lemma')
+    list_display = ("xml_id", "reconstruction", "lemma")
 
 
 class TranscriptionAdmin(admin.ModelAdmin):
-    list_display = ('trs_id', 'reconstruction', 'lemma')
+    list_display = ("xml_id", "reconstruction", "lemma")
 
 
 class TranslationAdmin(admin.ModelAdmin):
-    list_display = ('translation_id', 'segment', 'translation_txt')
+    list_display = ("xml_id", "segment", "translation_txt", "lang")
 
 
 class SegmentAdmin(admin.ModelAdmin):
-    list_display = ('segment_id', 'segment_type', 'omen')
+    list_display = ("xml_id", "segment_type", "omen")
+
+
+class SequenceAdmin(admin.ModelAdmin):
+    list_display = ("seq_name", "omen", "position")
 
 
 admin.site.register(Omen, OmenAdmin)
