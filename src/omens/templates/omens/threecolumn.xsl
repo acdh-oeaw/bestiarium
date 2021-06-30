@@ -92,14 +92,19 @@
     </tr>
   </xsl:template>
 
- <xsl:template match="anchor[@type=&apos;breakEnd&apos;]">
-   <xsl:text>[</xsl:text>
+ <xsl:template match="anchor">
+       <xsl:choose>
+          <xsl:when test="@type='breakStart'"> 
+            <xsl:text>[</xsl:text>
+          </xsl:when>
+        <xsl:when test="@type='breakEnd'"> 
+            <xsl:text>]</xsl:text>
+          </xsl:when>
+       </xsl:choose>
   </xsl:template>
-  <xsl:template match="anchor[@type=&apos;breakEnd&apos;]">
-   <xsl:text>]</xsl:text>
-  </xsl:template>
-   <xsl:template match="damageSpan">
-      &#11810
+ 
+  <xsl:template match="damageSpan">
+      &#11810;
   </xsl:template>
 
 
