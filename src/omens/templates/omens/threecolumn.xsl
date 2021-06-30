@@ -92,6 +92,18 @@
     </tr>
   </xsl:template>
  
+  <xsl:template match="anchor">
+   <xsl:choose>
+      <xsl:when test="@type='breakStart'"> 
+        <xsl:text>[</xsl:text>
+      </xsl:when>
+      <xsl:when test="@type='breakEnd'"> 
+        <xsl:if test="../damageSpan"><xsl:text>&#11811;</xsl:text></xsl:if>
+        <xsl:if test="not(../damageSpan)"><xsl:text>]</xsl:text></xsl:if>
+      </xsl:when>
+    </xsl:choose>
+   </xsl:template>
+
   <xsl:template match="damageSpan">
       <xsl:text>&#11810;</xsl:text>
   </xsl:template>
@@ -223,16 +235,4 @@
     </li>
   </xsl:template>
 
-<!-- BREAK START-->
-   <xsl:template match="tei:TEI/tei:text/tei:body/tei:div/div[@type='score']/ab/w/app/rdg/anchor">
-       <xsl:choose>
-           <xsl:when test="@type='breakStart'"> 
-            <xsl:copy-of select="."/>
-            <xsl:value-of select="concat('[', anchor)"/>
-          </xsl:when>
-        <xsl:otherwise >
-            <xsl:copy-of select="."/>
-        </xsl:otherwise>
-       </xsl:choose>
-    </xsl:template>
 </xsl:stylesheet>
