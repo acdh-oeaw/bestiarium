@@ -95,7 +95,7 @@
  <xsl:template match="anchor">
        <xsl:choose>
           <xsl:when test="@type='breakStart'"> 
-            <xsl:text>[</xsl:text>
+            <xsl:text>&#11810;</xsl:text>
           </xsl:when>
         <xsl:when test="@type='breakEnd'"> 
             <xsl:text>]</xsl:text>
@@ -104,7 +104,7 @@
   </xsl:template>
  
   <xsl:template match="damageSpan">
-      &#11810;
+      <xsl:text>&#11810;</xsl:text>
   </xsl:template>
 
 
