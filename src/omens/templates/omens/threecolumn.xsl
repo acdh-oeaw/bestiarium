@@ -81,23 +81,7 @@
                     select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
                   <xsl:sort select="./@xml:id"/>
                   <td>
-                    <xsl:choose>
-                      <xsl:when test="((app/rdg[@wit=$witid]/anchor[@type='breakStart']) and (app/rdg[@wit=$witid]/anchor[@type='breakEnd']) and (app/rdg[@wit=$witid]/anchor[@xml:id = @corresp]))">
-                        <xsl:value-of select="concat('[', app/rdg[@wit=$witid], ']')"/>
-                      </xsl:when>
-                        <xsl:when test="((app/rdg[@wit=$witid]/anchor[@type='breakStart']) and (app/rdg[@wit=$witid]/anchor[@type='breakEnd']) and not(app/rdg[@wit=$witid]/anchor[@xml:id = @corresp]))">
-                        <xsl:value-of select="concat(']', app/rdg[@wit=$witid], '[')"/>
-                      </xsl:when>
-                      <xsl:when test="app/rdg[@wit=$witid]/anchor[@type='breakStart']">
-                         <xsl:value-of select="concat('[', app/rdg[@wit=$witid])"/>
-                      </xsl:when>
-                      <xsl:when test="app/rdg[@wit=$witid]/anchor[@type='breakEnd']">
-                         <xsl:value-of select="concat(app/rdg[@wit=$witid], ']')"/>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:value-of select="app/rdg[@wit=$witid]"/>
-                      </xsl:otherwise>
-                    </xsl:choose>
+                      <xsl:apply-templates select="app/rdg[@wit=$witid]"/>
                   </td>
                 </xsl:for-each>
               </tr>
@@ -107,6 +91,18 @@
       </td>
     </tr>
   </xsl:template>
+
+ <xsl:template match="anchor[@type=&apos;breakEnd&apos;]">
+   <xsl:text>[</xsl:text>
+  </xsl:template>
+  <xsl:template match="anchor[@type=&apos;breakEnd&apos;]">
+   <xsl:text>]</xsl:text>
+  </xsl:template>
+   <xsl:template match="damageSpan">
+      &#11810
+  </xsl:template>
+
+
   <xsl:template match="tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w"> <!-- Words in the score -->
     <th scope="col"><small><xsl:value-of select="@xml:id"/></small></th>
   </xsl:template>
