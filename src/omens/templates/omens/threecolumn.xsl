@@ -206,11 +206,14 @@
           <xsl:sort select="./@xml:id"/>
           <!-- <xsl:for-each select="//tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w"> -->
           <xsl:variable name="wordid" select="./@xml:id"/>
-          <span class="lemma"><xsl:value-of select="../../../div[@n=$rdgid]/ab[@xml:id = $rdgxmlid]/w[@corresp=$wordid]"/></span>
+          <span class="lemma">
+            <xsl:apply-templates select="../../../div[@n=$rdgid]/ab[@xml:id = $rdgxmlid]/w[@corresp=$wordid]"/>
+            </span>
         </xsl:for-each>
       </div>
     </li>
   </xsl:template>
+
 
   <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;transcription&apos;]">
     <xsl:variable name="rdgid" select="../@n"/>
@@ -229,7 +232,9 @@
         <xsl:for-each select="../../div[@type = &apos;score&apos;]/ab/w">
           <xsl:sort select="./@xml:id"/>
           <xsl:variable name="wordid" select="./@xml:id"/>
-          <span class="lemma"><xsl:value-of select="../../../div[@n=$rdgid]/ab[@xml:id = $rdgxmlid]/w[@corresp=$wordid]"/></span>
+          <span class="lemma">
+            <xsl:apply-templates select="../../../div[@n=$rdgid]/ab[@xml:id = $rdgxmlid]/w[@corresp=$wordid]"/>
+          </span>
         </xsl:for-each>
       </div>
     </li>
