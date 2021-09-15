@@ -1,0 +1,106 @@
+{% extends "webpage/base.html" %}
+{% block content %}
+<div class="jumbotron">
+    <h3 style="text-align: center;">Omen {{data.omen.chapter.chapter_name}}.{{data.omen.omen_num}}</h3>
+</div>
+
+<div class="container">
+    <ul class="">
+        {% if messages %}
+        <li class="list-group-item" >
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </li>
+        {% endif %}
+
+        {% for reading_id, reading  in data.readings.items %}
+        <li class="list-group-item">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{reading_id }}</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for translation_id, translation in reading.items %}
+                        <li class="list-group-item">
+                            {% if request.user.is_authenticated %}
+                            <a data-toggle="collapse"
+                               data-target="#collapse_{{translation_id}}"
+                               aria-expanded="false"
+                               aria-controls="collapse_{{translation_id}}" href="#"
+                               class="text-decoration-none active mr-3">
+                                <span class="">&#x270e;</span>
+                            </a>
+                            {% endif %}
+                            <div id="{{translation_id}}">
+                                <!-- parse word by word in the segment translation -->
+                                <div id ="collapse_{{translation_id}}" class="collapse">
+                                    <form action="/omens/{{ data.omen.omen_id }}/edit/{{translation_id}}">
+                                        <input class="btn btn-success" type="submit" />
+                                        <a href="#" class="btn btn-danger" data-toggle="collapse"
+                                           data-target="#collapse_{{translation_id}}">
+                                            Cancel
+                                        </a>
+                                        <input class="form-control form-control-lg" type="text" placeholder="" value="{{translation.fulltext}}"
+                                               name="input_{{translation_id}}">
+                                    </form>
+
+                                </div>
+                                <ul class="nav nav-pills mb-1" id="pills-tab" role="tablist">
+                                    {% for word in translation.words %}
+                                    <li class="nav-item mr-1">
+                                        <a {% if word.senses %} href="#{{translation.safe_id}}{{forloop.counter0}}"
+                                           aria-controls="{{translation.safe_id}}{{forloop.counter0}}"{%endif%}
+                                           class="nav-link  p-0"
+                                           id="tab-{{translation_id}}{{forloop.counter0}}"
+                                           data-toggle="pill"
+                                           role="tab"
+                                           aria-selected="false">
+                                            {{word.word}}
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="tab-content">
+                                    {% for word in translation.words %}
+                                    {% if word.senses %}
+                                    <div id="{{translation.safe_id}}{{forloop.counter0}}"
+                                         class="tab-pane fade"
+                                         role="tabpanel" aria-labelledby="tab-{{translation_id}}{{forloop.counter0}}">
+                                        {% for s in word.senses %}
+                                        <div class="card">
+                                            <div class="card-body m-0 p-1">
+                                                <div>
+                                                    <button type="button" class="btn btn-info">
+                                                        {{s.name}}
+                                                    </button>
+                                                    {% for lemma in s.lemmas %}<span class="small mr-1"> {{lemma}};</span>{%endfor%}
+                                                </div>
+                                            <div class="small m-0 p-0">
+                                                <pre>{{s.tree}}</pre>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {%endif%}
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                            <!-- - tab contents -->
+
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+</div>
+{% endblock content %}

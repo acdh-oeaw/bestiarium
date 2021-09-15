@@ -1,0 +1,17 @@
+{% extends "webpage/base.html" %}
+{% block Titel %} Chapter {{chapter.chapter_name}} {% endblock %}
+{% block content %}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item" ><a href="/omens/chapters">Chapters</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Chapter {{chapter.chapter_name}}</li>
+    </ol>
+</nav>
+
+<div class="container">
+    This page is under construction.
+</div>
+
+{% endblock content %}

@@ -1,0 +1,124 @@
+<style>
+ td{
+     padding:0.3em;
+ }
+ .protasis{
+     color:DarkGoldenRod;
+ }
+ .apodosis{
+     color:DarkCyan;
+ }
+ .score-table{
+ }
+ .spacer{
+     flex: 1 1 auto;
+ }
+ .toggle-buttons{
+     text-align:right;
+     float:right;
+ }
+
+ .translation, .transcription,  .transliteration{
+     min-width: 25%;
+     font-size: 90%;
+     padding: 0.5em;
+ }
+
+ span.lemma:after{
+     content: " ";
+     white-space: break-spaces;
+ }
+ .reconstruction-label{
+     min-width: 100px;
+ }
+
+ .list-group-item{
+     background: transparent;
+     border: none;
+
+ }
+
+ .score-table{
+     min-width:50%;
+     margin-left:2em;
+ }
+</style>
+
+
+<script onload="displayResult()">
+ function toggleClass(checkbox, className){
+     console.log("Toggling");
+     var elements = document.getElementsByClassName(className);
+     for (let selected of elements){
+         if (checkbox.checked) {
+             selected.classList.remove('d-none');
+         }else{
+             selected.classList.add('d-none');
+         }
+     }
+ }
+
+
+
+ function loadXMLDoc(filename)
+ {
+     if (window.ActiveXObject)
+     {
+         xhttp = new ActiveXObject("Msxml2.XMLHTTP");
+     }
+     else
+     {
+         xhttp = new XMLHttpRequest();
+     }
+     xhttp.open("GET", filename, false);
+     try {xhttp.responseType = "application/xml"} catch(err) {} // Helping IE11
+     xhttp.send("");
+     return xhttp.responseXML;
+ }
+
+ var displayResult = function()
+ {
+     parser = new DOMParser();
+     xsl =loadXMLDoc("{% url 'omens:xsldoc' xsl_name=xsldoc%}");
+     xml = parser.parseFromString('{{tei|safe }}',"application/xml");
+     console.log("XML", xml);
+     console.log("XSL", xsl);
+
+     // code for IE
+     if (window.ActiveXObject)
+     {
+         var template = new ActiveXObject('Msxml2.XslTemplate');
+         template.stylesheet = xsl;
+         var proc = template.createProcessor();
+         proc.input = xml;
+         {%if omen_id%}
+         proc.addParameter(null, "omen", "{{omen_id}}");
+         {%endif%}
+         proc.transform();
+         document.getElementById("tei").innerHTML = proc.output;
+
+     }
+     // code for Chrome, Firefox, Opera, etc.
+     else if (document.implementation && document.implementation.createDocument)
+     {
+         xsltProcessor = new XSLTProcessor();
+         xsltProcessor.importStylesheet(xsl);
+         {%if omen_id%}
+         xsltProcessor.setParameter(null, "omen", "{{omen_id}}");
+         console.log("{{omen_id}}");
+         {%endif%}
+         resultDocument = xsltProcessor.transformToFragment(xml, document);
+         console.log("RESULT", resultDocument);
+         document.getElementById("tei").appendChild(resultDocument);
+     }
+
+ }
+ window.onload = function () {
+     displayResult();
+ }
+</script>
+<noscript>
+    <div class="alert alert-warning m-3" role="alert">
+        Javascript is not supported by your browser, so we cannot render the TEI here. Enable Javascript and try again or click <a href="{{request.path}}.xml"> here </a> to view the raw TEI data.
+    </div>
+</noscript>

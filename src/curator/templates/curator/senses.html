@@ -1,0 +1,379 @@
+<style>
+
+ .node circle {
+     fill: #fff;
+     stroke: steelblue;
+     stroke-width: 3px;
+ }
+
+ .node text {
+     font: 11px sans-serif;
+ }
+
+ .link {
+     fill: none;
+     stroke: #ccc;
+     stroke-width: 2px;
+ }
+
+ .svgrow svg {
+     width: 90rem;
+ }
+
+ .svgrow{
+     max-width: 1100px;
+     overflow-x: scroll;
+ }
+</style>
+<form  style="width:100%" method="post">{% csrf_token %}
+    <input id ="save-senses-{{translation.safe_id}}-{{token}}" class="btn btn-success btn-sm d-inline  m-2" type="button" value ="Save" />
+    <div id ="message-{{translation.safe_id}}-{{token}}" class="alert-sm alert-success m-2 p-1 d-none" role="alert" >
+    </div>
+    <div class="overflow-auto svgrow">
+        <svg id="svg{{translation.safe_id}}-{{token}}" style="overflow-x:scroll"></svg>
+    </div>
+    <div id ="test{{translation.safe_id}}-{{token}}">
+        You should not be seeing this.
+    </div>
+
+
+</form>
+<!-- {{translation.hypernyms}} -->
+<script type="text/javascript">
+ function wrap(text, width) {
+     text.each(function() {
+         var text = d3.select(this),
+             words = text.text().split(/\s+/).reverse(),
+             word,
+             line = [],
+             lineNumber = 0,
+             lineHeight = 1.1, // ems
+             y = text.attr("y"),
+             dy = parseFloat(text.attr("dy")),
+             tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+         while (word = words.pop()) {
+             line.push(word);
+             tspan.text(line.join(" "));
+             if (tspan.node().getComputedTextLength() > width) {
+                 line.pop();
+                 tspan.text(line.join(" "));
+                 line = [word];
+                 tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+             }
+         }
+     });}
+
+
+ function csrfSafeMethod(method) {
+     // these HTTP methods do not require CSRF protection
+     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+ }
+ $.ajaxSetup({
+     beforeSend: function(xhr, settings) {
+         var csrftoken = Cookies.get('csrftoken');
+         if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+             xhr.setRequestHeader("X-CSRFToken", csrftoken);
+         }
+     }
+ });
+
+
+ var width = 1100;
+ var height = 1200;
+ var color = d3.scaleOrdinal(d3.schemeCategory10);
+ $('a[href="#menu2-{{translation.safe_id}}"]').on('hidden.bs.tab',function(e){
+     console.log("hide");
+     var svg = d3.select("#svg{{translation.safe_id}}");
+     svg.selectAll("*").remove();
+ });
+ $('a[href="#menu2-{{translation.safe_id}}-{{token}}"]').on('shown.bs.tab',function(e){
+     var word = d3.select('a[href="#menu2-{{translation.safe_id}}"]')
+     console.log("Graph....");
+     d3.json("/curator/segments/{{translation.translation_id}}/wordsense/{{token}}").then(treeData =>{
+         console.log("TREE", treeData);
+         // Assigns parent, children, height, depth
+         const root = d3.hierarchy(treeData, function(d) { return d.children; });
+         root.x0 = width/6 / 2;
+         root.y0 = 0;
+
+         root.descendants().forEach((d, i) => {
+             d.id = i;
+             // d._children = d.children;
+             // if (d.depth >9) d.children = null;
+         });
+
+         const margin = {top: 30, right: 200, bottom: 30, left: 50};
+         const svg = d3.select("#svg{{translation.safe_id}}-{{token}}")
+                       .attr("viewBox", [-margin.left, -margin.top, width, 10]);
+         //To prevent adding multiple graphs whenever ths sense is clicked
+         svg.selectAll("*").remove();
+
+
+         const gLink = svg.append("g")
+                          .attr("fill", "none")
+                          .attr("stroke", "#555")
+                          .attr("stroke-opacity", 0.4)
+                          .attr("stroke-width", 1.5);
+
+         const gNode = svg.append("g")
+                          .attr("cursor", "pointer")
+                          .attr("pointer-events", "all");
+
+
+         var i = 0;
+
+
+         // declares a tree layout and assigns the size
+
+
+         var treemap = d3.tree().nodeSize([30,150])
+
+
+
+         // Collapse after the second el
+
+         // root.children.forEach(collapse);
+
+         update(root);
+
+         // Collapse the node and all its children
+         function collapse(d) {
+             if(d.children) {
+                 d._children = d.children
+                 d._children.forEach(collapse)
+                 d.children = null
+             }
+         }
+         $('#save-senses-{{translation.safe_id}}-{{token}}').on('click', function(e){
+             // action=
+             console.log("Saving... /curator/segments/{{translation.translation_id}}/{{token}}/save");
+             console.log("ROOT", root);
+             $.ajax({
+                 type: "POST",
+                 url: "/curator/segments/{{translation.translation_id}}/{{token}}/save",
+                 data: JSON.stringify(root, function( key, value) {
+                     if( key != 'parent' && key!= 'x' && key != 'x0' && key != 'y' && key != 'y0' && key != 'height' && key != 'depth') { //removing circular reference
+                         if (value != null && typeof value === "object" &&
+                             "data" in value){
+                             return value["data"];
+                         }
+                         return value;
+                     }
+                 }),
+                 success: console.log("... saved."),
+             });
+         });
+
+
+         function update(source) {
+             const duration = d3.event && d3.event.altKey ? 2500 : 250;
+             const nodes = root.descendants().reverse();
+             var links = root.descendants().slice(1);
+
+             // Compute the new tree layout.
+
+             // Assigns the x and y position for the nodes
+             var treeData = treemap(root);
+
+             let left = root;
+             let right = root;
+             root.eachBefore(node => {
+                 if (node.x < left.x) left = node;
+                 if (node.x > right.x) right = node;
+             });
+
+             const height = right.x - left.x + margin.top + margin.bottom;
+
+             const transition = svg.transition()
+                                   .duration(duration)
+                                   .attr("viewBox", [-margin.left, left.x - margin.top, width, height])
+                                   .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
+
+             // Compute the new tree layout.
+             links = treeData.descendants().slice(1);
+
+
+             // ****************** Nodes section ***************************
+
+             // Update the nodes...
+             /* var node = svg.selectAll('g.node')
+              *               .data(nodes, function(d) {return d.id || (d.id = ++i); }); */
+             const node = gNode.selectAll("g").data(nodes, d => d.id);
+
+
+
+             // Enter any new nodes at the parent's previous position.
+             const nodeEnter = node.enter().append("g")
+                                   .attr("transform", d => "translate(" + source.y0 + "," + source.x0 + ")")
+                                   .attr('class', 'node')
+                                   .on('click', click)
+                                   .on("contextmenu", removeNode)
+                                   .on("mouseover", mouseover)
+                                   .on("mouseout", mouseout);
+             // Add Circle for the nodes
+             nodeEnter.append('circle')
+                      .attr('class', 'node')
+                      .attr('r', 1e-6)
+                      .style("fill", function(d) {
+                          return d._children ? "lightsteelblue" : "#fff";
+                      });
+
+
+             // Add labels for the nodes
+             nodeEnter.append('text')
+                      .attr("dy", "1.25em")
+                      .attr('class','caption')
+                      .attr("text-anchor", "middle")
+                      .text(function(d) { return d.data.value; })
+                      .clone(true).lower()
+                      .attr("stroke-linejoin", "round")
+                      .attr("stroke-width", 3)
+                      .attr("stroke", "white");
+
+
+
+             // Transition nodes to their new position.
+             const nodeUpdate = node.merge(nodeEnter).transition(transition)
+                                    .attr("transform", d => `translate(${d.y},${d.x})`)
+                                    .select('circle.node')
+                                    .attr('r', 4)
+                                    .style("fill", function(d) {
+                                        return d._children ? "lightsteelblue" : "#fff";
+                                    })
+                                    .attr('cursor', 'pointer');
+
+
+             // Transition exiting nodes to the parent's new position.
+             const nodeExit = node.exit().transition(transition).remove()
+                                  .attr("transform", d => `translate(${source.y},${source.x})`)
+                                  .attr("fill-opacity", 0)
+                                  .attr("stroke-opacity", 0)
+                                  .select('circle')
+                                  .attr('r', 1e-6)
+                                  .select('text')
+                                  .style('fill-opacity', 1e-6);
+
+
+
+             // ****************** links section ***************************
+
+             // Update the links...
+             var link = svg.selectAll('path.link')
+                           .data(links, function(d) { return d.id; });
+
+             // Enter any new links at the parent's previous position.
+             var linkEnter = link.enter().insert('path', "g")
+                                 .attr("class", "link")
+                                 .attr('d', function(d){
+                                     var o = {x: source.x0, y: source.y0}
+                                     return diagonal(o, o)
+                                 });
+
+             // UPDATE
+             var linkUpdate = linkEnter.merge(link);
+
+             // Transition back to the parent element position
+             linkUpdate.transition()
+                       .duration(duration)
+                       .attr('d', function(d){ return diagonal(d, d.parent) });
+
+             // Remove any exiting links
+             var linkExit = link.exit().transition()
+                                .duration(duration)
+                                .attr('d', function(d) {
+                                    var o = {x: source.x, y: source.y}
+                                    return diagonal(o, o)
+                                })
+                                .remove();
+
+             // Store the old positions for transition.
+             nodes.forEach(function(d){
+                 d.x0 = d.x;
+                 d.y0 = d.y;
+             });
+
+             // Creates a curved (diagonal) path from parent to the child nodes
+             function diagonal(s, d) {
+
+                 path = `M ${s.y} ${s.x}
+    C ${(s.y + d.y) / 2} ${s.x},
+    ${(s.y + d.y) / 2} ${d.x},
+    ${d.y} ${d.x}`
+
+                 return path
+             }
+
+             // Toggle children on click.
+             function click(d) {
+                 if (d.children) {
+                     d._children = d.children;
+                     d.children = null;
+                 } else {
+                     d.children = d._children;
+                     d._children = null;
+                 }
+                 update(d);
+             }
+
+             function rtclick(d, i) {
+                 d3.event.preventDefault();
+                 if (d.children) {
+                     d._children = null;
+                     d.children = null;
+                 }
+
+                 update(root);
+             }
+             function removeNode(d,i){
+                 d3.event.preventDefault();
+                 var target = d;
+                 var children = [];
+                 target.parent.children.forEach(function(child){
+                     if (child.id != target.id){
+                         children.push(child);
+                     }
+
+                 });
+
+                 if (children.length){
+                     target.parent.children = children;
+                     target.parent.data.children = children;
+                 }
+                 else{
+                     target.parent.children = null;
+                     target.parent.data.children = null;
+                 }
+                 //redraw the parent since one of its children is removed
+                 update(target.parent);
+             }
+
+
+             function mouseover(d) {
+                 var g = d3.select(this); // The node
+                 // The class is used to remove the additional text later
+                 var info = g.append('text')
+                             .classed('info alert alert-primary', true)
+                             .attr('y', "-0.75em")
+                             .attr('dy', "-2em")
+                             .text(d.data.defn)
+                             .attr("text-anchor", "middle")
+                             .call(wrap, 200);
+             }
+
+
+             function mouseout(d) {
+                 d3.select(this).select('.info').remove()
+
+             }
+
+         }
+
+         d3.select("#test{{translation.safe_id}}-{{token}}").text("");
+     }).catch(function(error) {
+         // Do some error handling.
+     });
+
+     console.log("Done.");
+ });
+
+</script>
