@@ -11,7 +11,7 @@ PROJECT_NAME = "tieromina"
 ACDH_IMPRINT_URL = (
     "https://shared.acdh.oeaw.ac.at/acdh-common-assets/api/imprint.php?serviceID="
 )
-REDMINE_ID = 10459
+REDMINE_ID = 15057
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
