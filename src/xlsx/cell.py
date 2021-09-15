@@ -23,9 +23,13 @@ class Chunk(NamedTuple):
     Smallest unit of information in a cell with the same formatting
     """
 
-    text: str
+    given_text: str
     cell_format: CellFormat
     complete: bool = False  # whether this is the only chunk in the cell
+
+    @property
+    def text(self):
+        return self.given_text.strip()
 
 
 class Cell:
@@ -50,7 +54,7 @@ class Cell:
             if not chunk.text:
                 continue
 
-            text = text + chunk.text
+            text = text + chunk.text.strip()
 
         return text
 

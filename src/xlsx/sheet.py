@@ -84,7 +84,9 @@ class Sheet:
             if len(si) == 1 and si[0].tag.endswith("}t"):
                 # only one "chunk" in the shared string
                 # No extra formatting
-                yield Chunk(text=si[0].text, cell_format=cell_format, complete=True)
+                yield Chunk(
+                    given_text=si[0].text, cell_format=cell_format, complete=True
+                )
             else:
                 # multiple chunks and in-cell formatting
                 for elem in si:  # r elements
@@ -133,7 +135,8 @@ class Sheet:
                     )
 
                     yield Chunk(
-                        text=elem.find("./spreadsheetml:t", NS).text, cell_format=fmt
+                        given_text=elem.find("./spreadsheetml:t", NS).text,
+                        cell_format=fmt,
                     )
 
         else:
@@ -141,7 +144,9 @@ class Sheet:
             raw_text_elem = cell_element.find("spreadsheetml:v", NS)
             if raw_text_elem is not None:
                 yield Chunk(
-                    text=raw_text_elem.text, cell_format=cell_format, complete=True
+                    given_text=raw_text_elem.text,
+                    cell_format=cell_format,
+                    complete=True,
                 )
 
     def _extract_cell_format(self, cell) -> CellFormat:

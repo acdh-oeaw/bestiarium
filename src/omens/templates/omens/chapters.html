@@ -25,7 +25,8 @@
                 </div>
 
                 <div class="card-body mx-auto">
-                    <a href="{{ request.path }}/{{ chapter.chapter_name }}/structure" class="btn btn-light">Overview</a>
+                    <!--<a href="{{ request.path }}/{{ chapter.chapter_name }}/structure" class="btn btn-light">Overview</a> -->
+                    <a href="{% url 'omens:chapter_overview' chapter_name=chapter.chapter_name %}"  class="btn btn-light">Overview</a> 
                     <a href="{% url 'omens:chapter_layout' chapter_name=chapter.chapter_name %}" class="btn btn-light" title="View TEI">
                         Contents
                     </a>
