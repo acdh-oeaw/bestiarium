@@ -1,10 +1,13 @@
 from .base import *
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^mm-24*i-6iecm7c@z9l+7%^ns^4g^z!8=dgffg4ulggr-4=1%'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    '^mm-24*i-6iecm7c@z9l+7%^ns^4g^z!8=dgffg4ulggr-4=1%'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', True)
 DEV_VERSION = True
 
 ALLOWED_HOSTS = [
@@ -15,10 +18,10 @@ ALLOWED_HOSTS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'tieromina',
-        'USER': 'tieromina',
-        'PASSWORD': 'WwxPNtMh5SjS',
-        'HOST': 'helios.arz.oeaw.ac.at',
+        'NAME': os.environ.get('POSTGRES_DB', 'tieromina'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -76,15 +79,4 @@ LOGGING = {
         },
     }
 }
-# LOGGING = {
-#     'version': 1,
-#     'formatters': {
-#         'simple': {
-#             'format': '%(asctime)s %(levelname)-8s %(name)-15s %(message)s',
-#             'style': '{'
-#         }
-#     },
-#     'filters': [],
-#     'handlers': [],
-#     'datefmt': '%Y-%m-%d %H:%M:%S'
-# }
+
