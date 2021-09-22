@@ -25,6 +25,10 @@ A webapp for entering data in the project Bestiarium Mesopotamicum: Animal Omens
 
 ## workflow
 
+started with code from commit: https://gitlab.com/acdh-oeaw/bestiarium-mesopotamicum/webapp/-/tree/618e2642ff17e4afd5f3616030ed71082269e10b
+
+(to make the app working on a fresh database you'll need to manually run `python manage.py makemigrations omens` and `python manage.py makemigrations curator`; at some point migration files should be checked in)
+
 * Upload an index-file e.g. https://oeawcloud.oeaw.ac.at/index.php/f/35784358
   * 7 Witnesses: u.a. 'A441 +'
 * Upload omen-file e.g. https://oeawcloud.oeaw.ac.at/index.php/f/36945156
@@ -39,5 +43,33 @@ A webapp for entering data in the project Bestiarium Mesopotamicum: Animal Omens
 * reupload of index-file
 * reupload of omen-file
   * fails with error (variable 'row' referenced which does not exist, https://gitlab.com/acdh-oeaw/bestiarium-mesopotamicum/webapp/-/blob/master/src/omens/reconstruction.py#L31)
-  * fixing this bug by removing reference to 'row'
- 
+  * fixing this bug by removing reference to 'row' [commit](https://gitlab.com/acdh-oeaw/bestiarium-mesopotamicum/webapp/-/commit/c08b162b7623715280d591fe0a629c791ab7fb08)
+* reupload of omen-file
+  * failes due to yet another data-issue, "BM 38313" referenced in data but witness id is BM 038313, changed wrong data in sheet 37.37
+* delete everything / reupload everything
+
+```
+Ants 37.21-37.40 final.xlsx:
+Unrecognised row header; idno: Var. (A 441+) (trl)
+Unrecognised row header; idno: Var. (A 441+) (trl)
+Unrecognised row header; idno: Var. (A 441+) (trl)
+Unrecognised row header; idno: Var. (A 441+) (trl)
+```
+
+which looks like some regex issue in the same function with the bug fixed above; `omens/reconstruction.py`
+
+```python
+class ReconstructionId(namedtuple("ReconstructionId", "omen_prefix,label,witness")):
+    @classmethod
+    def idno_parts(cls, idno):
+        m = re.match(
+            r"^(?P<label>[a-zA-Z\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$", idno
+        )
+        if not m:
+            raise ValueError(f"Unrecognised row header; idno: {idno}", )
+        return namedtuple("idno", "label,witness,rdg_type")(
+            label=m.group("label"),
+            witness=m.group("siglum")[1:-2],
+            rdg_type=m.group("rdg_type"),
+        )
+```
