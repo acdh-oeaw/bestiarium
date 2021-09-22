@@ -23,7 +23,7 @@ A webapp for entering data in the project Bestiarium Mesopotamicum: Animal Omens
 * merged `develop` into `master`
 
 
-## workflow
+## workflow / debug
 
 started with code from commit: https://gitlab.com/acdh-oeaw/bestiarium-mesopotamicum/webapp/-/tree/618e2642ff17e4afd5f3616030ed71082269e10b
 
@@ -73,3 +73,18 @@ class ReconstructionId(namedtuple("ReconstructionId", "omen_prefix,label,witness
             rdg_type=m.group("rdg_type"),
         )
 ```
+
+by rewriting `def idno_parts(cls, idno)` like
+
+```python
+if not m:
+    # raise ValueError(f"Unrecognised row header; idno: {idno}", )
+    return namedtuple("idno", "label,witness,rdg_type")(
+        label=idno,
+        witness=idno,
+        rdg_type='trl',
+    )
+``` 
+
+the import goes through, next step would be to parse the currently hard_code rdg_type from the actual value
+
