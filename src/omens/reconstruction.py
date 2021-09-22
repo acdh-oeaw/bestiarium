@@ -28,7 +28,7 @@ class ReconstructionId(namedtuple("ReconstructionId", "omen_prefix,label,witness
             r"^(?P<label>[a-zA-Z\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$", idno
         )
         if not m:
-            raise ValueError("Unrecognised row header %s", row)
+            raise ValueError(f"Unrecognised row header; idno: {idno}", )
         return namedtuple("idno", "label,witness,rdg_type")(
             label=m.group("label"),
             witness=m.group("siglum")[1:-2],
