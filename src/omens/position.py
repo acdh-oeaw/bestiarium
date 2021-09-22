@@ -76,7 +76,8 @@ class LineInfo:
 
     @property
     def tei(self):
-        lb = ET.Element("lb", {"n": self.text, "ed": self.witness.xml_id})
+        fixed_witt = self.witness.split('______')[0]
+        lb = ET.Element("lb", {"n": self.text, "ed": fixed_witt})
         if self.broken:
             # TODO: Finalise/confirm encoding attribute
             lb.attrib["broken"] = "True"
@@ -101,5 +102,6 @@ class ColumnInfo:
 
     @property
     def tei(self):
-        cb = ET.Element("cb", {"n": self.text, "ed": self.witness.xml_id})
+        fixed_witt = self.witness.split('______')[0]
+        cb = ET.Element("cb", {"n": self.text, "ed": fixed_witt})
         return cb

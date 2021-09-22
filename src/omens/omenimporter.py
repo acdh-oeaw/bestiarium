@@ -213,9 +213,9 @@ class OmenImporter:
 
                 witnesses.extend(wit)
                 omen.witness.add(wit[0])
-
+                fake_wit = f"{wit[0].witness_id}______{row_num}"
                 # build score
-                score.add_row(cells, wit[0])
+                score.add_row(cells, fake_wit)
             elif row_type == ROWTYPE.RECONSTRUCTION:
                 recon.add_to_reconstruction(cells)
 

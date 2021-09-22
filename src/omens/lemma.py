@@ -191,7 +191,8 @@ class Lemma:
         returns the TEI representation
         TODO: Align this with the convention
         """
-        w = ET.Element("rdg", {"wit": witness.xml_id})
+        fixed_witt = witness.split('______')[0]
+        w = ET.Element("rdg", {"wit": fixed_witt})
         if reference:
             w.attrib["source"] = reference
 
