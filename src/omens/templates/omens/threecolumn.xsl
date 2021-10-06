@@ -69,24 +69,47 @@
       <xsl:attribute name="class">small <xsl:value-of select="$omenid"/>-score-row collapse</xsl:attribute>
       <td colspan="100%">
         <table class="table-condensed score-table">
-          <xsl:for-each select="../../../../tei:teiHeader/tei:sourceDesc/tei:listWit/tei:witness">
-            <xsl:variable name="witid" select="@xml:id"/>
-            <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[@wit=$witid]">
+            <xsl:for-each select="../../../../tei:teiHeader/tei:sourceDesc/tei:listWit/tei:witness">
+             <xsl:variable name="witid" select="./tei:idno"/>
+              <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[@wit=$witid]">
               <!-- if witness is used in the score -->
               <tr>
-                <td >
-                  <xsl:value-of select="./tei:idno"/>
+                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[(@wit=$witid) and not(@source)]">
+                <td>
+                   <xsl:value-of select="./tei:idno"/>
                 </td>
+                <td>
+                  <xsl:text></xsl:text>
+                </td>
+                </xsl:if>
                 <xsl:for-each
                     select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
                   <xsl:sort select="./@xml:id"/>
-                  <td>
-                      <xsl:apply-templates select="app/rdg[@wit=$witid]"/>
-                  </td>
+                <td>
+                      <xsl:apply-templates select="app/rdg[(@wit=$witid) and not(@source)]"/>
+                </td>
                 </xsl:for-each>
               </tr>
-            </xsl:if>
-          </xsl:for-each>
+              <tr>
+                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[(@wit=$witid) and @source]">
+                <td>
+                   <xsl:value-of select="./tei:idno"/> 
+                </td>
+                <td>
+                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg/@source"/>
+                </td>
+                </xsl:if>
+                <xsl:for-each
+                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
+                  <xsl:sort select="./@xml:id"/>
+                <td>
+                      <xsl:apply-templates select="app/rdg[(@wit=$witid) and @source]"/>
+                </td>
+                </xsl:for-each>
+              </tr>
+
+              </xsl:if>
+            </xsl:for-each>
         </table>
       </td>
     </tr>
