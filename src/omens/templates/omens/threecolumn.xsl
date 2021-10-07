@@ -43,10 +43,11 @@
 
     <xsl:apply-templates select="./div[@type = &apos;score&apos;]"/> <!-- Score -->
     <xsl:apply-templates select="./div[@n]"/> <!-- Reconstruction -->
-
   </xsl:template>
+  
   <xsl:template match="tei:body/tei:div/div[@type = &apos;score&apos;]"> <!-- Score -->
     <xsl:variable name="omenid" select="../@xml:id"/>
+    <xsl:variable name="headerid" select="../@n"/>
     <tr>
       <th colspan="100%">
         <xsl:choose>
@@ -57,7 +58,7 @@
             </a>
           </xsl:when>
         </xsl:choose>
-        <xsl:value-of select="substring-after($omenid, 'Omen-')"/>&#160;
+        <xsl:value-of select="substring-after($headerid, 'Omen ')"/>&#160;
         <a data-toggle="collapse" role="button" aria-expanded="false"  >
           <xsl:attribute name="data-target">.<xsl:value-of select="$omenid"/>-score-row</xsl:attribute>
           <xsl:attribute name="href">#<xsl:value-of select="$omenid"/>-score</xsl:attribute>
@@ -107,7 +108,6 @@
                 </td>
                 </xsl:for-each>
               </tr>
-
               </xsl:if>
             </xsl:for-each>
         </table>
@@ -131,6 +131,31 @@
       <xsl:text>&#11810;</xsl:text>
   </xsl:template>
 
+  <xsl:template match="rdg/text()">
+    <xsl:choose>
+    <xsl:when test="contains(., '2')">
+         <xsl:value-of select="translate(., '2', '&#8322;')"/>
+      </xsl:when>
+      <xsl:when test="contains(., '3')">
+         <xsl:value-of select="translate(., '3', '&#8323;')"/>
+      </xsl:when>
+      <xsl:when test="contains(., '4')">
+         <xsl:value-of select="translate(., '4', '&#8324;')"/>
+      </xsl:when>
+      <xsl:when test="contains(., '5')">
+         <xsl:value-of select="translate(., '5', '&#8325;')"/>
+      </xsl:when>
+      <xsl:when test="contains(., '8')">
+         <xsl:value-of select="translate(., '8', '&#8328;')"/>
+      </xsl:when>
+       <xsl:when test="contains(., '6')">
+         <xsl:value-of select="translate(., '6', '&#8326;')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="."/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template> 
 
   <xsl:template match="tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w"> <!-- Words in the score -->
     <th scope="col"><small><xsl:value-of select="@xml:id"/></small></th>
@@ -158,8 +183,6 @@
             </label>
           </div>
         </xsl:if>
-
-
       </td>
       <td class="transliteration"><ul class="list-group">
         <xsl:apply-templates select="./ab[@type = &apos;transliteration&apos;]"/></ul>
@@ -237,6 +260,28 @@
     </li>
   </xsl:template>
 
+  <xsl:template match="div/ab[@type='transliteration']/w/text()">
+    <xsl:choose>
+    <xsl:when test="contains(., '2')">
+         <xsl:value-of select="translate(., '2', '&#8322;')"/>
+      </xsl:when>
+      <xsl:when test="contains(., '4')">
+         <xsl:value-of select="translate(., '4', '&#8324;')"/>
+      </xsl:when>
+      <xsl:when test="contains(., '5')">
+         <xsl:value-of select="translate(., '5', '&#8325;')"/>
+      </xsl:when>
+      <xsl:when test="contains(., '8')">
+         <xsl:value-of select="translate(., '8', '&#8328;')"/>
+      </xsl:when>
+       <xsl:when test="contains(., '6')">
+         <xsl:value-of select="translate(., '6', '&#8326;')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="."/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template> 
 
   <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;transcription&apos;]">
     <xsl:variable name="rdgid" select="../@n"/>
