@@ -23,7 +23,7 @@ class Position:
                 return True
 
     def __init__(self, cell, witness):
-        self.witness = witness
+        self.witness = witness.split('___')[0]
         self.line = None
         self.column = None
         self.text = ""
@@ -44,17 +44,17 @@ class Position:
         parts = self.text.split()
         if parts[0][0].isnumeric() or parts[0][0] == "r":  # line number or reverse
             # Only line number - multiple columns obverse/reverse is not indicated
-            self.line = LineInfo(witness, self.text, self.supplement_text)
+            self.line = LineInfo(self.witness, self.text, self.supplement_text)
 
         elif parts[0][0].isalpha():  # column  number
-            self.column = ColumnInfo(witness, parts[0])
-            self.line = LineInfo(witness, " ".join(parts[1:]), self.supplement_text)
+            self.column = ColumnInfo(self.witness, parts[0])
+            self.line = LineInfo(self.witness, " ".join(parts[1:]), self.supplement_text)
         else:
             logging.warning(
-                f"Line/column number in an unexpected format at {cell.address} [witness {witness.witness_id}]."
+                f"Line/column number in an unexpected format at {cell.address} [witness {self.witness}]."
             )
             raise ValueError(
-                f"Line/column number in an unexpected format at {cell.address} [witness {witness.witness_id}]."
+                f"Line/column number in an unexpected format at {cell.address} [witness {self.witness}]."
             )
             self.line = LineInfo(witness, self.text, self.supplement_text)
 
