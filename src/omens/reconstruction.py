@@ -25,7 +25,7 @@ class ReconstructionId(namedtuple("ReconstructionId", "omen_prefix,label,witness
     @classmethod
     def idno_parts(cls, idno):
         m = re.match(
-            r"^(?P<label>[a-zA-Z\.?\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$", idno
+            r"^(?P<label>[a-zA-Z.\s]*)\s(?P<siglum>.*)\((?P<rdg_type>[a-zA-Z]*)\)$", idno
         )
         if not m:
             raise ValueError(f"Unrecognised row header; idno: {idno}", )
