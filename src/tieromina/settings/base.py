@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django_filters",
     "django_tables2",
     "rest_framework",
+    "ckeditor",
     "leaflet",
     "idprovider",
     "webpage",

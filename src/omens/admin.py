@@ -34,6 +34,7 @@ class ChapterAdmin(admin.ModelAdmin):
         "reviewer",
         "proofreader",
         "ctime",
+        "introduction"
     )
 
 

@@ -9,9 +9,13 @@
         <li class="breadcrumb-item active" aria-current="page">Chapter {{chapter.chapter_name}}</li>
     </ol>
 </nav>
-
-<div class="container">
-    This page is under construction.
+<div class="head">
+    <h1><b> Chapter: {{chapter.chapter_name}} - {{chapter.animal}} 
+    </b></h1>
 </div>
 
+<div class="body">{{chapter.introduction|safe}}</div>
+
 {% endblock content %}
+
+

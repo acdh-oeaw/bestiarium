@@ -1,6 +1,8 @@
 import logging
 from xml.etree import ElementTree as ET
 
+from ckeditor.fields import RichTextField
+
 from curator.models import Upload
 # Create your models here.
 from django.db import models
@@ -71,6 +73,7 @@ class Chapter(models.Model):
     tei = models.TextField(default="", blank=True, null=True)
     witness = models.ManyToManyField(Witness)
     upload = models.ManyToManyField(Upload)
+    introduction = RichTextField(default="Page under construction", blank=True, null=True)
 
     def __str__(self):
         return f"Chapter {self.chapter_name}"
