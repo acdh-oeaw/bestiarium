@@ -92,19 +92,36 @@
                 </xsl:for-each>
               </tr>
               <tr>
-                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[(@wit=$witid) and @source]">
+                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[(@wit=$witid) and starts-with(@source, 'KAL')]">
                 <td>
                    <xsl:value-of select="./tei:idno"/> 
                 </td>
                 <td>
-                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg/@source"/>
+                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[@wit=$witid]/@source"/>
                 </td>
                 </xsl:if>
                 <xsl:for-each
                     select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
-                  <xsl:sort select="./@xml:id"/>
+                  <!-- <xsl:sort select="./@xml:id"/> -->
                 <td>
-                      <xsl:apply-templates select="app/rdg[(@wit=$witid) and @source]"/>
+                      <xsl:apply-templates select="app/rdg[(@wit=$witid) and starts-with(@source, 'KAL')]"/>
+                </td>
+                </xsl:for-each>
+              </tr>
+              <tr>
+                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[(@wit=$witid) and starts-with(@source, 'If')]">
+                <td>
+                   <xsl:value-of select="./tei:idno"/> 
+                </td>
+                <td>
+                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[@wit=$witid]/@source"/>
+                </td>
+                </xsl:if>
+                <xsl:for-each
+                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
+                  <!-- <xsl:sort select="./@xml:id"/> -->
+                <td>
+                      <xsl:apply-templates select="app/rdg[(@wit=$witid) and starts-with(@source, 'If')]"/>
                 </td>
                 </xsl:for-each>
               </tr>

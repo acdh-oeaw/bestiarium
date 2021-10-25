@@ -42,7 +42,7 @@ class Position:
             )
         # Identify if the cell contains column information
         parts = self.text.split()
-        if parts[0][0].isnumeric() or parts[0][0] == "r":  # line number or reverse
+        if parts[0][0].isnumeric() or parts[0][0] == "r" or parts[0][0] == "*":  # line number or reverse
             # Only line number - multiple columns obverse/reverse is not indicated
             self.line = LineInfo(self.witness, self.text, self.supplement_text)
 
