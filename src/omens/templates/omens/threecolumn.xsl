@@ -102,7 +102,7 @@
                 </xsl:if>
                 <xsl:for-each
                     select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
-                  <!-- <xsl:sort select="./@xml:id"/> -->
+                  <xsl:sort select="./@xml:id"/>
                 <td>
                       <xsl:apply-templates select="app/rdg[(@wit=$witid) and starts-with(@source, 'KAL')]"/>
                 </td>
@@ -119,7 +119,7 @@
                 </xsl:if>
                 <xsl:for-each
                     select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
-                  <!-- <xsl:sort select="./@xml:id"/> -->
+                  <xsl:sort select="./@xml:id"/> 
                 <td>
                       <xsl:apply-templates select="app/rdg[(@wit=$witid) and starts-with(@source, 'If')]"/>
                 </td>
@@ -167,6 +167,17 @@
       </xsl:when>
        <xsl:when test="contains(., '6')">
          <xsl:value-of select="translate(., '6', '&#8326;')"/>
+      </xsl:when>
+      <xsl:when test="contains(., '}')">
+          <xsl:variable name="before" select="substring-before(., '{')"/>
+          <xsl:variable name="after" select="substring-after(., '}')"/>
+          <xsl:variable name="until" select="substring-before(., '}')"/>
+          <xsl:variable name="super" select="substring-after($until, '{')"/>
+        <xsl:value-of select="$before"/>
+        <xsl:element name="sup">
+          <xsl:value-of select="$super"/>
+        </xsl:element>
+         <xsl:value-of select="$after"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="."/>
@@ -293,6 +304,17 @@
       </xsl:when>
        <xsl:when test="contains(., '6')">
          <xsl:value-of select="translate(., '6', '&#8326;')"/>
+      </xsl:when>
+      <xsl:when test="contains(., '}')">
+          <xsl:variable name="before" select="substring-before(., '{')"/>
+          <xsl:variable name="after" select="substring-after(., '}')"/>
+          <xsl:variable name="until" select="substring-before(., '}')"/>
+          <xsl:variable name="super" select="substring-after($until, '{')"/>
+        <xsl:value-of select="$before"/>
+        <xsl:element name="sup">
+          <xsl:value-of select="$super"/>
+        </xsl:element>
+         <xsl:value-of select="$after"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="."/>
