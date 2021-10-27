@@ -150,23 +150,8 @@
 
   <xsl:template match="rdg/text()">
     <xsl:choose>
-    <xsl:when test="contains(., '2')">
-         <xsl:value-of select="translate(., '2', '&#8322;')"/>
-      </xsl:when>
-      <xsl:when test="contains(., '3')">
-         <xsl:value-of select="translate(., '3', '&#8323;')"/>
-      </xsl:when>
-      <xsl:when test="contains(., '4')">
-         <xsl:value-of select="translate(., '4', '&#8324;')"/>
-      </xsl:when>
-      <xsl:when test="contains(., '5')">
-         <xsl:value-of select="translate(., '5', '&#8325;')"/>
-      </xsl:when>
-      <xsl:when test="contains(., '8')">
-         <xsl:value-of select="translate(., '8', '&#8328;')"/>
-      </xsl:when>
-       <xsl:when test="contains(., '6')">
-         <xsl:value-of select="translate(., '6', '&#8326;')"/>
+       <xsl:when test="contains(., '#')">
+         <xsl:value-of select="translate(., 'abcdefghijklmnopqrstuvwxyz#', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
       </xsl:when>
       <xsl:when test="contains(., '}')">
           <xsl:variable name="before" select="substring-before(., '{')"/>
@@ -180,7 +165,7 @@
          <xsl:value-of select="$after"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="."/>
+        <xsl:value-of select="translate(., '012345678911', '&#8320;&#8321;&#8322;&#8323;&#8324;&#8325;&#8326;&#8327;&#8328;&#8329;&#83211;')"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template> 
@@ -289,21 +274,9 @@
   </xsl:template>
 
   <xsl:template match="div/ab[@type='transliteration']/w/text()">
-    <xsl:choose>
-    <xsl:when test="contains(., '2')">
-         <xsl:value-of select="translate(., '2', '&#8322;')"/>
-      </xsl:when>
-      <xsl:when test="contains(., '4')">
-         <xsl:value-of select="translate(., '4', '&#8324;')"/>
-      </xsl:when>
-      <xsl:when test="contains(., '5')">
-         <xsl:value-of select="translate(., '5', '&#8325;')"/>
-      </xsl:when>
-      <xsl:when test="contains(., '8')">
-         <xsl:value-of select="translate(., '8', '&#8328;')"/>
-      </xsl:when>
-       <xsl:when test="contains(., '6')">
-         <xsl:value-of select="translate(., '6', '&#8326;')"/>
+     <xsl:choose>
+       <xsl:when test="contains(., '#')">
+         <xsl:value-of select="translate(., 'abcdefghijklmnopqrstuvwxyz#', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
       </xsl:when>
       <xsl:when test="contains(., '}')">
           <xsl:variable name="before" select="substring-before(., '{')"/>
@@ -317,7 +290,7 @@
          <xsl:value-of select="$after"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:value-of select="."/>
+        <xsl:value-of select="translate(., '012345678911', '&#8320;&#8321;&#8322;&#8323;&#8324;&#8325;&#8326;&#8327;&#8328;&#8329;&#83211;')"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template> 
