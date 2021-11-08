@@ -1,3 +1,5 @@
+[![flake8 Lint](https://github.com/acdh-oeaw/bestiarium/actions/workflows/lint.yml/badge.svg)](https://github.com/acdh-oeaw/bestiarium/actions/workflows/lint.yml)
+
 # Bestiarium Mesopotamicum
 
 Code repo for FWF Project [Bestiarium Mesopotamicum: Tieromina im Alten Mesopotamien](https://pf.fwf.ac.at/de/wissenschaft-konkret/project-finder/42881)
@@ -11,6 +13,5 @@ Code repo for FWF Project [Bestiarium Mesopotamicum: Tieromina im Alten Mesopota
 * make migrations and run migrations
 * start the dev server`
 
-1. `python manage.py makemigrations`
-2. `python manage.py migrate`
-3. `python manage.py runserver`
+1. `python manage.py migrate`
+1. `python manage.py runserver`
