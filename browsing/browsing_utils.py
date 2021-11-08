@@ -5,7 +5,7 @@ import django_filters
 import django_tables2
 import pandas as pd
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import HTML, Div, Fieldset, Layout, MultiField, Submit
+from crispy_forms.layout import Submit
 from django.apps import apps
 from django.conf import settings
 from django.db.models.fields.related import ManyToManyField
@@ -91,10 +91,6 @@ class GenericListView(django_tables2.SingleTableView):
             return self.table_class
         else:
             return get_entities_table(self.model)
-
-        raise ImproperlyConfigured(
-            "You must either specify {0}.table_class or {0}.model".format(type(self).__name__)
-        )
 
     def get_all_cols(self):
         all_cols = list(self.get_table().base_columns.keys())
@@ -280,10 +276,11 @@ def create_brows_config_obj(app_name, exclude_fields=[]):
                 field_name = f.name
                 verbose_name = getattr(f, 'verbose_name', f.name)
                 help_text = getattr(f, 'help_text', 'no helptext')
-                print("{}: {} ({})".format(
-                    model_name,
-                    field_name,
-                    help_text
+                print(
+                    "{}: {} ({})".format(
+                        model_name,
+                        field_name,
+                        help_text
                     )
                 )
                 brc, _ = BrowsConf.objects.get_or_create(
