@@ -12,9 +12,6 @@ cover/
 # IDE
 .idea
 
-# migrations
-*/migrations/*
-
 /staticfiles
 
 # Ipython Notebook checkpoints
@@ -39,3 +36,10 @@ dev_secret.py
 *~
 *conda*
 /htmlcov/*
+/env
+
+# exclude everything
+media/*
+
+# exception to the rule
+!media/.gitkeep 

@@ -1,9 +1,8 @@
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(
-    os.path.dirname(os.path.abspath(os.path.join(__file__, "../")))
-)
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
 
 DEBUG = os.environ.get('DJANGO_DEBUG', True)
 SHARED_URL = "https://shared.acdh.oeaw.ac.at/"
