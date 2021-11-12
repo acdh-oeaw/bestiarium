@@ -5,7 +5,7 @@ import logging
 import pprint
 from collections import Counter, defaultdict
 
-from django.db.models import DecimalField, IntegerField
+from django.db.models import DecimalField
 from django.db.models.functions import Cast
 
 from .models import Chapter, Omen, Reconstruction, Translation

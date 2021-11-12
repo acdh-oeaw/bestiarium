@@ -2,8 +2,6 @@
 Collection of classes used to describe various parts of an omen
 """
 
-
-
 ROWTYPE_BLANK = "BLANK"
 ROWTYPE_SCORE = "SCORE"
 ROWTYPE_RECONSTRUCTION = "RECONSTRUCTION"
