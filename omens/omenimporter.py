@@ -1,25 +1,24 @@
 import logging
 from xml.etree import ElementTree as ET
 
-from .namespaces import NS, TEI_NS, XML_ID, get_attribute
-
-for ns, uri in NS.items():
-    ET.register_namespace(ns, uri)
-
-
 from typing import NamedTuple
 
-from django.db import DatabaseError, transaction
+from django.db import transaction
 from django.db.utils import IntegrityError
+from omens import omen
 from xlsx.workbook import Workbook
 
-from .importer import Importer
 from .models import Chapter, Omen, Segment, Witness
 from .reconstruction import Reconstruction
 from .score import Score
 from .util import clean_id, element2string
+from .namespaces import NS, TEI_NS, XML_ID, get_attribute
+
 
 logger = logging.getLogger(__name__)
+
+for ns, uri in NS.items():
+    ET.register_namespace(ns, uri)
 
 
 class OmenImporter:
@@ -229,7 +228,8 @@ class OmenImporter:
         tei.append(score.tei)
         for recon_grp in recon.tei:
             tei.append(recon_grp)
-
+        omen.tei_content = ET.tostring(tei).decode()
+        omen.save()
         return OmenData(
             name=sheet.name, label=label, tei=tei, witnesses=list(set(witnesses))
         )

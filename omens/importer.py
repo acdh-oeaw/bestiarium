@@ -3,7 +3,6 @@ import logging
 import pandas as pd
 
 
-
 class Importer:
     """
     A generic class to import xlsx files into the database

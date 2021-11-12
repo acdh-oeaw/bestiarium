@@ -95,12 +95,12 @@ class Omen(models.Model):
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default="")
     witness = models.ManyToManyField(Witness)
     upload = models.ManyToManyField(Upload)
+    tei_content = models.TextField(blank=True, null=True)
 
     @property
     def tei(self):
         chapter_tei = ET.XML(self.chapter.tei)
         omen_tei = chapter_tei.find(f'.//*[@n="{self.omen_name}"]')
-        print(omen_tei)
         if omen_tei:
             return element2string(omen_tei)
         return ""

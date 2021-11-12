@@ -1,11 +1,8 @@
 import logging
-from json import dumps
-from xml.etree import ElementTree as ET
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import Http404
 from django.shortcuts import render
 
 # Create your views here.
