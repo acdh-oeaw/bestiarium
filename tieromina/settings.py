@@ -2,7 +2,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 DEBUG = os.environ.get('DJANGO_DEBUG', True)
 SHARED_URL = "https://shared.acdh.oeaw.ac.at/"
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django_filters",
     "django_tables2",
     "rest_framework",
+    "django_extensions",
     "ckeditor",
     "leaflet",
     "idprovider",

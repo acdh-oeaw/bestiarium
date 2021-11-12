@@ -251,3 +251,16 @@ class Sequence(models.Model):
     seq_name = models.CharField(max_length=100, unique=True)
     omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
     position = models.IntegerField(default=0)
+
+
+class PhilComment(models.Model):
+    """
+    A row represents a philological comment
+    """
+
+    omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
+    comment = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        if self.comment:
+            return f"{self.comment[:24]}... (Omen: {self.omen.omen_num})"

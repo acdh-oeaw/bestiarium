@@ -1,6 +1,17 @@
 from django.contrib import admin
 
-from .models import *
+from .models import (
+    Witness,
+    Chapter,
+    Omen,
+    Segment,
+    Lemma,
+    Reconstruction,
+    Translation,
+    Transliteration,
+    Transcription,
+    PhilComment
+)
 
 # Register your models here.
 
@@ -79,3 +90,4 @@ admin.site.register(Transliteration, TransliterationAdmin)
 admin.site.register(Transcription, TranscriptionAdmin)
 admin.site.register(Translation, TranslationAdmin)
 admin.site.register(Segment, SegmentAdmin)
+admin.site.register(PhilComment)
