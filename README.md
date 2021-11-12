@@ -11,7 +11,7 @@ Code repo for FWF Project [Bestiarium Mesopotamicum: Tieromina im Alten Mesopota
 * adapt `settings.py` to match your database
 * create a virtual environment and install dependencies `pip install -r requirements.txt`
 * make migrations and run migrations
-* start the dev server`
+* start the dev server
 
 1. `python manage.py migrate`
 1. `python manage.py runserver`
