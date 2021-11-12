@@ -1,5 +1,6 @@
 import logging
 import os
+import pandas as pd
 
 from crispy_forms.helper import FormHelper
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,6 +11,7 @@ from omens.chapter import Chapter
 from omens.creditsimporter import CreditsImporter
 from omens.indeximporter import IndexImporter
 from omens.omenimporter import OmenImporter
+from omens.coment_utils import import_comments
 
 from .forms import UploadSpreadSheet
 from .models import USTATUS, UTYPES, Upload
@@ -286,7 +288,9 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
             report = OmenImporter(f, upload).save()
 
         elif ftype == UTYPES.COMMENTS_FILE:
-            pass
+            df = pd.read_excel(f)
+            report = import_comments(df)
+
         elif ftype == UTYPES.DITTO_FILE:
             pass
         elif ftype == UTYPES.CREDITS_FILE:

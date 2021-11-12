@@ -15,5 +15,5 @@ def import_comments(df):
         )
         com.comment = row['commentary']
         com.save()
-        ids.append((com.id, i))
+        ids.append(f"commentary {com} created")
     return ids
