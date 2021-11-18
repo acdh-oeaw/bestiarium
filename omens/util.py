@@ -28,3 +28,31 @@ def pretty_print(root):
 
 def clean_id(dirty_id):
     return re.sub("[^A-Za-z0-9]+", "-", dirty_id)
+
+
+TEI_TEMPLATE = """
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title>Chapter {{ object.chapter.chapter_name }}</title>
+         </titleStmt>
+         <publicationStmt>
+            <p>born digital</p>
+         </publicationStmt>
+         <sourceDesc>
+            <listWit>{% for x in object.witness.all %}
+                <witness xml:id="{{x.xml_id}}">
+                    <idno>{{ x.witness_id }}</idno>
+                </witness>{% endfor %}
+            </listWit>
+         </sourceDesc>
+      </fileDesc>
+  </teiHeader>
+  <text>
+      <body>
+            {{ object.tei_content|safe }}
+      </body>
+  </text>
+</TEI>
+"""

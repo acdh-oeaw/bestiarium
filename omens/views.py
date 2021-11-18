@@ -88,7 +88,7 @@ def omen_detail(request, omen_id):
 def omen_tei_raw(request, omen_id):
     template_name = "omens/tei.xml"
     omen = get_omen(omen_id)
-    context = {"tei": omen.tei_content}
+    context = {"tei": omen.full_tei_string}
     return render(request, template_name, context, content_type="text/xml")
 
 
@@ -99,6 +99,7 @@ def omen_tei(request, omen_id):
     if omen:
         context = {
             "tei": omen.chapter.safe_tei,
+            # "tei": omen.full_tei_string.replace("\n", "").replace("'", "&#8217;"),
             "omen_id": omen.xml_id,
             "omen_num": omen.omen_num,
             "chapter_name": omen.chapter.chapter_name,

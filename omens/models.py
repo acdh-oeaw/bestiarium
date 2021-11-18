@@ -9,7 +9,8 @@ from django.db import models
 from django.utils.timezone import now
 
 from .namespaces import NS, TEI_NS, XML_ID, get_attribute
-from .util import clean_id, element2string
+from .util import clean_id, element2string, TEI_TEMPLATE
+from django.template import Template, Context
 
 for ns, uri in NS.items():
     ET.register_namespace(ns, uri)
@@ -108,6 +109,15 @@ class Omen(models.Model):
                 '<div xmlns="http://www.tei-c.org/ns/1.0"'
             )
         return ""
+
+    @property
+    def full_tei_string(self):
+        template = Template(TEI_TEMPLATE)
+        context = Context(
+            {"object": self}
+        )
+        full_tei_string = template.render(context)
+        return full_tei_string
 
     @property
     def protasis(self):
