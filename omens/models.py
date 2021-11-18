@@ -279,15 +279,30 @@ class PhilComment(models.Model):
         if self.comment:
             return f"{self.comment[:24]}... (Omen: {self.omen.omen_num})"
 
+    @property
+    def xml_id(self):
+        return f"phil-comment__{self.id}"
+
     def as_tei_node(self):
         if self.comment:
             note_node = LET.Element("{http://www.tei-c.org/ns/1.0}note")
             note_node.attrib['type'] = "phil-comment"
-            note_node.attrib["{http://www.w3.org/XML/1998/namespace}id"] = f"phil-comment__{self.id}"
+            note_node.attrib["{http://www.w3.org/XML/1998/namespace}id"] = self.xml_id
             note_node.text = self.comment
             return note_node
         return None
 
     def get_parent_node(self):
         omen_tei = TeiReader(self.omen.tei_content)
-        return omen_tei
+        return omen_tei.tree
+
+    def save(self, *args, **kwargs):
+        some_div = self.get_parent_node()
+        phil_note = self.as_tei_node()
+        xpath = f'//*[@xml:id="{self.xml_id}"]'
+        for bad in some_div.xpath(xpath):
+            bad.getparent().remove(bad)
+        some_div.insert(0, phil_note)
+        self.omen.tei_content = ET.tostring(some_div).decode()
+        self.omen.save()
+        super().save(*args, **kwargs)
