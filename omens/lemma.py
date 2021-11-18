@@ -1,4 +1,5 @@
 import logging
+import uuid
 from xml.etree import ElementTree as ET
 
 from xlsx.cell import Cell, Chunk
@@ -146,8 +147,9 @@ class Lemma:
                         )
                         self.tokens.append(anchor)
                     elif char in "˺]":
+                        random_id = f"{anchor_id}__{uuid.uuid1()}"
                         anchor = BreakEnd(
-                            text=char, xml_id=anchor_id, fmt=chunk.cell_format
+                            text=char, xml_id=random_id, fmt=chunk.cell_format
                         )
                         self.tokens.append(anchor)
                     elif char == "x":
