@@ -10,7 +10,6 @@ from xlsx.cell import Cell
 
 from .lemma import Lemma
 from .line import Line
-from .models import Witness
 from .namespaces import NS, XML_ID
 from .position import Position
 
@@ -25,17 +24,16 @@ class ScoreLine(Line):
     def __init__(self, row: List[Cell], omen, witness):
         super().__init__(omen.xml_id)
         self.omen = omen
-        idno = ""
         self.reference = ""
 
         if row[0].column_name == "A":
-            idno = row[0].full_text
+            idno = row[0].full_text  # noqa: F841
         else:
             logger.error("First cell from column A missing: %s", row)
             raise ValueError(f"col1 must be column A in row: {row}")
         try:
             self.reference = row[1].full_text if row[1].column_name == "B" else ""
-        except IndexError as ie:
+        except IndexError:
             pass
 
         self.witness = witness
@@ -52,7 +50,7 @@ class ScoreLine(Line):
                     self.data.append(position.column)
                 self.data.append(position.line)
             else:
-                ## Lemma
+                # Lemma
                 lemma = Lemma(cell, omen=self.omen)
                 self.data.append(lemma)
 

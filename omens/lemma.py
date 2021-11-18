@@ -2,11 +2,8 @@ import logging
 import uuid
 from xml.etree import ElementTree as ET
 
-from xlsx.cell import Cell, Chunk
-
 from .models import Lemma as LemmaDB
 from .namespaces import XML_ID
-from .util import clean_id
 
 logger = logging.getLogger(__name__)
 

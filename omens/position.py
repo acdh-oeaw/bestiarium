@@ -1,11 +1,11 @@
 """
 Classes to decode the position information in a cell
 """
+import logging
+from xml.etree import ElementTree as ET
 
 LINENUM_COLOR = "FFFF0000"
 
-import logging
-from xml.etree import ElementTree as ET
 
 logger = logging.getLogger(__name__)
 

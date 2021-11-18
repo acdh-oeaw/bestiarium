@@ -1,4 +1,3 @@
-from unittest.mock import patch
 from xml.etree import ElementTree as ET
 
 from django.test import TestCase
@@ -6,7 +5,6 @@ from django.test import TestCase
 from ..chapter import Chapter
 from ..models import Chapter as DB
 from ..namespaces import get_attribute
-from ..util import pretty_print
 
 NS = {
     'ns': 'http://www.tei-c.org/ns/1.0',

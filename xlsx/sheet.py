@@ -1,9 +1,6 @@
 """
 A single sheet from a workbook
 """
-from collections import defaultdict
-from xml.etree import ElementTree as ET
-
 from .cell import Cell, CellFormat, Chunk
 from .namespaces import NS
 

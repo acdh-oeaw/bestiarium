@@ -8,7 +8,7 @@ from collections import Counter, defaultdict
 from django.db.models import DecimalField
 from django.db.models.functions import Cast
 
-from .models import Chapter, Omen, Reconstruction, Translation
+from .models import Chapter, Omen, Translation
 
 
 def all_chapters() -> dict:
@@ -62,43 +62,43 @@ def get_omen(omen_id: str) -> Omen:
         return None
 
 
-def omen_hypernyms(omen_id: str) -> dict:
-    omen = get_omen(omen_id)
-    readings = {}
+# def omen_hypernyms(omen_id: str) -> dict:
+#     omen = get_omen(omen_id)
+#     readings = {}
 
-    hyp = lambda s: s.hypernyms()
+#     hyp = lambda s: s.hypernyms()
 
-    for reading in Reconstruction.objects.filter(omen__omen_id=omen.omen_id):
-        readings[reading.reconstruction_id] = {}
-        records = Translation.objects.filter(
-            reconstruction__reconstruction_id=reading.reconstruction_id
-        )
+#     for reading in Reconstruction.objects.filter(omen__omen_id=omen.omen_id):
+#         readings[reading.reconstruction_id] = {}
+#         records = Translation.objects.filter(
+#             reconstruction__reconstruction_id=reading.reconstruction_id
+#         )
 
-        for record in records:
-            readings[reading.reconstruction_id][record.translation_id] = {
-                "safe_id": record.translation_id.replace("_", "-").replace(".", "-"),
-                "fulltext": record.translation_txt,
-                "words": [],
-            }
-            # collect wordnet senses
-            postags = nltk.pos_tag(wordpunct_tokenize(record.translation_txt))
-            for text, postag in postags:
-                sense_info = {"word": text, "senses": []}
-                for sim in wordnet.synsets(text):
-                    sense_info["senses"].append(
-                        {
-                            "name": sim.name(),
-                            "lemmas": sim.lemma_names(),
-                            "examples": sim.examples(),
-                            "tree": text_viz_hypernyms(sim.tree(hyp)),
-                        }
-                    )
+#         for record in records:
+#             readings[reading.reconstruction_id][record.translation_id] = {
+#                 "safe_id": record.translation_id.replace("_", "-").replace(".", "-"),
+#                 "fulltext": record.translation_txt,
+#                 "words": [],
+#             }
+#             # collect wordnet senses
+#             postags = nltk.pos_tag(wordpunct_tokenize(record.translation_txt))
+#             for text, postag in postags:
+#                 sense_info = {"word": text, "senses": []}
+#                 for sim in wordnet.synsets(text):
+#                     sense_info["senses"].append(
+#                         {
+#                             "name": sim.name(),
+#                             "lemmas": sim.lemma_names(),
+#                             "examples": sim.examples(),
+#                             "tree": text_viz_hypernyms(sim.tree(hyp)),
+#                         }
+#                     )
 
-                readings[reading.reconstruction_id][record.translation_id][
-                    "words"
-                ].append(sense_info)
+#                 readings[reading.reconstruction_id][record.translation_id][
+#                     "words"
+#                 ].append(sense_info)
 
-    return {"data": {"omen": omen, "readings": readings}}
+#     return {"data": {"omen": omen, "readings": readings}}
 
 
 def text_viz_hypernyms(hypernym_tree):

@@ -40,7 +40,8 @@ class Commentary(UserList):
         Adds philological commentary to the commentary attribute
         '''
         for cell in row:
-            if not cell.full_text: continue
+            if not cell.full_text:
+                continue
 
             if cell.column_name == 'A' and not self.title:
                 self.title = cell.full_text

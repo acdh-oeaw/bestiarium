@@ -5,7 +5,6 @@ from typing import NamedTuple
 
 from django.db import transaction
 from django.db.utils import IntegrityError
-from omens import omen
 from xlsx.workbook import Workbook
 
 from .models import Chapter, Omen, Segment, Witness
@@ -38,9 +37,9 @@ class OmenImporter:
         header = ET.SubElement(root, get_attribute("teiHeader", TEI_NS))
         fileDesc = ET.SubElement(header, get_attribute("fileDesc", TEI_NS))
         titleStmt = ET.SubElement(fileDesc, get_attribute("titleStmt", TEI_NS))
-        title = ET.SubElement(titleStmt, get_attribute("title", TEI_NS))
-        editor = ET.SubElement(titleStmt, get_attribute("editor", TEI_NS))
-        respStmt = ET.SubElement(titleStmt, get_attribute("respStmt", TEI_NS))
+        ET.SubElement(titleStmt, get_attribute("title", TEI_NS))
+        ET.SubElement(titleStmt, get_attribute("editor", TEI_NS))
+        ET.SubElement(titleStmt, get_attribute("respStmt", TEI_NS))
         publicationStmt = ET.SubElement(
             fileDesc, get_attribute("publicationStmt", TEI_NS)
         )
@@ -55,7 +54,7 @@ class OmenImporter:
 
     def __init__(self, file_to_import, upload):
         self.wb = Workbook(file_to_import)
-        ## Extract chapter name from the first sheet name
+        # Extract chapter name from the first sheet name
         self.sheets = list(self.wb.get_sheets())
         self.upload = upload
 
@@ -130,11 +129,7 @@ class OmenImporter:
             Returns the row type based on the contents of cell_text
             Expects the cell in the first column but does not validate
             """
-            if (
-                not cell.is_empty
-                and cell.column_name != "A"
-                and prev_row_type == ROWTYPE.COMMENT
-            ):
+            if not cell.is_empty and cell.column_name != "A" and prev_row_type == ROWTYPE.COMMENT:
                 return ROWTYPE.COMMENT
 
             if (
@@ -161,7 +156,7 @@ class OmenImporter:
         witnesses = []
 
         try:
-            omen, created = Omen.objects.update_or_create(
+            omen, created = Omen.objects.update_or_create(  # noqa: F811
                 xml_id=xml_id,
                 omen_name=label,
                 omen_num=sheet.name,
@@ -177,7 +172,7 @@ class OmenImporter:
                     xml_id=xml_id + "_A", omen=omen, segment_type="APODOSIS"
                 )
                 apodosis.save()
-        except IntegrityError as ie:
+        except IntegrityError:
             raise ValueError(f"Error creating omen {label} from {sheet.name}")
 
         score = Score(omen)
@@ -202,7 +197,7 @@ class OmenImporter:
                 ) | Witness.objects.filter(museum_numbers__icontains=search_str)
                 if not wit:
                     raise ValueError(
-                        f'Unknown siglum - "{cells[0].full_text}". Unable to find any siglum starting with {search_str} for {label} in sheet {sheet.name}'
+                        f'Unknown siglum - "{cells[0].full_text}". Unable to find any siglum starting with {search_str} for {label} in sheet {sheet.name}'  # noqa: E501
                     )
 
                 if len(wit) != 1:
@@ -219,9 +214,9 @@ class OmenImporter:
                 recon.add_to_reconstruction(cells)
 
             # Readings
-            ## Transliteration
-            ## Transcription
-            ## Translation
+            # Transliteration
+            # Transcription
+            # Translation
             # Philologocal commentary?
 
         # append score div to omen

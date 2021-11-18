@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.urls import path, re_path
 
 from . import views
@@ -36,11 +35,11 @@ urlpatterns = [
         views.chapter_tei_raw,
         name="chapter_tei_raw",
     ),
-    path(
-        "<omen_id>",
-        views.omen_detail,
-        name="omen_detail",
-    ),
+    # path(
+    #     "<omen_id>",
+    #     views.omen_detail,
+    #     name="omen_detail",
+    # ),
     path(
         "xsl/<xsl_name>",
         views.xsldoc,
@@ -56,9 +55,9 @@ urlpatterns = [
         views.omen_tei_raw,
         name="omen_tei",
     ),
-    path(
-        "<omen_id>/edit/<translation_id>",
-        views.edit_translation,
-        name="edit_translation",
-    ),
+    # path(
+    #     "<omen_id>/edit/<translation_id>",
+    #     views.edit_translation,
+    #     name="edit_translation",
+    # ),
 ]

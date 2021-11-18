@@ -39,7 +39,7 @@ class Importer:
                 for header_col in self.df.columns:
                     if header_col.strip().lower() == col.lower():
                         col_found = True
-                        df.rename(columns={header_col: col}, inplace=True)
+                        df.rename(columns={header_col: col}, inplace=True)  # noqa: F821
                         continue
 
                     else:

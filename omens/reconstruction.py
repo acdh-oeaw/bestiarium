@@ -3,18 +3,14 @@ Represents the reconstructions of an omen
 """
 import logging
 import re
-from collections import UserDict, UserList, defaultdict, namedtuple
-from typing import NamedTuple
+from collections import UserDict, defaultdict, namedtuple
 from xml.etree import ElementTree as ET
 
 from .lemma import Lemma
 from .line import Line
 from .models import Lemma as LemmaDB
 from .models import Reconstruction as ReconstructionDB
-from .models import Segment as SegmentDB
-from .models import Transcription as TranscriptionDB
 from .models import Translation as TranslationDB
-from .models import Transliteration as TranslitDB
 from .namespaces import XML_ID
 from .util import clean_id
 
@@ -49,9 +45,9 @@ class ReconstructionId(namedtuple("ReconstructionId", "omen_prefix,label,witness
     def xml_id(self):
         return (
             self.omen_prefix
-            + "."
-            + clean_id(self.label)
-            + ("." + clean_id(self.witness) if self.witness else "")
+            + "."  # noqa: W503
+            + clean_id(self.label)  # noqa: W503
+            + ("." + clean_id(self.witness) if self.witness else "")  # noqa: W503
         )
 
 
@@ -98,7 +94,7 @@ class ReconstructionLine(Line):
                         lemma_db = LemmaDB.objects.get(xml_id=word.xml_id)
                         lemma_db.set_segment_type_to_apodosis()
 
-                    except Exception as e:
+                    except Exception:
                         logging.warning("Could not change %s to APODOSIS", word.xml_id)
                 else:
                     pass
@@ -140,7 +136,7 @@ class ReconstructionLine(Line):
 
     @property
     def xml_id(self):
-        return f'{self.rdg_type}.{self.reconstruction_id.xml_id}{"_"+clean_id(self.reference) if self.reference else ""}'
+        return f'{self.rdg_type}.{self.reconstruction_id.xml_id}{"_"+clean_id(self.reference) if self.reference else ""}'  # noqa: E501
 
     @property
     def tei(self):
