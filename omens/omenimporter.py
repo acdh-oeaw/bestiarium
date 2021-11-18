@@ -182,7 +182,7 @@ class OmenImporter:
 
         score = Score(omen)
         recon = Reconstruction(omen)
-        tei = ET.Element("tei:div", {"n": label, XML_ID: xml_id})
+        tei = ET.Element("{http://www.tei-c.org/ns/1.0}div", {"n": label, XML_ID: xml_id})
 
         row_type = None
         for row_num, row in sheet.get_rows():

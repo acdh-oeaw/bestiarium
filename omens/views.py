@@ -88,7 +88,7 @@ def omen_detail(request, omen_id):
 def omen_tei_raw(request, omen_id):
     template_name = "omens/tei.xml"
     omen = get_omen(omen_id)
-    context = {"tei": omen.tei}
+    context = {"tei": omen.tei_content}
     return render(request, template_name, context, content_type="text/xml")
 
 

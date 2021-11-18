@@ -1,8 +1,8 @@
-import logging
+# import logging
 from xml.etree import ElementTree as ET
-
+import lxml.etree as LET
 from ckeditor.fields import RichTextField
-
+from acdh_tei_pyutils.tei import TeiReader
 from curator.models import Upload
 # Create your models here.
 from django.db import models
@@ -102,7 +102,11 @@ class Omen(models.Model):
         chapter_tei = ET.XML(self.chapter.tei)
         omen_tei = chapter_tei.find(f'.//*[@n="{self.omen_name}"]')
         if omen_tei:
-            return element2string(omen_tei)
+            tei_string = element2string(omen_tei)
+            return tei_string.replace(
+                '<tei:div',
+                '<div xmlns="http://www.tei-c.org/ns/1.0"'
+            )
         return ""
 
     @property
@@ -264,3 +268,16 @@ class PhilComment(models.Model):
     def __str__(self):
         if self.comment:
             return f"{self.comment[:24]}... (Omen: {self.omen.omen_num})"
+
+    def as_tei_node(self):
+        if self.comment:
+            note_node = LET.Element("{http://www.tei-c.org/ns/1.0}note")
+            note_node.attrib['type'] = "phil-comment"
+            note_node.attrib["{http://www.w3.org/XML/1998/namespace}id"] = f"phil-comment__{self.id}"
+            note_node.text = self.comment
+            return note_node
+        return None
+
+    def get_parent_node(self):
+        omen_tei = TeiReader(self.omen.tei_content)
+        return omen_tei
