@@ -1,4 +1,5 @@
 [![flake8 Lint](https://github.com/acdh-oeaw/bestiarium/actions/workflows/lint.yml/badge.svg)](https://github.com/acdh-oeaw/bestiarium/actions/workflows/lint.yml)
+[![Build and push to DockerHub](https://github.com/acdh-oeaw/bestiarium/actions/workflows/build.yml/badge.svg)](https://github.com/acdh-oeaw/bestiarium/actions/workflows/build.yml)
 
 # Bestiarium Mesopotamicum
 
