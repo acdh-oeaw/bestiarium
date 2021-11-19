@@ -293,16 +293,21 @@ class PhilComment(models.Model):
         return None
 
     def get_parent_node(self):
-        omen_tei = TeiReader(self.omen.tei_content)
+        try:
+            omen_tei = TeiReader(self.omen.tei_content)
+        except LET.XMLSyntaxError:
+            return None
         return omen_tei.tree
 
     def save(self, *args, **kwargs):
         some_div = self.get_parent_node()
-        phil_note = self.as_tei_node()
-        xpath = f'//*[@xml:id="{self.xml_id}"]'
-        for bad in some_div.xpath(xpath):
-            bad.getparent().remove(bad)
-        some_div.insert(0, phil_note)
-        self.omen.tei_content = ET.tostring(some_div).decode()
+        if some_div is not None:
+            phil_note = self.as_tei_node()
+            xpath = f'//*[@xml:id="{self.xml_id}"]'
+            for bad in some_div.xpath(xpath):
+                bad.getparent().remove(bad)
+            if phil_note is not None:
+                some_div.insert(0, phil_note)
+            self.omen.tei_content = ET.tostring(some_div).decode()
         self.omen.save()
         super().save(*args, **kwargs)

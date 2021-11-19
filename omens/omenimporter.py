@@ -1,6 +1,6 @@
 import logging
 from xml.etree import ElementTree as ET
-
+from lxml import etree as LET
 from typing import NamedTuple
 
 from django.db import transaction
@@ -96,8 +96,10 @@ class OmenImporter:
             except ValueError as ve:
                 report.append(str(ve))
                 continue
-
-            logger.debug("Found %s witnesses", omen_data.witnesses)
+            if not omen_data.valid_tei:
+                logger.error(f"Invalid XML for {omen_data.name}")
+                report.append(f"Invalid XML for {omen_data.name}")
+            # logger.debug("Found %s witnesses", omen_data.witnesses)
             for witness in omen_data.witnesses:
                 witness_elem = self.root.find(
                     f'.//tei:witness[@xml:id="{witness.xml_id}"]',
@@ -110,7 +112,7 @@ class OmenImporter:
             # Check and remove if omen already exists in the TEI
             omen_div_old = body.find(f'.//tei:div[@n="{omen_data.label}"]', NS)
             if omen_div_old is not None:
-                logger.warning("Overwriting existing omen div: %s", omen_data.label)
+                # logger.warning("Overwriting existing omen div: %s", omen_data.label)
                 body.remove(omen_div_old)
 
             # Add omen div to TEI
@@ -223,10 +225,20 @@ class OmenImporter:
         tei.append(score.tei)
         for recon_grp in recon.tei:
             tei.append(recon_grp)
-        omen.tei_content = ET.tostring(tei).decode()
+        try:
+            LET.fromstring(ET.tostring(tei).decode())
+            omen.tei_content = ET.tostring(tei).decode()
+            valid_tei = True
+        except LET.XMLSyntaxError:
+            omen.tei_content = None
+            valid_tei = False
         omen.save()
         return OmenData(
-            name=sheet.name, label=label, tei=tei, witnesses=list(set(witnesses))
+            name=sheet.name,
+            label=label,
+            tei=tei,
+            witnesses=list(set(witnesses)),
+            valid_tei=valid_tei
         )
 
     def add_score_line(self):
@@ -238,6 +250,7 @@ class OmenData(NamedTuple):
     label: str
     tei: any
     witnesses: any
+    valid_tei: bool
 
 
 class ROWTYPE:
