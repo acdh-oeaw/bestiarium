@@ -120,9 +120,9 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.environ.get('POSTGRES_DB', 'tieromina'),
         'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTEGRES_PORT', '5432')
     }
 }
 
