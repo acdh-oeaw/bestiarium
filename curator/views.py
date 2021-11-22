@@ -84,7 +84,7 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
             report = OmenImporter(f, upload).save()
 
         elif ftype == UTYPES.COMMENTS_FILE:
-            df = pd.read_excel(f)
+            df = pd.read_excel(f, converters={'omen': str, 'omen': str})
             report = import_comments(df)
 
         elif ftype == UTYPES.DITTO_FILE:

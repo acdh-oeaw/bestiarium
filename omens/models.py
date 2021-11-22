@@ -293,11 +293,14 @@ class PhilComment(models.Model):
         return None
 
     def get_parent_node(self):
-        try:
-            omen_tei = TeiReader(self.omen.tei_content)
-        except LET.XMLSyntaxError:
+        if self.omen.tei_content:
+            try:
+                omen_tei = TeiReader(self.omen.tei_content)
+            except LET.XMLSyntaxError:
+                return None
+            return omen_tei.tree
+        else:
             return None
-        return omen_tei.tree
 
     def save(self, *args, **kwargs):
         some_div = self.get_parent_node()
