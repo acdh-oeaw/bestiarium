@@ -9,8 +9,8 @@ from django.db import models
 from django.utils.timezone import now
 
 from .namespaces import NS, TEI_NS, XML_ID, get_attribute
-from .util import clean_id, element2string, TEI_TEMPLATE
-from django.template import Template, Context
+from .util import clean_id, element2string
+from django.template.loader import render_to_string
 
 for ns, uri in NS.items():
     ET.register_namespace(ns, uri)
@@ -112,11 +112,9 @@ class Omen(models.Model):
 
     @property
     def full_tei_string(self):
-        template = Template(TEI_TEMPLATE)
-        context = Context(
-            {"object": self}
-        )
-        full_tei_string = template.render(context)
+        template_name = "omens/tei_templates/omen.xml"
+        context = {"object": self}
+        full_tei_string = render_to_string(template_name, context)
         return full_tei_string
 
     @property
