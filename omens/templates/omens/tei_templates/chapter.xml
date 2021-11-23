@@ -1,0 +1,31 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+           <titleStmt>
+              <title>Chapter {{ object.chapter_name }}</title>
+           </titleStmt>
+           <publicationStmt>
+              <p>born digital</p>
+           </publicationStmt>
+           <sourceDesc>
+              <listWit>{% for x in object.get_witness_from_omen %}
+                  <witness xml:id="{{x.xml_id}}">
+                      <idno>{{ x.witness_id }}</idno>
+                  </witness>{% endfor %}
+              </listWit>
+           </sourceDesc>
+        </fileDesc>
+    </teiHeader>
+    <text>
+        <body>{% for x in object.omen_set.all %}
+        {% if x.tei_content %}
+            {{ x.tei_content|safe }}
+        {% else %}
+            <div xml:id="{{ x.xml_id }}">
+                <p>No TEI could be serialized for <hi>Omen {{ x.xml_id }}</hi></p>
+            </div>
+        {% endif %}
+{% endfor %}
+        </body>
+    </text>
+  </TEI>

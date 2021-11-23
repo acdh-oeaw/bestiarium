@@ -76,7 +76,7 @@ def xsldoc(request, xsl_name):
 def chapter_tei_raw(request, chapter_name):
     template_name = "omens/tei.xml"
     chapter = get_chapter(chapter_name=chapter_name)
-    context = {"tei": chapter.tei}
+    context = {"tei": chapter.full_tei_string}
     return render(request, template_name, context, content_type="text/xml")
 
 

@@ -83,6 +83,17 @@ class Chapter(models.Model):
     def safe_tei(self):
         return self.tei.replace("\n", "").replace("'", "&#8217;")
 
+    def get_witness_from_omen(self):
+        witnesses = Witness.objects.filter(omen__in=self.omen_set.all()).distinct()
+        return witnesses
+
+    @property
+    def full_tei_string(self):
+        template_name = "omens/tei_templates/chapter.xml"
+        context = {"object": self}
+        full_tei_string = render_to_string(template_name, context)
+        return full_tei_string
+
 
 class Omen(models.Model):
     """
