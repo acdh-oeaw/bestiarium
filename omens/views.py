@@ -9,6 +9,8 @@ from .omenview import (
     omens_in_chapter
 )
 
+from .models import PhilComment
+
 
 def chapters(request):
     template_name = "omens/chapters.html"
@@ -98,8 +100,10 @@ def omen_tei(request, omen_id):
 
     omen = get_omen(omen_id)
     if omen:
+        comment_base = PhilComment.objects.get(omen=omen)
         context = {
             "tei": omen.chapter.safe_tei,
+            "comment": comment_base.comment,
             # "tei": omen.full_tei_string.replace("\n", "").replace("'", "&#8217;"),
             "omen_id": omen.xml_id,
             "omen_num": omen.omen_num,
