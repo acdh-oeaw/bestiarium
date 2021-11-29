@@ -71,17 +71,12 @@ class Chapter(models.Model):
     proofreader = models.CharField(max_length=100, blank=True, null=True)
     remarks = models.CharField(max_length=100, blank=True, null=True)
     ctime = models.DateTimeField(default=now, blank=True, null=True)
-    tei = models.TextField(default="", blank=True, null=True)
     witness = models.ManyToManyField(Witness)
     upload = models.ManyToManyField(Upload)
     introduction = RichTextField(default="Page under construction", blank=True, null=True)
 
     def __str__(self):
         return f"Chapter {self.chapter_name}"
-
-    @property
-    def safe_tei(self):
-        return self.tei.replace("\n", "").replace("'", "&#8217;")
 
     def get_witness_from_omen(self):
         witnesses = Witness.objects.filter(omen__in=self.omen_set.all()).distinct()

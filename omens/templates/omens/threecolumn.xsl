@@ -70,12 +70,12 @@
       <xsl:attribute name="class">small <xsl:value-of select="$omenid"/>-score-row collapse</xsl:attribute>
       <td colspan="100%">
         <table class="table-condensed score-table">
-            <xsl:for-each select="../../../../tei:teiHeader/tei:sourceDesc/tei:listWit/tei:witness">
+            <xsl:for-each select="//tei:witness">
              <xsl:variable name="witid" select="./tei:idno"/>
-              <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit=$witid]">
+              <xsl:if test="//*[@xml:id=$omenid]//tei:rdg[@wit=$witid]">
               <!-- if witness is used in the score -->
               <tr>
-                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit=$witid) and not(@source)]">
+                 <xsl:if test="//*[@xml:id=$omenid]//*[(@wit=$witid) and not(@source)]">
                 <td>
                    <xsl:value-of select="./tei:idno"/>
                 </td>
@@ -84,7 +84,7 @@
                 </td>
                 </xsl:if>
                 <xsl:for-each
-                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                    select="//*[@xml:id=$omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
                   <xsl:sort select="./@xml:id"/>
                 <td>
                       <xsl:apply-templates select="tei:app/tei:rdg[(@wit=$witid) and not(@source)]"/>
@@ -92,16 +92,16 @@
                 </xsl:for-each>
               </tr>
               <tr>
-                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'KAL')]">
+                 <xsl:if test="//*[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'KAL')]">
                 <td>
                    <xsl:value-of select="./tei:idno"/> 
                 </td>
                 <td>
-                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit=$witid]/@source"/>
+                  <xsl:value-of select="//*[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit=$witid]/@source"/>
                 </td>
                 </xsl:if>
                 <xsl:for-each
-                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                    select="//*[@xml:id=$omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
                   <xsl:sort select="./@xml:id"/>
                 <td>
                       <xsl:apply-templates select="tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'KAL')]"/>
@@ -109,16 +109,16 @@
                 </xsl:for-each>
               </tr>
               <tr>
-                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'If')]">
+                 <xsl:if test="//*[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'If')]">
                 <td>
                    <xsl:value-of select="./tei:idno"/> 
                 </td>
                 <td>
-                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit=$witid]/@source"/>
+                  <xsl:value-of select="//*[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit=$witid]/@source"/>
                 </td>
                 </xsl:if>
                 <xsl:for-each
-                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                    select="//*[@xml:id=$omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
                   <xsl:sort select="./@xml:id"/> 
                 <td>
                       <xsl:apply-templates select="tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'If')]"/>

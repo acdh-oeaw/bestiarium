@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 
@@ -45,7 +45,8 @@ def chapter_layout(request, chapter_name):
     omens = omens_in_chapter(chapter_name)
     num_omens = len(omens.get("omens")) if omens else 0
     context = {
-        "tei": chapter.safe_tei,
+        "tei": chapter.full_tei_string.replace("\n", "").replace("'", "&#8217;"),
+        # "tei": chapter.safe_tei,
         "chapter_name": chapter_name,
         "animal": chapter.animal,
         "num_omens": num_omens,
@@ -77,10 +78,8 @@ def xsldoc(request, xsl_name):
 
 
 def chapter_tei_raw(request, chapter_name):
-    template_name = "omens/tei.xml"
     chapter = get_chapter(chapter_name=chapter_name)
-    context = {"tei": chapter.full_tei_string}
-    return render(request, template_name, context, content_type="text/xml")
+    return HttpResponse(chapter.full_tei_string, content_type="application/xml")
 
 
 # def omen_detail(request, omen_id):
@@ -110,9 +109,9 @@ def omen_tei(request, omen_id):
         else:
             com = None
         context = {
-            "tei": omen.chapter.safe_tei,
+            # "tei": omen.chapter.safe_tei,
             "comment": com,
-            # "tei": omen.full_tei_string.replace("\n", "").replace("'", "&#8217;"),
+            "tei": omen.full_tei_string.replace("\n", "").replace("'", "&#8217;"),
             "omen_id": omen.xml_id,
             "omen_num": omen.omen_num,
             "chapter_name": omen.chapter.chapter_name,

@@ -78,15 +78,6 @@ class OmenImporter:
 
         body, self.root = None, None
         # build TEI
-        if self.chapter.tei and not self.root:
-            # load existing TEI
-            self.root = ET.fromstring(self.chapter.tei)
-        elif not self.root:
-            self.root = OmenImporter.tei_root()  # TEI skeleton
-
-        body = self.root.find(".//tei:body", NS)
-        title = self.root.find(".//tei:title", NS)
-        title.text = f"Chapter {chapter_name}"
 
         for sheet in self.sheets:  # Read sheet by sheet
             # extract omen data
@@ -99,25 +90,6 @@ class OmenImporter:
             if not omen_data.valid_tei:
                 logger.error(f"Invalid XML for {omen_data.name}")
                 report.append(f"Invalid XML for {omen_data.name}")
-            # logger.debug("Found %s witnesses", omen_data.witnesses)
-            for witness in omen_data.witnesses:
-                witness_elem = self.root.find(
-                    f'.//tei:witness[@xml:id="{witness.xml_id}"]',
-                    NS,
-                )
-
-                if witness_elem is None:
-                    self.root.find(".//tei:listWit", NS).append(witness.tei)
-
-            # Check and remove if omen already exists in the TEI
-            omen_div_old = body.find(f'.//tei:div[@n="{omen_data.label}"]', NS)
-            if omen_div_old is not None:
-                # logger.warning("Overwriting existing omen div: %s", omen_data.label)
-                body.remove(omen_div_old)
-
-            # Add omen div to TEI
-            body.append(omen_data.tei)
-        self.chapter.tei = element2string(self.root)
         self.chapter.save()
         return report
 
