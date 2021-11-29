@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 
 # Create your views here.
@@ -100,10 +101,17 @@ def omen_tei(request, omen_id):
 
     omen = get_omen(omen_id)
     if omen:
-        comment_base = PhilComment.objects.get(omen=omen)
+        try:
+            comment_base = PhilComment.objects.get(omen=omen)
+        except ObjectDoesNotExist:
+            comment_base = None
+        if comment_base:
+            com = comment_base.comment
+        else:
+            com = None
         context = {
             "tei": omen.chapter.safe_tei,
-            "comment": comment_base.comment,
+            "comment": com,
             # "tei": omen.full_tei_string.replace("\n", "").replace("'", "&#8217;"),
             "omen_id": omen.xml_id,
             "omen_num": omen.omen_num,

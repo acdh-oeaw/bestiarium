@@ -7,7 +7,7 @@
 
   </xsl:param>
 
-  <xsl:key name="witness" match="tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w/app/rdg" use="./@wit" />
+  <xsl:key name="witness" match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w/tei:app/tei:rdg" use="./@wit" />
   <xsl:template match="/">
     <div id ="omens">
       <div  class="table-responsive">
@@ -37,15 +37,15 @@
     <!--         <xsl:attribute name="href">/omens/<xsl:value-of select="@xml:id"/>/tei</xsl:attribute> -->
     <!--         &#8599; -->
     <!--       </a> -->
-    <!--     </div> -->
+    <!--     </tei:div> -->
     <!--   </xsl:when> -->
     <!-- </xsl:choose> -->
 
-    <xsl:apply-templates select="./div[@type = &apos;score&apos;]"/> <!-- Score -->
-    <xsl:apply-templates select="./div[@n]"/> <!-- Reconstruction -->
+    <xsl:apply-templates select="./tei:div[@type = &apos;score&apos;]"/> <!-- Score -->
+    <xsl:apply-templates select="./tei:div[@n]"/> <!-- Reconstruction -->
   </xsl:template>
   
-  <xsl:template match="tei:body/tei:div/div[@type = &apos;score&apos;]"> <!-- Score -->
+  <xsl:template match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]"> <!-- Score -->
     <xsl:variable name="omenid" select="../@xml:id"/>
     <xsl:variable name="headerid" select="../@n"/>
     <tr>
@@ -72,10 +72,10 @@
         <table class="table-condensed score-table">
             <xsl:for-each select="../../../../tei:teiHeader/tei:sourceDesc/tei:listWit/tei:witness">
              <xsl:variable name="witid" select="./tei:idno"/>
-              <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[@wit=$witid]">
+              <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit=$witid]">
               <!-- if witness is used in the score -->
               <tr>
-                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[(@wit=$witid) and not(@source)]">
+                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit=$witid) and not(@source)]">
                 <td>
                    <xsl:value-of select="./tei:idno"/>
                 </td>
@@ -84,44 +84,44 @@
                 </td>
                 </xsl:if>
                 <xsl:for-each
-                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
+                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
                   <xsl:sort select="./@xml:id"/>
                 <td>
-                      <xsl:apply-templates select="app/rdg[(@wit=$witid) and not(@source)]"/>
+                      <xsl:apply-templates select="tei:app/tei:rdg[(@wit=$witid) and not(@source)]"/>
                 </td>
                 </xsl:for-each>
               </tr>
               <tr>
-                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[(@wit=$witid) and starts-with(@source, 'KAL')]">
+                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'KAL')]">
                 <td>
                    <xsl:value-of select="./tei:idno"/> 
                 </td>
                 <td>
-                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[@wit=$witid]/@source"/>
+                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit=$witid]/@source"/>
                 </td>
                 </xsl:if>
                 <xsl:for-each
-                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
+                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
                   <xsl:sort select="./@xml:id"/>
                 <td>
-                      <xsl:apply-templates select="app/rdg[(@wit=$witid) and starts-with(@source, 'KAL')]"/>
+                      <xsl:apply-templates select="tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'KAL')]"/>
                 </td>
                 </xsl:for-each>
               </tr>
               <tr>
-                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[(@wit=$witid) and starts-with(@source, 'If')]">
+                 <xsl:if test="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'If')]">
                 <td>
                    <xsl:value-of select="./tei:idno"/> 
                 </td>
                 <td>
-                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div/ab/w/app/rdg[@wit=$witid]/@source"/>
+                  <xsl:value-of select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit=$witid]/@source"/>
                 </td>
                 </xsl:if>
                 <xsl:for-each
-                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/div[@type = &apos;score&apos;]/ab/w">
+                    select="../../../../tei:text/tei:body/tei:div[@xml:id=$omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
                   <xsl:sort select="./@xml:id"/> 
                 <td>
-                      <xsl:apply-templates select="app/rdg[(@wit=$witid) and starts-with(@source, 'If')]"/>
+                      <xsl:apply-templates select="tei:app/tei:rdg[(@wit=$witid) and starts-with(@source, 'If')]"/>
                 </td>
                 </xsl:for-each>
               </tr>
@@ -132,23 +132,23 @@
     </tr>
   </xsl:template>
  
-  <xsl:template match="anchor">
+  <xsl:template match="tei:anchor">
    <xsl:choose>
       <xsl:when test="@type='breakStart'"> 
         <xsl:text>[</xsl:text>
       </xsl:when>
       <xsl:when test="@type='breakEnd'"> 
-        <xsl:if test="../damageSpan"><xsl:text>&#11811;</xsl:text></xsl:if>
-        <xsl:if test="not(../damageSpan)"><xsl:text>]</xsl:text></xsl:if>
+        <xsl:if test="../tei:damageSpan"><xsl:text>&#11811;</xsl:text></xsl:if>
+        <xsl:if test="not(../tei:damageSpan)"><xsl:text>]</xsl:text></xsl:if>
       </xsl:when>
     </xsl:choose>
    </xsl:template>
 
-  <xsl:template match="damageSpan">
+  <xsl:template match="tei:damageSpan">
       <xsl:text>&#11810;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="rdg/text()">
+  <xsl:template match="tei:rdg/text()">
     <xsl:choose>
        <xsl:when test="contains(., '#')">
          <xsl:value-of select="translate(., 'abcdefghijklmnopqrstuvwxyz#', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
@@ -170,11 +170,11 @@
     </xsl:choose>
   </xsl:template> 
 
-  <xsl:template match="tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w"> <!-- Words in the score -->
+  <xsl:template match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w"> <!-- Words in the score -->
     <th scope="col"><small><xsl:value-of select="@xml:id"/></small></th>
   </xsl:template>
 
-  <xsl:template match="tei:body/tei:div/div[@n]"> <!-- Reconstruction -->
+  <xsl:template match="tei:body/tei:div/tei:div[@n]"> <!-- Reconstruction -->
     <tr>
       <td class="reconstruction-label">
         <xsl:value-of select="@n"/>
@@ -198,21 +198,21 @@
         </xsl:if>
       </td>
       <td class="transliteration"><ul class="list-group">
-        <xsl:apply-templates select="./ab[@type = &apos;transliteration&apos;]"/></ul>
+        <xsl:apply-templates select="./tei:ab[@type = &apos;transliteration&apos;]"/></ul>
       </td>
       <td class="transcription"><ul class="list-group">
-        <xsl:apply-templates select="./ab[@type = &apos;transcription&apos;]"/>
+        <xsl:apply-templates select="./tei:ab[@type = &apos;transcription&apos;]"/>
       </ul>
       </td>
       <td class="translation"><ul class="list-group">
-        <xsl:apply-templates select="./ab[@type = &apos;translation&apos;]"/>
+        <xsl:apply-templates select="./tei:ab[@type = &apos;translation&apos;]"/>
       </ul>
       </td>
     </tr>
   </xsl:template>
 
 
-  <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;translation&apos;]">
+  <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]">
     <!-- <th scope="row">Translation (<xsl:value-of select="@lang"/>)</th> -->
     <li class="list-group-item">
       <xsl:attribute name="lang">
@@ -227,17 +227,17 @@
       <div>
         <xsl:attribute name="id"><xsl:value-of select="./@xml:id"/>
         </xsl:attribute>
-        <xsl:apply-templates select="./div[@type = &apos;protasis&apos;]"/>
-        <xsl:apply-templates select="./div[@type = &apos;apodosis&apos;]"/>
+        <xsl:apply-templates select="./tei:div[@type = &apos;protasis&apos;]"/>
+        <xsl:apply-templates select="./tei:div[@type = &apos;apodosis&apos;]"/>
       </div>
     </li>
   </xsl:template>
-  <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;translation&apos;]/div[@type = &apos;protasis&apos;]">
+  <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:div[@type = &apos;protasis&apos;]">
     <span class="protasis">
       <xsl:value-of select="." />
     </span>
   </xsl:template>
-  <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;translation&apos;]/div[@type = &apos;apodosis&apos;]">
+  <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:div[@type = &apos;apodosis&apos;]">
     <xsl:if test=".!=''">
       &#x2D;&#160;
     <span class="apodosis">
@@ -246,7 +246,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;transliteration&apos;]">
+  <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;transliteration&apos;]">
     <xsl:variable name="rdgid" select="../@n"/>
     <xsl:variable name="rdgxmlid" select="@xml:id"/>
     <!-- <xsl:value-of select="@xml:id"/> -->
@@ -261,19 +261,19 @@
       <div>
         <xsl:attribute name="id"><xsl:value-of select="./@xml:id"/>
         </xsl:attribute>
-        <xsl:for-each select="../../div[@type = &apos;score&apos;]/ab/w">
+        <xsl:for-each select="../../tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
           <xsl:sort select="./@xml:id"/>
-          <!-- <xsl:for-each select="//tei:body/tei:div/div[@type = &apos;score&apos;]/ab/w"> -->
+          <!-- <xsl:for-each select="//tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w"> -->
           <xsl:variable name="wordid" select="./@xml:id"/>
           <span class="lemma">
-            <xsl:apply-templates select="../../../div[@n=$rdgid]/ab[@xml:id = $rdgxmlid]/w[@corresp=$wordid]"/>
+            <xsl:apply-templates select="../../../tei:div[@n=$rdgid]/tei:ab[@xml:id = $rdgxmlid]/tei:w[@corresp=$wordid]"/>
             </span>
         </xsl:for-each>
       </div>
     </li>
   </xsl:template>
 
-  <xsl:template match="div/ab[@type='transliteration']/w/text()">
+  <xsl:template match="tei:div/tei:ab[@type='transliteration']/tei:w/text()">
      <xsl:choose>
        <xsl:when test="contains(., '#')">
          <xsl:value-of select="translate(., 'abcdefghijklmnopqrstuvwxyz#', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
@@ -295,7 +295,7 @@
     </xsl:choose>
   </xsl:template> 
 
-  <xsl:template match="tei:body/tei:div/div[@n]/ab[@type = &apos;transcription&apos;]">
+  <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;transcription&apos;]">
     <xsl:variable name="rdgid" select="../@n"/>
     <xsl:variable name="rdgxmlid" select="@xml:id"/>
     <!-- <th scope="row">Transcription</th> -->
@@ -309,11 +309,11 @@
       <div>
         <xsl:attribute name="id"><xsl:value-of select="./@xml:id"/>
         </xsl:attribute>
-        <xsl:for-each select="../../div[@type = &apos;score&apos;]/ab/w">
+        <xsl:for-each select="../../tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
           <xsl:sort select="./@xml:id"/>
           <xsl:variable name="wordid" select="./@xml:id"/>
           <span class="lemma">
-            <xsl:apply-templates select="../../../div[@n=$rdgid]/ab[@xml:id = $rdgxmlid]/w[@corresp=$wordid]"/>
+            <xsl:apply-templates select="../../../tei:div[@n=$rdgid]/tei:ab[@xml:id = $rdgxmlid]/tei:w[@corresp=$wordid]"/>
           </span>
         </xsl:for-each>
       </div>
