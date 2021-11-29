@@ -80,22 +80,22 @@ class Score(UserDict):
         """
         returns the TEI representation
         """
-        score = ET.Element("div", {"type": "score"})
-        ab = ET.SubElement(score, "ab")
+        score = ET.Element("{http://www.tei-c.org/ns/1.0}div", {"type": "score"})
+        ab = ET.SubElement(score, "{http://www.tei-c.org/ns/1.0}ab")
         for witness, scoreline in self.data.items():
             for item in scoreline:
                 if isinstance(item, Lemma):
                     # construct word identifier
                     # word_id = f'{self.omen_prefix}.{item.xml_id}'
-                    word_node = ab.find(f'.//*[@{XML_ID}="{item.xml_id}"]/app', NS)
+                    word_node = ab.find(f'.//*[@{XML_ID}="{item.xml_id}"]/tei:app', NS)
 
                     # This is the correct way to check if the node exists
                     # if not Node is True even if find returns a match
                     if word_node is None:
                         # add new /find corresponding word node
-                        word_parent = ET.Element("w", {XML_ID: item.xml_id})
+                        word_parent = ET.Element("{http://www.tei-c.org/ns/1.0}w", {XML_ID: item.xml_id})
                         ab.append(word_parent)
-                        word_node = ET.SubElement(word_parent, "app")
+                        word_node = ET.SubElement(word_parent, "{http://www.tei-c.org/ns/1.0}app")
 
                     # Add lemma to the word node
                     word_node.append(

@@ -50,10 +50,10 @@ class BreakStart(Token):
     @property
     def tei(self):
         if self.text == "[":
-            anchor = ET.Element("anchor", {"type": "breakStart"})
+            anchor = ET.Element("{http://www.tei-c.org/ns/1.0}anchor", {"type": "breakStart"})
             anchor.tail = ""
         elif self.text == "˹":
-            anchor = ET.Element("damageSpan", {"spanTo": self.span_to})
+            anchor = ET.Element("{http://www.tei-c.org/ns/1.0}damageSpan", {"spanTo": self.span_to})
             anchor.tail = ""
 
         return anchor
@@ -78,7 +78,7 @@ class BreakEnd(Token):
 
     @property
     def tei(self):
-        anchor = ET.Element("anchor", {"type": "breakEnd", "corresp": self.corresp})
+        anchor = ET.Element("{http://www.tei-c.org/ns/1.0}anchor", {"type": "breakEnd", "corresp": self.corresp})
         anchor.tail = ""
         return anchor
 
@@ -98,7 +98,10 @@ class Missing(Token):
     @property
     def tei(self):
 
-        anchor = ET.Element("gap", {"quantity": self.quantity, "unit": "signs"})
+        anchor = ET.Element(
+            "{http://www.tei-c.org/ns/1.0}gap",
+            {"quantity": self.quantity, "unit": "signs"}
+        )
         anchor.tail = ""
 
 
@@ -191,14 +194,14 @@ class Lemma:
         TODO: Align this with the convention
         """
         fixed_witt = witness.split('______')[0]
-        w = ET.Element("rdg", {"wit": fixed_witt})
+        w = ET.Element("{http://www.tei-c.org/ns/1.0}rdg", {"wit": fixed_witt})
         if reference:
             w.attrib["source"] = reference
 
         return self.tei_body(w, prefix)
 
     def reconstruction_tei(self, prefix):
-        w = ET.Element("w", {"corresp": self.xml_id})
+        w = ET.Element("{http://www.tei-c.org/ns/1.0}w", {"corresp": self.xml_id})
         w = self.tei_body(w, prefix)
         return w
 

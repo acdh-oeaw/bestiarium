@@ -140,7 +140,7 @@ class ReconstructionLine(Line):
 
     @property
     def tei(self):
-        ab = ET.Element("ab", {XML_ID: self.xml_id})
+        ab = ET.Element("{http://www.tei-c.org/ns/1.0}ab", {XML_ID: self.xml_id})
         if self.reference:
             ab.attrib["source"] = self.reference
 
@@ -178,7 +178,7 @@ class ReconstructionLine(Line):
             logger.debug("PARTS: %s", translation_parts)
 
             protasis_element = ET.Element(
-                "div",
+                "{http://www.tei-c.org/ns/1.0}div",
                 {
                     XML_ID: self.xml_id + "_protasis",
                     "type": "protasis",
@@ -188,7 +188,8 @@ class ReconstructionLine(Line):
             protasis_element.text = translation_parts[0].strip()
 
             apodosis_element = ET.Element(
-                "div", {XML_ID: self.xml_id + "_apodosis", "type": "apodosis"}
+                "{http://www.tei-c.org/ns/1.0}div",
+                {XML_ID: self.xml_id + "_apodosis", "type": "apodosis"}
             )
             apodosis_element.text = translation_parts[1].strip()
 
@@ -225,7 +226,7 @@ class Reconstruction(UserDict):
     def tei(self):
         for rdg_grp, lines in self.data.items():
             elem = ET.Element(
-                "div",
+                "{http://www.tei-c.org/ns/1.0}div",
                 {
                     "n": f"{rdg_grp.label} ({rdg_grp.witness})"
                     if rdg_grp.witness

@@ -49,7 +49,7 @@ class OmenImporter:
         ET.SubElement(sourceDesc, get_attribute("listWit", TEI_NS))
         text = ET.SubElement(root, get_attribute("text", TEI_NS))
         body = ET.SubElement(text, get_attribute("body", TEI_NS))
-        ET.SubElement(body, "head")
+        ET.SubElement(body, get_attribute("head", TEI_NS))
         return root
 
     def __init__(self, file_to_import, upload):

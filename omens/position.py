@@ -77,7 +77,7 @@ class LineInfo:
     @property
     def tei(self):
         fixed_witt = self.witness.split('______')[0]
-        lb = ET.Element("lb", {"n": self.text, "ed": fixed_witt})
+        lb = ET.Element("{http://www.tei-c.org/ns/1.0}lb", {"n": self.text, "ed": fixed_witt})
         if self.broken:
             # TODO: Finalise/confirm encoding attribute
             lb.attrib["broken"] = "True"

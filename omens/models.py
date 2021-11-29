@@ -115,10 +115,7 @@ class Omen(models.Model):
         omen_tei = chapter_tei.find(f'.//*[@n="{self.omen_name}"]')
         if omen_tei:
             tei_string = element2string(omen_tei)
-            return tei_string.replace(
-                '<tei:div',
-                '<div xmlns="http://www.tei-c.org/ns/1.0"'
-            )
+            return tei_string
         return ""
 
     @property
