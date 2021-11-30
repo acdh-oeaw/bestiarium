@@ -10,7 +10,7 @@ from xlsx.workbook import Workbook
 from .models import Chapter, Omen, Segment, Witness
 from .reconstruction import Reconstruction
 from .score import Score
-from .util import clean_id, element2string
+from .util import clean_id
 from .namespaces import NS, TEI_NS, XML_ID, get_attribute
 
 
@@ -75,9 +75,6 @@ class OmenImporter:
         )
         self.chapter.upload.add(self.upload)
         self.chapter.save()
-
-        body, self.root = None, None
-        # build TEI
 
         for sheet in self.sheets:  # Read sheet by sheet
             # extract omen data
