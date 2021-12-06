@@ -1,6 +1,9 @@
+import lxml.etree as ET
+
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
+from django.views.decorators.cache import cache_page
 
 # Create your views here.
 from .omenview import (
@@ -39,14 +42,20 @@ def chapter_overview(request, chapter_name):
     return render(request, template_name, context)
 
 
+@cache_page(60 * 60 * 24)
 def chapter_layout(request, chapter_name):
     template_name = "omens/chapter_full.html"
     chapter = get_chapter(chapter_name=chapter_name)
     omens = omens_in_chapter(chapter_name)
     num_omens = len(omens.get("omens")) if omens else 0
+    xslt_doc = ET.parse("./omens/templates/omens/threecolumn.xsl")
+    transform = ET.XSLT(xslt_doc)
+    # print("#########################start#######################")
+    xml = ET.fromstring(chapter.full_tei_string)
+    html = transform(xml)
+    # print("#########################stop#######################")
     context = {
-        "tei": chapter.full_tei_string.replace("\n", "").replace("'", "&#8217;"),
-        # "tei": chapter.safe_tei,
+        "tei": html,
         "chapter_name": chapter_name,
         "animal": chapter.animal,
         "num_omens": num_omens,
@@ -100,6 +109,10 @@ def omen_tei(request, omen_id):
 
     omen = get_omen(omen_id)
     if omen:
+        xslt_doc = ET.parse("./omens/templates/omens/threecolumn.xsl")
+        transform = ET.XSLT(xslt_doc)
+        xml = ET.fromstring(omen.full_tei_string)
+        html = transform(xml)
         try:
             comment_base = PhilComment.objects.get(omen=omen)
         except ObjectDoesNotExist:
@@ -109,9 +122,8 @@ def omen_tei(request, omen_id):
         else:
             com = None
         context = {
-            # "tei": omen.chapter.safe_tei,
+            "html": html,
             "comment": com,
-            "tei": omen.full_tei_string.replace("\n", "").replace("'", "&#8217;"),
             "omen_id": omen.xml_id,
             "omen_num": omen.omen_num,
             "chapter_name": omen.chapter.chapter_name,
