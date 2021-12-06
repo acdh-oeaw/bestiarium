@@ -57,6 +57,12 @@
               &#8599;
             </a>
           </xsl:when>
+          <xsl:otherwise>
+            <a  target="_blank" class="btn-sm btn-link text-decoration-none">
+              <xsl:attribute name="href">/omens/<xsl:value-of select="$omenid"/>/tei.xml</xsl:attribute>
+              &#8595;
+            </a>
+          </xsl:otherwise>
         </xsl:choose>
         <xsl:value-of select="substring-after($headerid, 'Omen ')"/>&#160;
         <a data-toggle="collapse" role="button" aria-expanded="false"  >
