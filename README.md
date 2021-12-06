@@ -33,3 +33,11 @@ At the ACDH-CH we use a centralized database-server. So instead of spawning a da
 To run the image you should provide an `.env` file to pass in needed environment variables; see example below:
 
 * `docker run -it -p 8020:8020 --rm --env-file env.default --name bestiarium bestiarium:latest`
+
+
+## caching
+
+first time set up: run `$ python manage.py createcachetable`
+
+the cache can be cleared via admin-interface or management command `$python manage.py clearcache`, see
+https://github.com/timonweb/django-clearcache

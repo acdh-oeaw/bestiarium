@@ -23,11 +23,19 @@ ALLOWED_HOSTS = [
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'vxAeLsadfsadfYeo')
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
+
 
 # Application definition
 
 INSTALLED_APPS = [
     "dal",
+    "clearcache",
     "django.contrib.admin",
     "dal_select2",
     "django.contrib.auth",

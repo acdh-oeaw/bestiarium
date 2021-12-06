@@ -3,6 +3,7 @@ import lxml.etree as ET
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
+from django.views.decorators.cache import cache_page
 
 # Create your views here.
 from .omenview import (
@@ -41,6 +42,7 @@ def chapter_overview(request, chapter_name):
     return render(request, template_name, context)
 
 
+@cache_page(60 * 60 * 24)
 def chapter_layout(request, chapter_name):
     template_name = "omens/chapter_full.html"
     chapter = get_chapter(chapter_name=chapter_name)
@@ -48,10 +50,10 @@ def chapter_layout(request, chapter_name):
     num_omens = len(omens.get("omens")) if omens else 0
     xslt_doc = ET.parse("./omens/templates/omens/threecolumn.xsl")
     transform = ET.XSLT(xslt_doc)
-    print("#########################start#######################")
+    # print("#########################start#######################")
     xml = ET.fromstring(chapter.full_tei_string)
     html = transform(xml)
-    print("#########################stop#######################")
+    # print("#########################stop#######################")
     context = {
         "tei": html,
         "chapter_name": chapter_name,
