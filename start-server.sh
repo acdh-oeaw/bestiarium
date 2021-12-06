@@ -13,4 +13,4 @@ fi
 echo "Check cache table"
 python manage.py createcachetable
 echo "start gunicorn"
-gunicorn tieromina.wsgi --user www-data --bind 0.0.0.0:8010 --workers 3 & nginx -g "daemon off;"
+gunicorn tieromina.wsgi --user www-data --bind 0.0.0.0:8010 --workers 3 --timeout 360 & nginx -g "daemon off;"
