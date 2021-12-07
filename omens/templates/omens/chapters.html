@@ -1,4 +1,5 @@
 {% extends "webpage/base.html" %}
+{% load static %}
 {% block Titel %} Chapters {% endblock %}
 
 {% block content %}
@@ -13,7 +14,7 @@
      </div> -->
 <div class="container">
 
-    <ul class="flex-wrap d-flex mt-3" style="background-image:url('../../static/webpage/img/project_background.jpg'); background-size:cover;">
+    <ul class="flex-wrap d-flex mt-3" style="background-image:url('{% static 'webpage/img/project_background.jpg' %}'); background-size:cover;">
         {% for chapter in chapters %}
         <li class="list-group-item m-3  rounded p-0">
             <div class="card">
