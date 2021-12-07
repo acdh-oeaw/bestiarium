@@ -57,4 +57,17 @@
      margin-left:2em;
  }
 </style>
-
+<script>
+     function toggleClass(checkbox, className){
+     console.log("Toggling", className);
+     var elements = document.getElementsByClassName(className);
+     for (let selected of elements){
+         if (selected.classList.contains("d-none")) {
+             selected.classList.remove('d-none');
+         }else{
+             selected.classList.add('d-none');
+         }
+     }
+     return false;
+ }
+</script>
