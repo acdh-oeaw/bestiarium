@@ -150,7 +150,7 @@ class ReconstructionLine(Line):
             ab.attrib["type"] = "transcription"
         else:
             ab.attrib["type"] = "translation"
-            ab.attrib["lang"] = self.rdg_type
+            ab.attrib["xml:lang"] = self.rdg_type
 
         if self.rdg_type in ("trl", "trs"):
             self.connect_damaged_ends()
@@ -178,7 +178,7 @@ class ReconstructionLine(Line):
             logger.debug("PARTS: %s", translation_parts)
 
             protasis_element = ET.Element(
-                "{http://www.tei-c.org/ns/1.0}div",
+                "{http://www.tei-c.org/ns/1.0}seg",
                 {
                     XML_ID: self.xml_id + "_protasis",
                     "type": "protasis",
@@ -188,7 +188,7 @@ class ReconstructionLine(Line):
             protasis_element.text = translation_parts[0].strip()
 
             apodosis_element = ET.Element(
-                "{http://www.tei-c.org/ns/1.0}div",
+                "{http://www.tei-c.org/ns/1.0}seg",
                 {XML_ID: self.xml_id + "_apodosis", "type": "apodosis"}
             )
             apodosis_element.text = translation_parts[1].strip()

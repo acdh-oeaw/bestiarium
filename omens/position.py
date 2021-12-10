@@ -80,10 +80,10 @@ class LineInfo:
         lb = ET.Element("{http://www.tei-c.org/ns/1.0}lb", {"n": self.text, "ed": fixed_witt})
         if self.broken:
             # TODO: Finalise/confirm encoding attribute
-            lb.attrib["broken"] = "True"
+            lb.attrib["ana"] = "Broken"
         if self.reverse:
             # TODO: Finalise/confirm encoding attribute
-            lb.attrib["reverse"] = "True"
+            lb.attrib["ana"] = "Reverse"
 
         if self.supplement_text:
             # TODO: Finalise/confirm encoding attribute
