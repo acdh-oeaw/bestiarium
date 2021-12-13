@@ -217,12 +217,11 @@
     </tr>
   </xsl:template>
 
-
   <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]">
     <!-- <th scope="row">Translation (<xsl:value-of select="@lang"/>)</th> -->
     <li class="list-group-item">
-      <xsl:attribute name="lang">
-        <xsl:value-of select="@lang"/>
+      <xsl:attribute name="xml:lang">
+        <xsl:value-of select="@xml:lang"/>
       </xsl:attribute>
       <xsl:choose>
         <xsl:when test="@source">
@@ -233,17 +232,17 @@
       <div>
         <xsl:attribute name="id"><xsl:value-of select="./@xml:id"/>
         </xsl:attribute>
-        <xsl:apply-templates select="./tei:div[@type = &apos;protasis&apos;]"/>
-        <xsl:apply-templates select="./tei:div[@type = &apos;apodosis&apos;]"/>
+        <xsl:apply-templates select="./tei:seg[@type = &apos;protasis&apos;]"/>
+        <xsl:apply-templates select="./tei:seg[@type = &apos;apodosis&apos;]"/>
       </div>
     </li>
   </xsl:template>
-  <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:div[@type = &apos;protasis&apos;]">
+  <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:seg[@type = &apos;protasis&apos;]">
     <span class="protasis">
       <xsl:value-of select="." />
     </span>
   </xsl:template>
-  <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:div[@type = &apos;apodosis&apos;]">
+  <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:seg[@type = &apos;apodosis&apos;]">
     <xsl:if test=".!=''">
       &#x2D;&#160;
     <span class="apodosis">
