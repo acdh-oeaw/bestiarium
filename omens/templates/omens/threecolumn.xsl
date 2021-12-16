@@ -8,9 +8,6 @@
         match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w/tei:app/tei:rdg"
         use="./@wit"/>
     <xsl:template match="/">
-        <h1>
-            <xsl:value-of select="$omen"/>
-        </h1>
         <div id="omens">
             <div class="table-responsive">
                 <table class="table-striped table-condensed">

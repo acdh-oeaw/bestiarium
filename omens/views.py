@@ -113,7 +113,9 @@ def omen_tei(request, omen_id):
         xslt_doc = ET.parse("./omens/templates/omens/threecolumn.xsl")
         transform = ET.XSLT(xslt_doc)
         xml = ET.fromstring(omen.full_tei_string)
-        html = transform(xml, omen=omen.xml_id)
+        param_value = f"'{omen_id}'"
+        print(omen_id, param_value)
+        html = transform(xml, omen=param_value)
         try:
             comment_base = PhilComment.objects.get(omen=omen)
         except ObjectDoesNotExist:
