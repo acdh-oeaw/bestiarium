@@ -1,5 +1,6 @@
 import lxml.etree as ET
 
+
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
@@ -112,7 +113,7 @@ def omen_tei(request, omen_id):
         xslt_doc = ET.parse("./omens/templates/omens/threecolumn.xsl")
         transform = ET.XSLT(xslt_doc)
         xml = ET.fromstring(omen.full_tei_string)
-        html = transform(xml)
+        html = transform(xml, omen=omen.xml_id)
         try:
             comment_base = PhilComment.objects.get(omen=omen)
         except ObjectDoesNotExist:
