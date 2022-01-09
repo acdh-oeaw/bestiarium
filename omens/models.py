@@ -274,7 +274,8 @@ class PhilComment(models.Model):
     """
 
     omen = models.ForeignKey(Omen, on_delete=models.CASCADE)
-    comment = models.TextField(blank=True, null=True)
+    # comment = models.TextField(blank=True, null=True)
+    comment = RichTextField(blank=True, null=True)
 
     def __str__(self):
         if self.comment:
