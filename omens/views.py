@@ -117,16 +117,13 @@ def omen_tei(request, omen_id):
         print(omen_id, param_value)
         html = transform(xml, omen=param_value)
         try:
-            comment_base = PhilComment.objects.get(omen=omen)
+            com = PhilComment.objects.get(omen=omen)
         except ObjectDoesNotExist:
-            comment_base = None
-        if comment_base:
-            com = comment_base.comment
-        else:
-            com = None
+            None
+
         context = {
             "html": html,
-            "comment": com,
+            "comment": com.comment,
             "omen_id": omen.xml_id,
             "omen_num": omen.omen_num,
             "chapter_name": omen.chapter.chapter_name,

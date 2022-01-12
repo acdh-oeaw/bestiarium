@@ -26,7 +26,7 @@ def omens_in_chapter(chapter_name: str) -> dict:
     chapter = get_chapter(chapter_name)
     omens = Omen.objects.filter(chapter=chapter)
 
-    message = f"Cound not find chapter {chapter_name}" if not chapter else ""
+    message = f"Could not find chapter {chapter_name}" if not chapter else ""
 
     return {"chapter": chapter, "omens": omens, "error": message}
 
