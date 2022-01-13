@@ -124,7 +124,8 @@ def omen_tei(request, omen_id):
         if com_base:
             com = com_base.comment
         else:
-            com = "No comment"       
+            com = "No comment"
+
         context = {
             "html": html,
             "comment": com,
