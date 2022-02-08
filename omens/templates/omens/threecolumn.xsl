@@ -98,8 +98,8 @@
                                         <xsl:value-of select="./tei:idno"/>
                                     </td>
                                     <td>
-                                        <em><xsl:apply-templates
-                                            select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb"
+                                        <em><xsl:value-of
+                                            select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed=$witid]/@n"
                                         /></em>
                                     </td>
                                 </xsl:if>
@@ -182,13 +182,6 @@
 
     <xsl:template match="tei:damageSpan">
         <xsl:text>&#11810;</xsl:text>
-    </xsl:template>
-
-    <xsl:template match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb">
-        <xsl:variable name="tab" select="../tei:w/tei:app/tei:rdg/@wit"/>
-        <xsl:if test="./@ed = $tab">
-            <xsl:value-of select="./@n"/>
-        </xsl:if>
     </xsl:template>
 
     <xsl:template match="tei:rdg/text()">
