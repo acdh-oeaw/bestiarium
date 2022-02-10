@@ -1,5 +1,5 @@
 acdh-tei-pyutils==0.17.0
-Django==3.2.7
+Django==3.2.12
 django-autocomplete-light==3.8.2
 django-ckeditor==6.1.0
 django-clearcache==1.2.1
