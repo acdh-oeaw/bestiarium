@@ -63,18 +63,14 @@
                 </xsl:choose>
                 <xsl:value-of select="substring-after($headerid, 'Omen ')"/>
 &#160; <a data-toggle="collapse" role="button" aria-expanded="false">
-                <xsl:attribute name="data-target">.                    <xsl:value-of select="$omenid" />
--score-row</xsl:attribute>
-                <xsl:attribute name="href">#                    <xsl:value-of select="$omenid" />
--score</xsl:attribute>
+                <xsl:attribute name="data-target">.<xsl:value-of select="$omenid" />-score-row</xsl:attribute>
+                <xsl:attribute name="href">#<xsl:value-of select="$omenid"/>-score</xsl:attribute>
                 <small>Score</small>
             </a>
         </th>
     </tr>
     <tr>
-        <xsl:attribute name="class">small <xsl:value-of select="$omenid"/>
--score-row
-                collapse</xsl:attribute>
+        <xsl:attribute name="class">small <xsl:value-of select="$omenid"/>-score-row collapse</xsl:attribute>
         <td colspan="100%">
             <table class="table-condensed score-table">
                 <xsl:for-each select="//tei:witness">
