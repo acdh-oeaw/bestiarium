@@ -2,10 +2,14 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:tei="http://www.tei-c.org/ns/1.0">
     <xsl:param name="omen"/>
-     
+
+
     <xsl:key name="witness"
         match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w/tei:app/tei:rdg"
         use="./@wit"/>
+    <xsl:key name="source"
+        match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w/tei:app/tei:rdg"
+        use="./@source"/>
     <xsl:template match="/">
         <div id="omens">
             <div class="table-responsive">
@@ -32,7 +36,8 @@
     </xsl:template>
 
     <xsl:template match="tei:body/tei:div">
-        <!-- Omen -->
+
+        <!-- </xsl:choose> -->
 
         <xsl:apply-templates select="./tei:div[@type = &apos;score&apos;]"/>
         <!-- Score -->
@@ -85,6 +90,11 @@
                                 <td>
                                     <em>
                                         <xsl:value-of
+                                            select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:cb[@ed = $witid]/@n"
+                                        />
+                                    </em>
+                                    <em>
+                                        <xsl:value-of
                                             select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n"
                                         />
                                     </em>
@@ -100,28 +110,90 @@
                                 </xsl:for-each>
                             </tr>
                             <xsl:if
-                                test="//*[@xml:id = $omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit = $witid) and @source]">
+                                test="//*[@xml:id = $omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit = $witid) and starts-with(@source, 'KAL')]">
                                 <tr>
                                     <td>
                                         <xsl:value-of select="$witid"/>
                                     </td>
                                     <td>
                                         <xsl:value-of
-                                            select="//*[@xml:id = $omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit = $witid]/@source"
+                                            select="//*[@xml:id = $omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit = $witid and starts-with(@source, 'KAL')]/@source"
                                         />
                                     </td>
-
                                     <xsl:for-each
                                         select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
                                         <xsl:sort select="./@xml:id"/>
                                         <td>
                                             <xsl:apply-templates
-                                                select="tei:app/tei:rdg[(@wit = $witid) and @source]"
+                                                select="tei:app/tei:rdg[(@wit = $witid) and starts-with(@source, 'KAL')]"
                                             />
                                         </td>
                                     </xsl:for-each>
                                 </tr>
                             </xsl:if>
+                            <xsl:if
+                                test="//*[@xml:id = $omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit = $witid) and starts-with(@source, 'If A City 2')]">
+                                <tr>
+                                    <td>
+                                        <xsl:value-of select="$witid"/>
+                                    </td>
+                                    <td>
+                                        <xsl:value-of
+                                            select="//*[@xml:id = $omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit = $witid and starts-with(@source, 'If A City 2')]/@source"
+                                        />
+                                    </td>
+                                    <xsl:for-each
+                                        select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                                        <xsl:sort select="./@xml:id"/>
+                                        <td>
+                                            <xsl:apply-templates
+                                                select="tei:app/tei:rdg[(@wit = $witid) and starts-with(@source, 'If A City 2')]"
+                                            />
+                                        </td>
+                                    </xsl:for-each>
+                                </tr>
+                            </xsl:if>
+                            <xsl:if
+                                test="//*[@xml:id = $omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[(@wit = $witid) and starts-with(@source, 'If A City 1')]">
+                                <tr>
+                                    <td>
+                                        <xsl:value-of select="$witid"/>
+                                    </td>
+                                    <td>
+                                        <xsl:value-of
+                                            select="//*[@xml:id = $omenid]/tei:div/tei:ab/tei:w/tei:app/tei:rdg[@wit = $witid and starts-with(@source, 'If A City 1')]/@source"
+                                        />
+                                    </td>
+                                    <xsl:for-each
+                                        select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                                        <xsl:sort select="./@xml:id"/>
+                                        <td>
+                                            <xsl:apply-templates
+                                                select="tei:app/tei:rdg[(@wit = $witid) and starts-with(@source, 'If A City 1')]"
+                                            />
+                                        </td>
+                                    </xsl:for-each>
+                                </tr>
+                            </xsl:if>
+                            <!-- <xsl:for-each select="//*[generate-id() = generate-id(key('source',@source)[1])]">
+                                            <tr>
+                                                <td>
+                                                    <xsl:value-of select="$witid"/>
+                                                </td>
+                                                <td>
+                                            <xsl:value-of select="@source"/>
+                                                </td>
+                                                <xsl:for-each
+                                                    select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                                                    <xsl:sort select="./@xml:id"/>
+                                                    <td>
+                                                        <xsl:apply-templates
+                                                            select="tei:app/tei:rdg[(@wit = $witid) and @source]"
+                                                        />
+                                                    </td>
+                                                </xsl:for-each>
+                                            </tr>
+                                        </xsl:for-each> -->
 
                         </xsl:if>
                     </xsl:for-each>
