@@ -162,7 +162,7 @@ class OmenImporter:
             if row_type == ROWTYPE.SCORE:
 
                 # Get the witness for score line
-                search_str = cells[0].full_text.split("+")[0]
+                search_str = cells[0].full_text
                 wit = Witness.objects.filter(
                     witness_id__icontains=search_str
                 ) | Witness.objects.filter(museum_numbers__icontains=search_str)

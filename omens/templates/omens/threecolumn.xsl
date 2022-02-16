@@ -78,27 +78,29 @@
             <xsl:attribute name="class">small <xsl:value-of select="$omenid"/>-score-row
                 collapse</xsl:attribute>
             <td colspan="100%">
-                <table class="table-condensed score-table">
+                <table class="table-condensed score-table">   
                     <xsl:for-each select="//tei:witness">
                         <xsl:variable name="witid" select="./tei:idno"/>
                         <xsl:if test="//*[@xml:id = $omenid]//tei:rdg[@wit = $witid]">
                             <!-- if witness is used in the score -->
                             <tr>
                                 <td>
-                                    <xsl:value-of select="./tei:idno"/>
+                                    <b><xsl:value-of select="./tei:idno"/></b>
+                                </td>
+                                <td>
                                 </td>
                                 <td>
                                     <em>
                                         <xsl:value-of
                                             select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:cb[@ed = $witid]/@n"
-                                        />
+                                        /> &#160;
                                     </em>
                                     <em>
                                         <xsl:value-of
                                             select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n"
-                                        />
+                                        style="color: #36453F;"/>
                                     </em>
-                                </td>
+                                </td>  
                                 <xsl:for-each
                                     select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
                                     <xsl:sort select="./@xml:id"/>
@@ -121,6 +123,18 @@
                                         <td>
                                             <xsl:value-of select="@source"/>
                                         </td>
+                                        <td>
+                                    <em>
+                                        <xsl:value-of
+                                            select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:cb[@ed = $witid]/@n"
+                                        />&#160;
+                                    </em>
+                                    <em>
+                                        <xsl:value-of
+                                            select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n"
+                                        />
+                                    </em>
+                                </td>
                                         <xsl:variable name="src" select="@source"/>
                                         <xsl:for-each
                                             select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
@@ -253,8 +267,10 @@
                 <xsl:attribute name="id">
                     <xsl:value-of select="./@xml:id"/>
                 </xsl:attribute>
-                <xsl:apply-templates select="./tei:seg[@type = &apos;protasis&apos;]"/>
-                <xsl:apply-templates select="./tei:seg[@type = &apos;apodosis&apos;]"/>
+                <xsl:apply-templates select="./tei:seg[@type = &apos;protasis&apos; and not(@note)]"/>
+                <xsl:apply-templates select="./tei:seg[@type = &apos;apodosis&apos; and not(@note)]"/>
+                <br/><xsl:apply-templates select="./tei:seg[@type = &apos;protasis&apos; and @note]"/>
+                <xsl:apply-templates select="./tei:seg[@type = &apos;apodosis&apos; and @note]"/>
             </div>
         </li>
     </xsl:template>

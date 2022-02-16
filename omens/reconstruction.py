@@ -110,29 +110,47 @@ class ReconstructionLine(Line):
             translation_parts = full_translation.split("–")
             if len(translation_parts) == 1:
                 translation_parts.append("")
-            elif len(translation_parts) > 2:
+            elif len(translation_parts) > 2 and len(translation_parts) != 4:
                 raise ValueError(
                     f"More than one apodosis found in row {row[0].row_name}."
                 )
+            if len(translation_parts) == 2:
+                protasis_translation_db = TranslationDB(
+                    xml_id=self.xml_id + "_protasis",
+                    reconstruction=recon_db,
+                    segment=recon_db.omen.protasis,
+                    translation_txt=translation_parts[0],
+                    lang=self.rdg_type,
+                )
+                protasis_translation_db.save()
 
-            protasis_translation_db = TranslationDB(
-                xml_id=self.xml_id + "_protasis",
-                reconstruction=recon_db,
-                segment=recon_db.omen.protasis,
-                translation_txt=translation_parts[0],
-                lang=self.rdg_type,
-            )
-            protasis_translation_db.save()
+                apodosis_translation_db = TranslationDB(
+                    xml_id=self.xml_id + "_apodosis",
+                    reconstruction=recon_db,
+                    segment=recon_db.omen.apodosis,
+                    translation_txt=translation_parts[1],
+                    lang=self.rdg_type,
+                )
+                apodosis_translation_db.save()
 
-            apodosis_translation_db = TranslationDB(
-                xml_id=self.xml_id + "_apodosis",
-                reconstruction=recon_db,
-                segment=recon_db.omen.apodosis,
-                translation_txt=translation_parts[1],
-                lang=self.rdg_type,
-            )
+            elif len(translation_parts) == 4:
+                protasis_translation_db = TranslationDB(
+                    xml_id=self.xml_id + "_protasis",
+                    reconstruction=recon_db,
+                    segment=recon_db.omen.protasis,
+                    translation_txt=translation_parts[0] + translation_parts[2],
+                    lang=self.rdg_type,
+                )
+                protasis_translation_db.save()
 
-            apodosis_translation_db.save()
+                apodosis_translation_db = TranslationDB(
+                    xml_id=self.xml_id + "_apodosis",
+                    reconstruction=recon_db,
+                    segment=recon_db.omen.apodosis,
+                    translation_txt=translation_parts[1] + translation_parts[3],
+                    lang=self.rdg_type,
+                )
+                apodosis_translation_db.save()
 
     @property
     def xml_id(self):
@@ -172,8 +190,8 @@ class ReconstructionLine(Line):
             translation_parts = full_translation.split("–")
             if len(translation_parts) == 1:
                 translation_parts.append("")
-            elif len(translation_parts) > 2:
-                translation_parts[1] = "-".join(translation_parts[1:])
+            #elif len(translation_parts) > 2:
+            #    translation_parts[1] = "-".join(translation_parts[1:])
 
             logger.debug("PARTS: %s", translation_parts)
 
@@ -191,10 +209,28 @@ class ReconstructionLine(Line):
                 "{http://www.tei-c.org/ns/1.0}seg",
                 {XML_ID: self.xml_id + "_apodosis", "type": "apodosis"}
             )
+            
             apodosis_element.text = translation_parts[1].strip()
-
+            
             ab.append(apodosis_element)
             ab.append(protasis_element)
+
+            if len(translation_parts) == 4:
+                protasis_element_var = ET.Element(
+                    "{http://www.tei-c.org/ns/1.0}seg",
+                    {
+                        XML_ID: self.xml_id + "_protasis" + "_var",
+                        "type": "protasis", "note": "var_prota"
+                    },
+                )
+                apodosis_element_var = ET.Element(
+                    "{http://www.tei-c.org/ns/1.0}seg",
+                    {XML_ID: self.xml_id + "_apodosis" + "_var", "type": "apodosis", "note": "var_apo"}
+                )
+                protasis_element_var.text = translation_parts[2].strip()
+                apodosis_element_var.text = translation_parts[3].strip()
+                ab.append(apodosis_element_var)
+                ab.append(protasis_element_var)
 
         return ab
 
