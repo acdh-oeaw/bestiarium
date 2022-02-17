@@ -115,7 +115,7 @@ class ReconstructionLine(Line):
                 raise ValueError(
                     f"Unmatched protasis/apodosis in {row[0].row_name}."
                 )
-           
+
             if len(translation_parts) == 2:
                 protasis_translation_db = TranslationDB(
                     xml_id=self.xml_id + "_protasis",
