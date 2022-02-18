@@ -231,25 +231,22 @@ class ReconstructionLine(Line):
                 for x in range(0, len(translation_parts)):
                     if not x % 2:
                         prelim_prot.append(translation_parts[x])
-                        y = str(x)
-                        print(y)
                         protasis_element_var = ET.Element(
                             "{http://www.tei-c.org/ns/1.0}seg",
                             {
-                                XML_ID: self.xml_id + "_protasis" + y + "_var",
-                                "type": "protasis", "note": "var_prota"
+                                XML_ID: self.xml_id + "_protasis" + str(x) + "_var",
+                                "type": "protasis", "n": str(x)
                             },
                         )
                         protasis_element_var.text = translation_parts[x].strip()
                         ab.append(protasis_element_var)
                     else:
                         prelim_apo.append(translation_parts[x])
-                        y = str(x)
                         apodosis_element_var = ET.Element(
                             "{http://www.tei-c.org/ns/1.0}seg",
                             {
-                                XML_ID: self.xml_id + "_apodosis" + y + "_var",
-                                "type": "apodosis", "note": "var_apo"
+                                XML_ID: self.xml_id + "_apodosis" + str(x) + "_var",
+                                "type": "apodosis", "n": str(x)
                             },
                         )
                         apodosis_element_var.text = translation_parts[x].strip()

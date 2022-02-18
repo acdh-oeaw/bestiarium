@@ -98,7 +98,7 @@
                                     <em>
                                         <xsl:value-of
                                             select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n"
-                                        style="color: #36453F;"/>
+                                        />
                                     </em>
                                 </td>  
                                 <xsl:for-each
@@ -267,10 +267,11 @@
                 <xsl:attribute name="id">
                     <xsl:value-of select="./@xml:id"/>
                 </xsl:attribute>
-                <xsl:apply-templates select="./tei:seg[@type = &apos;protasis&apos; and not(@note)]"/>
-                <xsl:apply-templates select="./tei:seg[@type = &apos;apodosis&apos; and not(@note)]"/>
-                <br/><xsl:apply-templates select="./tei:seg[@type = &apos;protasis&apos; and @note]"/>
-                <xsl:apply-templates select="./tei:seg[@type = &apos;apodosis&apos; and @note]"/>
+                <xsl:apply-templates select="./tei:seg[@type = &apos;protasis&apos; and not(@n)]"/>
+                <xsl:apply-templates select="./tei:seg[@type = &apos;apodosis&apos; and not(@n)]"/>
+                <xsl:apply-templates select="./tei:seg[(@type = &apos;protasis&apos; or @type = &apos;apodosis&apos;) and @n]">
+                    <xsl:sort select="./@n" order="ascending" data-type="number"/>
+                </xsl:apply-templates>
             </div>
         </li>
     </xsl:template>
@@ -283,7 +284,7 @@
     <xsl:template
         match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:seg[@type = &apos;apodosis&apos;]">
         <xsl:if test=". != ''"> &#x2D;&#160; <span class="apodosis">
-                <xsl:value-of select="."/>
+                <xsl:value-of select="."/><br/>
             </span>
         </xsl:if>
     </xsl:template>
