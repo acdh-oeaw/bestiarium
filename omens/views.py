@@ -125,12 +125,13 @@ def omen_tei(request, omen_id):
             com = com_base.comment
         else:
             com = "No comment"
-
+        
         context = {
             "html": html,
             "comment": com,
             "omen_id": omen.xml_id,
             "omen_num": omen.omen_num,
+            "heading": omen.omen_name,
             "chapter_name": omen.chapter.chapter_name,
             "xsldoc": "threecolumn",
             "author": omen.chapter.author
