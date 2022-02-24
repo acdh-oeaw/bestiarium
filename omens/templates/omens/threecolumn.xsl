@@ -57,23 +57,25 @@
                         <a target="_blank" class="btn-sm btn-link text-decoration-none">
                             <xsl:attribute name="href">/omens/<xsl:value-of select="$omenid"
                                 />/tei</xsl:attribute> &#8599; </a>
+                                <xsl:value-of select="substring-after($headerid, 'Omen ')"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <a target="_blank" class="btn-sm btn-link text-decoration-none">
                             <xsl:attribute name="href">/omens/<xsl:value-of select="$omenid"
                                 />/tei.xml</xsl:attribute> &#8595; </a>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:value-of select="substring-after($headerid, 'Omen ')"/>&#160; <a
+                    <xsl:value-of select="substring-after($headerid, 'Omen ')"/>&#160; <a
                     data-toggle="collapse" role="button" aria-expanded="false">
                     <xsl:attribute name="data-target">.<xsl:value-of select="$omenid"
                         />-score-row</xsl:attribute>
                     <xsl:attribute name="href">#<xsl:value-of select="$omenid"
                         />-score</xsl:attribute>
                     <small>Score</small>
-                </a>
+                    </a>
+                    </xsl:otherwise>
+                </xsl:choose>
             </th>
         </tr>
+        <xsl:if test="$omen">
         <tr>
             <xsl:attribute name="class">small <xsl:value-of select="$omenid"/>-score-row
                 collapse</xsl:attribute>
@@ -154,6 +156,7 @@
                 </table>
             </td>
         </tr>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="tei:anchor">
