@@ -14,13 +14,17 @@
         <div id="omens">
             <div class="table-responsive">
                 <table class="table-striped table-condensed">
-                    <tbody>
+                    <tbody> 
                         <xsl:choose>
                             <xsl:when test="not($omen)">
                                 <!-- parameter has not been supplied -->
                                 <xsl:apply-templates select=".//tei:body/tei:div">
                                     <!-- All Omens -->
-                                    <xsl:sort select="./@n" data-type="number"/>
+                                    <xsl:sort select="substring(./@n, 9, 3)" data-type="number" /> 
+                                    <xsl:sort select="substring(./@n, 9, 1)" data-type="text" /> 
+                                    <xsl:sort select="substring(./@n, 11, 2)" data-type="number" />
+                                    <xsl:sort select="substring(./@n, 14, 4)" data-type="number" />
+                                    <xsl:sort select="substring(./@n, string-length(./@n)-2)" />
                                 </xsl:apply-templates>
                             </xsl:when>
                             <xsl:otherwise>
