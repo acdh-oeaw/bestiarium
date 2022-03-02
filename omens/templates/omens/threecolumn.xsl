@@ -33,7 +33,7 @@
                                     <xsl:sort select="substring(./@n, 9, 1)" data-type="text" /> <!-- by letter-ID after chapter no. -->
                                     <xsl:sort select="substring(./@n, 11, 1)" data-type="text" /> <!-- by letter of museum siglum -->
                                     <xsl:sort select="substring(./@n, 13, 6)"  /> <!-- by museum no. as string (because of .1 var.s) -->
-                                    <xsl:sort select="substring(translate(./@n, $final, ''), string-length(./@n)-2)" data-type="number" />
+                                   <xsl:sort select="substring(translate(translate(translate(./@n, '+', ' '), 'abi', ''), $final, ''), string-length(./@n)-3)" data-type="number" />
                                 </xsl:apply-templates> 
                                 </xsl:apply-templates>
                             </xsl:when>
@@ -304,6 +304,21 @@
                 <xsl:value-of select="."/><br/>
             </span>
         </xsl:if>
+    </xsl:template>
+
+    <xsl:template
+        match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:seg[@type = &apos;apodosis&apos; or @type = &apos;protasis&apos;]/text()">
+             <xsl:if test="contains(., '}')">
+                <xsl:variable name="before" select="substring-before(., '{')"/>
+                <xsl:variable name="after" select="substring-after(., '}')"/>
+                <xsl:variable name="until" select="substring-before(., '}')"/>
+                <xsl:variable name="super" select="substring-after($until, '{')"/>
+                <xsl:value-of select="$before"/>
+                <xsl:element name="sup">
+                    <xsl:value-of select="$super"/>
+                </xsl:element>
+                <xsl:value-of select="$after"/>
+            </xsl:if>
     </xsl:template>
 
     <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;transliteration&apos;]">
