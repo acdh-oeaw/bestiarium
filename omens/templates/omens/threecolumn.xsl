@@ -15,6 +15,7 @@
             <div class="table-responsive">
                 <table class="table-striped table-condensed">
                     <tbody> 
+                         <xsl:variable name="final">'</xsl:variable>
                         <xsl:choose>
                             <xsl:when test="not($omen)">
                              <!-- parameter has not been supplied -->
