@@ -34,7 +34,6 @@
                                     <xsl:sort select="substring(./@n, 11, 1)" data-type="text" /> <!-- by letter of museum siglum -->
                                     <xsl:sort select="substring(./@n, 13, 6)"  /> <!-- by museum no. as string (because of .1 var.s) -->
                                    <xsl:sort select="substring(translate(translate(translate(./@n, '+', ' '), 'abi', ''), $final, ''), string-length(./@n)-3)" data-type="number" />
-                                </xsl:apply-templates> 
                                 </xsl:apply-templates>
                             </xsl:when>
                             <xsl:otherwise>
