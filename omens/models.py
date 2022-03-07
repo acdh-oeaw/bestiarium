@@ -291,7 +291,8 @@ class PhilComment(models.Model):
             note_node.attrib["{http://www.w3.org/XML/1998/namespace}id"] = self.xml_id
             note_node.text = self.comment
             return note_node
-        return None
+        else:
+            return None
 
     def get_parent_node(self):
         if self.omen.tei_content:
