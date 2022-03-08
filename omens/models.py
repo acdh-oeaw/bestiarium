@@ -288,7 +288,7 @@ class PhilComment(models.Model):
         if self.comment:
             note_node = LET.Element("{http://www.tei-c.org/ns/1.0}note")
             note_node.attrib['type'] = "phil-comment"
-            note_node.attrib["{http://www.w3.org/XML/1998/namespace}id"] = self.xml_id
+            note_node.attrib["{http://www.w3.org/XML/1998/namespace}id"] = f"phil-comment__{self.id}"
             note_node.text = self.comment
             return note_node
         return None
@@ -304,6 +304,7 @@ class PhilComment(models.Model):
             return None
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         some_div = self.get_parent_node()
         if some_div is not None:
             phil_note = self.as_tei_node()
@@ -314,4 +315,3 @@ class PhilComment(models.Model):
                 some_div.insert(0, phil_note)
             self.omen.tei_content = ET.tostring(some_div).decode()
         self.omen.save()
-        super().save(*args, **kwargs)
