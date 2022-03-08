@@ -1,6 +1,6 @@
 import logging
 import os
-import pandas as pd
+# import pandas as pd
 
 from crispy_forms.helper import FormHelper
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -83,9 +83,9 @@ class UploadSpreadSheet(LoginRequiredMixin, FormView):
         elif ftype == UTYPES.OMEN_FILE:
             report = OmenImporter(f, upload).save()
 
-        elif ftype == UTYPES.COMMENTS_FILE:
-            df = pd.read_excel(f, converters={'omen': str, 'omen': str})
-            report = import_comments(df)
+        # elif ftype == UTYPES.COMMENTS_FILE:
+        #     df = pd.read_excel(f, converters={'omen': str, 'omen': str})
+        #     report = import_comments(df)
 
         elif ftype == UTYPES.DITTO_FILE:
             pass
