@@ -288,7 +288,7 @@ class PhilComment(models.Model):
         if self.comment:
             note_node = LET.Element("{http://www.tei-c.org/ns/1.0}note")
             note_node.attrib['type'] = "phil-comment"
-            note_node.attrib["{http://www.w3.org/XML/1998/namespace}id"] = f"phil-comment__{self.id}"
+            note_node.attrib["{http://www.w3.org/XML/1998/namespace}id"] = self.xml_id
             note_node.text = self.comment
             return note_node
         return None
