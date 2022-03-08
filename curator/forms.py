@@ -14,18 +14,18 @@ class UploadSpreadSheet(forms.Form):
         widget=forms.ClearableFileInput(attrs={"multiple": True}),
         required=False,
     )
-    ditto_files = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={"multiple": True}),
-        required=False,
-    )
+    # ditto_files = forms.FileField(
+    #     widget=forms.ClearableFileInput(attrs={"multiple": True}),
+    #     required=False,
+    # )
     credits_files = forms.FileField(
         widget=forms.ClearableFileInput(attrs={"multiple": True}),
         required=False,
     )
-    comments_files = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={"multiple": True}),
-        required=False,
-    )
+    # comments_files = forms.FileField(
+    #     widget=forms.ClearableFileInput(attrs={"multiple": True}),
+    #     required=False,
+    # )
 
     class Meta:
         model = Upload
@@ -39,9 +39,9 @@ class UploadSpreadSheet(forms.Form):
         self.helper.form_class = "p-3"
         self.fields["index_files"].label = "Indices"
         self.fields["omen_files"].label = "Omens"
-        self.fields["ditto_files"].label = "Dittos"
+        # self.fields["ditto_files"].label = "Dittos"
         self.fields["credits_files"].label = "Credits"
-        self.fields["comments_files"].label = "Philological commentary"
+        # self.fields["comments_files"].label = "Philological commentary"
 
         self.helper.label_class = "col-md-5"
         self.helper.field_class = "col-md-11"

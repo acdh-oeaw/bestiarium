@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from omens.creditsimporter import CreditsImporter
 from omens.indeximporter import IndexImporter
 from omens.omenimporter import OmenImporter
-from omens.coment_utils import import_comments
+# from omens.coment_utils import import_comments
 
 from .forms import UploadSpreadSheet
 from .models import USTATUS, UTYPES, Upload

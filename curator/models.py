@@ -5,10 +5,11 @@ from django.utils.timezone import now
 class UTYPES:
     INDEX_FILE: str = "index"
     OMEN_FILE: str = "omen"
-    DITTO_FILE: str = "ditto"
-    COMMENTS_FILE: str = "comments"
+    # DITTO_FILE: str = "ditto"
+    # COMMENTS_FILE: str = "comments"
     CREDITS_FILE: str = "credits"
-    ALL = (INDEX_FILE, OMEN_FILE, DITTO_FILE, COMMENTS_FILE, CREDITS_FILE)
+    # ALL = (INDEX_FILE, OMEN_FILE, DITTO_FILE, COMMENTS_FILE, CREDITS_FILE)
+    ALL = (INDEX_FILE, OMEN_FILE, CREDITS_FILE)
 
 
 class USTATUS:
