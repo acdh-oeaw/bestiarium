@@ -10,7 +10,7 @@ PROJECT_METADATA = {
     'purpose_de': '',
     'purpose_en': 'A web app to upload and analyse animal omens from Mesopotamia',
     'version': '0.0.1',
-    'matomo_id': 'matomo_id',
+    'matomo_id': '154',
     'matomo_url': 'https://matomo.acdh.oeaw.ac.at/',
     'imprint': '/imprint',
     'social_media': [
