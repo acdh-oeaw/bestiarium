@@ -295,20 +295,40 @@
     <xsl:template
         match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:seg[@type = &apos;protasis&apos;]">
         <span class="protasis">
-            <xsl:value-of select="."/>
+            <xsl:choose>
+                <xsl:when test="contains(., '}')">
+                    <xsl:variable name="before" select="substring-before(., '{')"/>
+                    <xsl:variable name="after" select="substring-after(., '}')"/>
+                    <xsl:variable name="until" select="substring-before(., '}')"/>
+                    <xsl:variable name="super" select="substring-after($until, '{')"/>
+                    <xsl:value-of select="$before"/>
+                    <xsl:element name="sup">
+                        <xsl:value-of select="$super"/>
+                    </xsl:element>
+                    <xsl:value-of select="$after"/>
+                </xsl:when>
+                <xsl:when test="contains(., ' $')">
+                    <xsl:variable name="before" select="substring-before(., ' $')"/>
+                    <xsl:variable name="after" select="substring-after(., '/$')"/>
+                    <xsl:variable name="until" select="substring-before(., '/$')"/>
+                    <xsl:variable name="super" select="substring-after($until, ' $')"/>
+                    <xsl:value-of select="$before"/>
+                    <xsl:element name="em">
+                        <xsl:value-of select="$super"/>
+                    </xsl:element>
+                    <xsl:value-of select="$after"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
+            </xsl:choose>
         </span>
     </xsl:template>
     <xsl:template
         match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:seg[@type = &apos;apodosis&apos;]">
         <xsl:if test=". != ''"> &#x2D;&#160; <span class="apodosis">
-                <xsl:value-of select="."/><br/>
-            </span>
-        </xsl:if>
-    </xsl:template>
-
-    <xsl:template
-        match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:seg[@type = &apos;apodosis&apos; or @type = &apos;protasis&apos;]/text()">
-             <xsl:if test="contains(., '}')">
+            <xsl:choose>
+            <xsl:when test="contains(., '}')">
                 <xsl:variable name="before" select="substring-before(., '{')"/>
                 <xsl:variable name="after" select="substring-after(., '}')"/>
                 <xsl:variable name="until" select="substring-before(., '}')"/>
@@ -318,7 +338,24 @@
                     <xsl:value-of select="$super"/>
                 </xsl:element>
                 <xsl:value-of select="$after"/>
-            </xsl:if>
+            </xsl:when>
+                <xsl:when test="contains(., '$')">
+                    <xsl:variable name="before" select="substring-before(., ' $')"/>
+                    <xsl:variable name="after" select="substring-after(., ' $')"/>
+                    <xsl:variable name="until" select="substring-before(., '/$')"/>
+                    <xsl:variable name="super" select="substring-after($until, '{')"/>
+                    <xsl:value-of select="$before"/>
+                    <xsl:element name="em">
+                        <xsl:value-of select="$super"/>
+                    </xsl:element>
+                    <xsl:value-of select="$after"/>
+                </xsl:when>
+               <xsl:otherwise>
+                   <xsl:value-of select="."/>
+               </xsl:otherwise>
+            </xsl:choose>
+            </span>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;transliteration&apos;]">
@@ -352,7 +389,7 @@
         </li>
     </xsl:template>
 
-    <xsl:template match="tei:div/tei:ab[@type = 'transliteration']/tei:w/text()">
+    <xsl:template match="tei:div/tei:ab[@type = 'transliteration' or @type = 'transcription']/tei:w/text()">
         <xsl:choose>
             <xsl:when test="contains(., '#')">
                 <xsl:value-of
