@@ -81,6 +81,20 @@ class SequenceAdmin(admin.ModelAdmin):
     list_display = ("seq_name", "omen", "position")
 
 
+class PhilCommentAdmin(admin.ModelAdmin):
+    list_display = ("omen", "comment",)
+
+    # def get_form(self, request, obj=None, **kwargs):
+    #     form = super(PhilCommentAdmin, self).get_form(request, obj, **kwargs)
+    #     form.base_fields['omen'].queryset = Omen.objects.all().order_by('omen_name')
+    #     return form
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "omen":
+            kwargs['queryset'] = Omen.objects.all().order_by('omen_name')
+        return super(PhilCommentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+
 admin.site.register(Omen, OmenAdmin)
 admin.site.register(Witness, WitnessAdmin)
 admin.site.register(Chapter, ChapterAdmin)
@@ -90,4 +104,4 @@ admin.site.register(Transliteration, TransliterationAdmin)
 admin.site.register(Transcription, TranscriptionAdmin)
 admin.site.register(Translation, TranslationAdmin)
 admin.site.register(Segment, SegmentAdmin)
-admin.site.register(PhilComment)
+admin.site.register(PhilComment, PhilCommentAdmin)
