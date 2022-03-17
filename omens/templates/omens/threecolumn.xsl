@@ -15,14 +15,16 @@
             <div class="table-responsive">
                 <table class="table-striped table-condensed">
                     <tbody> 
-                         <xsl:variable name="final">'</xsl:variable>
+                            <xsl:variable name="final">'</xsl:variable>
+                            <xsl:variable name="i"> i </xsl:variable> <xsl:variable name="ii"> ii </xsl:variable> <xsl:variable name="iii"> iii </xsl:variable>
+                            <xsl:variable name="iv"> iv </xsl:variable> <xsl:variable name="v"> v </xsl:variable><xsl:variable name="vi"> vi </xsl:variable>
                         <xsl:choose>
                             <xsl:when test="not($omen)">
                              <!-- parameter has not been supplied -->
                                 <!-- All Omens -->
                                <xsl:apply-templates select=".//tei:body/tei:div[not(contains(./@n, 'N') or contains(./@n, 'A') or contains(./@n, 'S'))]">
                                     <!-- A) plain omen series -->
-                                    <xsl:sort select="substring-after(translate(./@n, $final, ''), '.')" data-type="number"/> 
+                                    <xsl:sort select="substring-after(translate(translate(./@n, 'ab', ''), $final, ''), '.')" data-type="number"/> 
                                 </xsl:apply-templates> 
                                 <xsl:apply-templates select=".//tei:body/tei:div[string-length (./@n) &lt; 15 and (contains(./@n, 'N') or contains(./@n, 'A') or contains(./@n, 'S'))]">
                                     <!-- B) omen series, only place siglum -->
@@ -34,7 +36,9 @@
                                     <xsl:sort select="substring(./@n, 9, 1)" data-type="text" /> <!-- by letter-ID after chapter no. -->
                                     <xsl:sort select="substring(./@n, 11, 1)" data-type="text" /> <!-- by letter of museum siglum -->
                                     <xsl:sort select="substring(./@n, 13, 6)"  /> <!-- by museum no. as string (because of .1 var.s) -->
-                                   <xsl:sort select="substring(translate(translate(translate(./@n, '+', ' '), 'abi', ''), $final, ''), string-length(./@n)-3)" data-type="number" />
+                                    <xsl:sort select="contains(./@n, $vi) "/> <xsl:sort select="contains(./@n, $v) "/><xsl:sort select="contains(./@n, $iv) "/>
+                                    <xsl:sort select="contains(./@n, $iii) "/><xsl:sort select="contains(./@n, $ii) "/> <xsl:sort select="contains(./@n, $i)"/>
+                                    <xsl:sort select="substring(translate(translate(translate(./@n, '+', ' '), 'abi', ''), $final, ''), string-length(./@n)-3)" data-type="number" />
                                 </xsl:apply-templates>
                             </xsl:when>
                             <xsl:otherwise>
