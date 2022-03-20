@@ -200,9 +200,9 @@
     <xsl:template match="tei:rdg/text()">
         <xsl:choose>
             <xsl:when test="contains(., '#')">
-                <xsl:value-of
-                    select="translate(., 'abcdefghijklmnopqrstuvwxyz#', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"
-                />
+                <em><xsl:value-of
+                    select="translate(., '#', ' ')"
+                /></em>
             </xsl:when>
             <xsl:when test="contains(., '}')">
                 <xsl:variable name="before" select="substring-before(., '{')"/>
@@ -296,71 +296,6 @@
             </div>
         </li>
     </xsl:template>
-    <xsl:template
-        match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:seg[@type = &apos;protasis&apos;]">
-        <span class="protasis">
-            <xsl:choose>
-                <xsl:when test="contains(., '}')">
-                    <xsl:variable name="before" select="substring-before(., '{')"/>
-                    <xsl:variable name="after" select="substring-after(., '}')"/>
-                    <xsl:variable name="until" select="substring-before(., '}')"/>
-                    <xsl:variable name="super" select="substring-after($until, '{')"/>
-                    <xsl:value-of select="$before"/>
-                    <xsl:element name="sup">
-                        <xsl:value-of select="$super"/>
-                    </xsl:element>
-                    <xsl:value-of select="$after"/>
-                </xsl:when>
-                <xsl:when test="contains(., ' $')">
-                    <xsl:variable name="before" select="substring-before(., ' $')"/>
-                    <xsl:variable name="after" select="substring-after(., '/$')"/>
-                    <xsl:variable name="until" select="substring-before(., '/$')"/>
-                    <xsl:variable name="super" select="substring-after($until, ' $')"/>
-                    <xsl:value-of select="$before"/>
-                    <xsl:element name="em">
-                        <xsl:value-of select="$super"/>
-                    </xsl:element>
-                    <xsl:value-of select="$after"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="."/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </span>
-    </xsl:template>
-    <xsl:template
-        match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;translation&apos;]/tei:seg[@type = &apos;apodosis&apos;]">
-        <xsl:if test=". != ''"> &#x2D;&#160; <span class="apodosis">
-            <xsl:choose>
-            <xsl:when test="contains(., '}')">
-                <xsl:variable name="before" select="substring-before(., '{')"/>
-                <xsl:variable name="after" select="substring-after(., '}')"/>
-                <xsl:variable name="until" select="substring-before(., '}')"/>
-                <xsl:variable name="super" select="substring-after($until, '{')"/>
-                <xsl:value-of select="$before"/>
-                <xsl:element name="sup">
-                    <xsl:value-of select="$super"/>
-                </xsl:element>
-                <xsl:value-of select="$after"/>
-            </xsl:when>
-                <xsl:when test="contains(., '$')">
-                    <xsl:variable name="before" select="substring-before(., ' $')"/>
-                    <xsl:variable name="after" select="substring-after(., ' $')"/>
-                    <xsl:variable name="until" select="substring-before(., '/$')"/>
-                    <xsl:variable name="super" select="substring-after($until, '{')"/>
-                    <xsl:value-of select="$before"/>
-                    <xsl:element name="em">
-                        <xsl:value-of select="$super"/>
-                    </xsl:element>
-                    <xsl:value-of select="$after"/>
-                </xsl:when>
-               <xsl:otherwise>
-                   <xsl:value-of select="."/>
-               </xsl:otherwise>
-            </xsl:choose>
-            </span>
-        </xsl:if>
-    </xsl:template>
 
     <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;transliteration&apos;]">
         <xsl:variable name="rdgid" select="../@n"/>
@@ -396,9 +331,9 @@
     <xsl:template match="tei:div/tei:ab[@type = 'transliteration' or @type = 'transcription']/tei:w/text()">
         <xsl:choose>
             <xsl:when test="contains(., '#')">
-                <xsl:value-of
-                    select="translate(., 'abcdefghijklmnopqrstuvwxyz#', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')"
-                />
+                <em><xsl:value-of
+                    select="translate(., '#', ' ')"
+                /></em>
             </xsl:when>
             <xsl:when test="contains(., '}')">
                 <xsl:variable name="before" select="substring-before(., '{')"/>
@@ -418,7 +353,76 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
+    
+    <xsl:template match="tei:div/tei:ab[@type = 'translation']/tei:seg[@type = &apos;protasis&apos; or @type = &apos;apodosis&apos;]">
+        <xsl:variable name="tran" select="."/>
+        <xsl:variable name="question">?</xsl:variable>
+ 
+        <xsl:choose>
+            <xsl:when test="contains(., '$')">
+                <xsl:call-template name="recursionItalics">
+                    <xsl:with-param name="translation" select="$tran"/>
+                </xsl:call-template>
+            </xsl:when>
+           <xsl:when test="contains(., $question)">
+                <xsl:call-template name="recursionSuper">
+                    <xsl:with-param name="translation" select="$tran"/>
+                </xsl:call-template>
+            </xsl:when> 
+            <xsl:otherwise>
+                <xsl:value-of select="$tran"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="recursionSuper" match="tei:div/tei:ab[@type = 'translation']/tei:seg[@type = &apos;protasis&apos; or @type = &apos;apodosis&apos;]/text()">
+        <xsl:param name="translation"/>
+        
+        <xsl:variable name="question">?</xsl:variable>
+        <xsl:variable name="before" select="substring-before($translation, '{')"/>
+        <xsl:variable name="after" select="substring-after($translation, '}')"/>
+        
+        <xsl:value-of select="$before"/>
+        <xsl:element name="sup">
+            <xsl:value-of select="$question"/>
+        </xsl:element>
+        <xsl:choose>
+            <xsl:when test="contains($after, $question)">
+                <xsl:call-template name="recursionSuper">
+                    <xsl:with-param name="translation" select="$after"/>
+                </xsl:call-template> 
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$after"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="recursionItalics" match="tei:div/tei:ab[@type = 'translation']/tei:seg[@type = &apos;protasis&apos; or @type = &apos;apodosis&apos;]/text()">
+        <xsl:param name="translation"/>
+        <xsl:variable name="italics">$</xsl:variable>
+        <xsl:variable name="question">{?}</xsl:variable>
+        
+        <xsl:variable name="before" select="substring-before($translation, '$')"/>
+        <xsl:variable name="after" select="substring-after($translation, '/$')"/>
+        <xsl:variable name="replace" select="substring-before(substring-after($translation, '$'), '/$')"/>
+        
+        <xsl:value-of select="$before"/>
+        <xsl:element name="em">
+            <xsl:value-of select="$replace"/>
+        </xsl:element>
+       <xsl:choose>
+            <xsl:when test="contains($after, $italics)">
+                <xsl:call-template name="recursionItalics">
+                    <xsl:with-param name="translation" select="translate($after, $question, '?')"/>
+                </xsl:call-template> 
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$after"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
     <xsl:template match="tei:body/tei:div/tei:div[@n]/tei:ab[@type = &apos;transcription&apos;]">
         <xsl:variable name="rdgid" select="../@n"/>
         <xsl:variable name="rdgxmlid" select="@xml:id"/>
