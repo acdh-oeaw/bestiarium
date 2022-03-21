@@ -360,8 +360,8 @@
         
         <xsl:if test=". != '' and @type = &apos;apodosis&apos;">&#x2D;&#160;</xsl:if>
         <span>
-            <xsl:attribute name="class"><xsl:if test="@type = &apos;protasis&apos;">protasis</xsl:if></xsl:attribute>
-            <xsl:attribute name="class"><xsl:if test="@type = &apos;apodosis&apos;">apodosis</xsl:if></xsl:attribute>
+            <xsl:if test="@type = &apos;protasis&apos;"><xsl:attribute name="class">protasis</xsl:attribute></xsl:if>
+            <xsl:if test="@type = &apos;apodosis&apos;"><xsl:attribute name="class">apodosis</xsl:attribute></xsl:if>
      
         <xsl:choose>
             <xsl:when test="contains(., '$')">
