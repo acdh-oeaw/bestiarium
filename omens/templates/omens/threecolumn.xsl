@@ -357,7 +357,12 @@
     <xsl:template match="tei:div/tei:ab[@type = 'translation']/tei:seg[@type = &apos;protasis&apos; or @type = &apos;apodosis&apos;]">
         <xsl:variable name="tran" select="."/>
         <xsl:variable name="question">?</xsl:variable>
- 
+        
+        <xsl:if test=". != '' and @type = &apos;apodosis&apos;">&#x2D;&#160;</xsl:if>
+        <span>
+            <xsl:attribute name="class"><xsl:if test="@type = &apos;protasis&apos;">protasis</xsl:if></xsl:attribute>
+            <xsl:attribute name="class"><xsl:if test="@type = &apos;apodosis&apos;">apodosis</xsl:if></xsl:attribute>
+     
         <xsl:choose>
             <xsl:when test="contains(., '$')">
                 <xsl:call-template name="recursionItalics">
@@ -373,6 +378,8 @@
                 <xsl:value-of select="$tran"/>
             </xsl:otherwise>
         </xsl:choose>
+       </span>
+       
     </xsl:template>
     
     <xsl:template name="recursionSuper" match="tei:div/tei:ab[@type = 'translation']/tei:seg[@type = &apos;protasis&apos; or @type = &apos;apodosis&apos;]/text()">
@@ -407,6 +414,7 @@
         <xsl:variable name="after" select="substring-after($translation, '/$')"/>
         <xsl:variable name="replace" select="substring-before(substring-after($translation, '$'), '/$')"/>
         
+
         <xsl:value-of select="$before"/>
         <xsl:element name="em">
             <xsl:value-of select="$replace"/>
