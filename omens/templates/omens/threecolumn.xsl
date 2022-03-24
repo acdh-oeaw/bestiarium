@@ -10,6 +10,9 @@
     <xsl:key name="source"
         match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w/tei:app/tei:rdg"
         use="./@source"/>
+    <xsl:key name="line"
+        match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb"
+        use="./@n"/>
     <xsl:template match="/">
         <div id="omens">
             <div class="table-responsive">
@@ -116,9 +119,16 @@
                                         /> &#160;
                                     </em>
                                     <em>
-                                        <xsl:value-of
-                                            select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n"
-                                        />
+                                    <xsl:for-each
+                                        select="//*[generate-id() = generate-id(key('line', @n)[1])]">
+                                        <xsl:if
+                                            test ="@n = //*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n">
+                                        <xsl:value-of select="@n"/>&#160;
+                                         <!-- <xsl:variable name="lines" select="count(key('line', @n))"/>
+                                            <xsl:if test="$lines='1'"><xsl:value-of select="@n"/></xsl:if>
+                                            <xsl:if test="$lines='2'"><xsl:value-of select="concat('-', @n)"/></xsl:if>-->
+                                        </xsl:if>
+                                     </xsl:for-each>
                                     </em>
                                 </td>  
                                 <xsl:for-each
@@ -150,21 +160,25 @@
                                         />&#160;
                                     </em>
                                     <em>
-                                        <xsl:value-of
-                                            select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n"
-                                        />
+                                    <xsl:for-each
+                                        select="//*[generate-id() = generate-id(key('line', @n)[1])]">
+                                        <xsl:if
+                                            test ="@n = //*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n">
+                                        <xsl:value-of select="@n"/>&#160;
+                                        </xsl:if>
+                                     </xsl:for-each>
                                     </em>
                                 </td>
-                                        <xsl:variable name="src" select="@source"/>
-                                        <xsl:for-each
-                                            select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                                    <xsl:variable name="src" select="@source"/>
+                                    <xsl:for-each
+                                        select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
                                             <xsl:sort select="./@xml:id"/>
-                                            <td>
-                                                <xsl:apply-templates
-                                                  select="tei:app/tei:rdg[(@wit = $witid) and (@source = $src)]"
+                                        <td>
+                                            <xsl:apply-templates
+                                                select="tei:app/tei:rdg[(@wit = $witid) and (@source = $src)]"
                                                 />
-                                            </td>
-                                        </xsl:for-each>
+                                     </td>
+                                    </xsl:for-each>
                                     </xsl:if>
                                 </tr>
                             </xsl:for-each>
