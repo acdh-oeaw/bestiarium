@@ -22,12 +22,13 @@ class Position:
             if chunk.cell_format.color == LINENUM_COLOR and chunk.cell_format.italics:
                 return True
 
-    def __init__(self, cell, witness):
+    def __init__(self, cell, witness, reference):
         self.witness = witness.split('___')[0]
         self.line = None
         self.column = None
         self.text = ""
         self.supplement_text = ""
+        self.reference = reference
 
         # Separate text that does not confirm to line number formatting
         for chunk in cell.chunks:
@@ -44,7 +45,7 @@ class Position:
         parts = self.text.split()
         if parts[0][0].isnumeric() or parts[0][0] == "r" or parts[0][0] == "*":  # line number or reverse
             # Only line number - multiple columns obverse/reverse is not indicated
-            self.line = LineInfo(self.witness, self.text, self.supplement_text)
+            self.line = LineInfo(self.witness, self.text, self.reference, self.supplement_text)
 
         elif parts[0][0].isalpha():  # column  number
             self.column = ColumnInfo(self.witness, parts[0])
@@ -67,17 +68,21 @@ class LineInfo:
     Line number information in the tablet
     """
 
-    def __init__(self, witness, text, supplement_text=""):
+    def __init__(self, witness, text, reference, supplement_text=""):
         self.witness = witness
         self.broken = "'" in text
         self.reverse = "r." in text
         self.text = text
         self.supplement_text = supplement_text
+        self.reference = reference
 
     @property
     def tei(self):
         fixed_witt = self.witness.split('______')[0]
-        lb = ET.Element("{http://www.tei-c.org/ns/1.0}lb", {"n": self.text, "ed": fixed_witt})
+        if self.reference:
+            lb = ET.Element("{http://www.tei-c.org/ns/1.0}lb", {"source": self.reference, "n": self.text, "ed": fixed_witt})
+        else:
+            lb = ET.Element("{http://www.tei-c.org/ns/1.0}lb", {"n": self.text, "ed": fixed_witt})
         if self.broken:
             # TODO: Finalise/confirm encoding attribute
             lb.attrib["ana"] = "Broken"

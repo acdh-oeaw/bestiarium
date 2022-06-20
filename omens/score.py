@@ -44,7 +44,7 @@ class ScoreLine(Line):
 
             # determine cell type (position - column/line number or lemma)
             if Position.is_position_cell(cell):  # Position:
-                position = Position(cell, self.witness)
+                position = Position(cell, self.witness, self.reference)
 
                 if position.column:
                     self.data.append(position.column)

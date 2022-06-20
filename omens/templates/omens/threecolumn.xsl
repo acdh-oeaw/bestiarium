@@ -10,8 +10,11 @@
     <xsl:key name="source"
         match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w/tei:app/tei:rdg"
         use="./@source"/>
+    <xsl:key name="srcline"
+        match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@source]"
+        use="./@n"/>
     <xsl:key name="line"
-        match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb"
+        match="tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[not(@source)]"
         use="./@n"/>
     <xsl:template match="/">
         <div id="omens">
@@ -155,13 +158,8 @@
                                         </td>
                                         <td>
                                     <em>
-                                        <xsl:value-of
-                                            select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:cb[@ed = $witid]/@n"
-                                        />&#160;
-                                    </em>
-                                    <em>
-                                    <xsl:for-each
-                                        select="//*[generate-id() = generate-id(key('line', @n)[1])]">
+                                        <xsl:for-each
+                                        select="//*[generate-id() = generate-id(key('srcline', @n)[1])]">
                                         <xsl:if
                                             test ="@n = //*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n">
                                         <xsl:value-of select="@n"/>&#160;
