@@ -80,7 +80,8 @@ class LineInfo:
     def tei(self):
         fixed_witt = self.witness.split('______')[0]
         if self.reference:
-            lb = ET.Element("{http://www.tei-c.org/ns/1.0}lb", {"source": self.reference, "n": self.text, "ed": fixed_witt})
+            lb = ET.Element("{http://www.tei-c.org/ns/1.0}lb", {"source": self.reference, "n": self.text,
+                                                                "ed": fixed_witt})
         else:
             lb = ET.Element("{http://www.tei-c.org/ns/1.0}lb", {"n": self.text, "ed": fixed_witt})
         if self.broken:
