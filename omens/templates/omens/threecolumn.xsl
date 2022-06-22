@@ -127,15 +127,13 @@
                                         <xsl:if
                                             test ="@n = //*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:lb[@ed = $witid]/@n">
                                         <xsl:value-of select="@n"/>&#160;
-                                         <!-- <xsl:variable name="lines" select="count(key('line', @n))"/>
-                                            <xsl:if test="$lines='1'"><xsl:value-of select="@n"/></xsl:if>
-                                            <xsl:if test="$lines='2'"><xsl:value-of select="concat('-', @n)"/></xsl:if>-->
                                         </xsl:if>
                                      </xsl:for-each>
                                     </em>
                                 </td>  
                                 <xsl:for-each
                                     select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                                    <xsl:sort select="string-length(substring-after(./@xml:id, 'w'))"/>
                                     <xsl:sort select="./@xml:id"/>
                                     <td>
                                         <xsl:apply-templates
@@ -170,7 +168,8 @@
                                     <xsl:variable name="src" select="@source"/>
                                     <xsl:for-each
                                         select="//*[@xml:id = $omenid]/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
-                                            <xsl:sort select="./@xml:id"/>
+                                        <xsl:sort select="string-length(substring-after(./@xml:id, 'w'))"/>
+                                        <xsl:sort select="./@xml:id"/>
                                         <td>
                                             <xsl:apply-templates
                                                 select="tei:app/tei:rdg[(@wit = $witid) and (@source = $src)]"
@@ -327,6 +326,7 @@
                     <xsl:value-of select="./@xml:id"/>
                 </xsl:attribute>
                 <xsl:for-each select="../../tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                    <xsl:sort select="string-length(substring-after(./@xml:id, 'w'))"/>
                     <xsl:sort select="./@xml:id"/>
                     <!-- <xsl:for-each select="//tei:body/tei:div/tei:div[@type = &apos;score&apos;]/tei:ab/tei:w"> -->
                     <xsl:variable name="wordid" select="./@xml:id"/>
@@ -460,6 +460,7 @@
                     <xsl:value-of select="./@xml:id"/>
                 </xsl:attribute>
                 <xsl:for-each select="../../tei:div[@type = &apos;score&apos;]/tei:ab/tei:w">
+                    <xsl:sort select="string-length(substring-after(./@xml:id, 'w'))"/>
                     <xsl:sort select="./@xml:id"/>
                     <xsl:variable name="wordid" select="./@xml:id"/>
                     <span class="lemma">
