@@ -23,6 +23,12 @@ ALLOWED_HOSTS = [
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'vxAeLsadfsadfYeo')
 
+# SECURITY WARNING: don't run with debug turned on in production!
+if os.environ.get('DEBUG'):
+    DEBUG = True
+else:
+    DEBUG = False
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
