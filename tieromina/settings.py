@@ -4,7 +4,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
-DEBUG = os.environ.get('DJANGO_DEBUG', True)
+# DEBUG = os.environ.get('DJANGO_DEBUG', True)
 SHARED_URL = "https://shared.acdh.oeaw.ac.at/"
 PROJECT_NAME = "tieromina"
 
