@@ -85,11 +85,11 @@ class ProjectInst(models.Model):
 class TeamMember(models.Model):
     """ A class describing project's team member"""
     name = models.CharField(
-        max_length=300, blank=True,
+        max_length=75, blank=True,
         verbose_name="Name"
     )
     description = models.TextField(
-        max_length=300, blank=True,
+        max_length=1000, blank=True,
         verbose_name="Short description of the Person"
     )
     website = models.URLField(
