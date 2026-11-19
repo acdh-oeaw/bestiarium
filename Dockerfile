@@ -1,4 +1,4 @@
-FROM python:3.8-buster
+FROM python:3.8.20-bookworm
 
 # install nginx posgtes and gdal
 RUN apt-get update -y && apt-get upgrade -y && apt-get install nginx vim \
