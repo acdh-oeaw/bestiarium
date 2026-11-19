@@ -164,7 +164,7 @@ class ReconstructionLine(Line):
 
     @property
     def xml_id(self):
-        return f'{self.rdg_type}.{self.reconstruction_id.xml_id}{"_"+clean_id(self.reference) if self.reference else ""}'  # noqa: E501
+        return f'{self.rdg_type}.{self.reconstruction_id.xml_id}{"_" + clean_id(self.reference) if self.reference else ""}'  # noqa: E501
 
     @property
     def tei(self):

@@ -31,7 +31,7 @@ class Workbook:
         for sheet_num, elem in enumerate(sheets):
             sheet_name = elem.attrib.get('name')
             sheet_xml = ET.XML(
-                self.z.read(f'xl/worksheets/sheet{sheet_num+1}.xml'))
+                self.z.read(f'xl/worksheets/sheet{sheet_num + 1}.xml'))
             yield Sheet(name=sheet_name,
                         sheet_xml=sheet_xml,
                         style=self.style,
